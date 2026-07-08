@@ -971,7 +971,10 @@ class Component extends DCLogic {
         if (lokalTs && remoteTs && remoteTs < lokalTs) { this.syncUpload(true); return; } // lokal ist neuer
       }
       if (s.behandler) { this.behandler = s.behandler; localStorage.setItem('pkv.behandler.v1', JSON.stringify(s.behandler)); }
-      this.setState({ eintraege: s.eintraege, settings: s.settings || this.state.settings, geladen: true, eingerichtetFlag: true }, () => this.persist(true));
+      const neueSettings = s.settings || this.state.settings;
+      // Kommt per Sync eine PIN-Sperre an und dieses Gerät wurde in dieser Sitzung nicht entsperrt: sofort sperren
+      const jetztSperren = !!neueSettings.sperreHash && sessionStorage.getItem('pkv.entsperrt') !== '1';
+      this.setState({ eintraege: s.eintraege, settings: neueSettings, geladen: true, eingerichtetFlag: true, gesperrt: jetztSperren }, () => this.persist(true));
       localStorage.setItem('pkv.sync.ts', remoteTs);
       localStorage.setItem('pkv.eingerichtet.v1', '1');
       this.setState({ syncStatus: (auto ? 'Automatisch geladen' : 'Geladen') + ' — ' + s.eintraege.length + ' Einträge (Stand ' + String(remoteTs).slice(0, 16).replace('T', ' ') + ').' });
