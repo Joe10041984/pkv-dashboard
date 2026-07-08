@@ -28,7 +28,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
       <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
           <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:22px;">PKV-Aufwände</div>
-          <div style="font-size:13px; color:#F3C7D7;">Hallesche · NK.select XL Bonus</div>
+          <div style="font-size:13px; color:#F3C7D7;">{{ tarifLabel }}</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <div style="display:flex; background:#9E0A3F; border-radius:5px; padding:3px; gap:2px;">
@@ -124,8 +124,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </sc-if>
 
         <div style="display:flex; gap:16px; justify-content:flex-end; font-size:12.5px; color:#46565E; padding:0 4px;">
-          <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px; height:9px; border-radius:50%; background:#3E7CB8; display:inline-block;"></span>Johannes</span>
-          <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px; height:9px; border-radius:50%; background:#9A6BB8; display:inline-block;"></span>Konrad</span>
+          <sc-for list="{{ legende }}" as="lg" hint-placeholder-count="2">
+            <span style="display:flex; align-items:center; gap:6px;"><span style="width:9px; height:9px; border-radius:50%; background:{{ lg.farbe }}; display:inline-block;"></span>{{ lg.name }}</span>
+          </sc-for>
         </div>
 
         <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
@@ -329,20 +330,16 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                     <span style="font-weight:600;">{{ a.art }}</span><span style="color:#68787F;">{{ a.summeFmt }}</span>
                   </div>
                   <div style="height:20px; background:#EDF0F2; border-radius:4px; overflow:hidden; display:flex;">
-                    <div style="height:100%; background:#3E7CB8; width:{{ a.pctJ }}%; display:flex; align-items:center; justify-content:center; overflow:hidden;" title="Johannes: {{ a.sJFmt }}">
-                      <span style="font-size:10.5px; font-weight:600; color:#FFFFFF; white-space:nowrap;">{{ a.labelJ }}</span>
-                    </div>
-                    <div style="height:100%; background:#9A6BB8; width:{{ a.pctK }}%; display:flex; align-items:center; justify-content:center; overflow:hidden;" title="Konrad: {{ a.sKFmt }}">
-                      <span style="font-size:10.5px; font-weight:600; color:#FFFFFF; white-space:nowrap;">{{ a.labelK }}</span>
-                    </div>
+                    <sc-for list="{{ a.segs }}" as="sg" hint-placeholder-count="2">
+                      <div style="height:100%; background:{{ sg.farbe }}; width:{{ sg.pct }}%; display:flex; align-items:center; justify-content:center; overflow:hidden;" title="{{ sg.tip }}">
+                        <span style="font-size:10.5px; font-weight:600; color:#FFFFFF; white-space:nowrap;">{{ sg.label }}</span>
+                      </div>
+                    </sc-for>
                     <sc-if value="{{ a.zeigeRest }}" hint-placeholder-val="{{ false }}">
                       <span style="display:flex; align-items:center; gap:8px; padding:0 8px; white-space:nowrap;">
-                        <sc-if value="{{ a.restJ }}" hint-placeholder-val="{{ false }}">
-                          <span style="font-size:10.5px; font-weight:700; color:#3E7CB8;">{{ a.restJ }}</span>
-                        </sc-if>
-                        <sc-if value="{{ a.restK }}" hint-placeholder-val="{{ false }}">
-                          <span style="font-size:10.5px; font-weight:700; color:#9A6BB8;">{{ a.restK }}</span>
-                        </sc-if>
+                        <sc-for list="{{ a.reste }}" as="r" hint-placeholder-count="1">
+                          <span style="font-size:10.5px; font-weight:700; color:{{ r.farbe }};">{{ r.text }}</span>
+                        </sc-for>
                       </span>
                     </sc-if>
                   </div>
@@ -350,8 +347,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               </sc-for>
             </div>
             <div style="display:flex; gap:14px; margin-top:12px; font-size:12px; color:#68787F;">
-              <span style="display:flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:50%; background:#3E7CB8; display:inline-block;"></span>Johannes</span>
-              <span style="display:flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:50%; background:#9A6BB8; display:inline-block;"></span>Konrad</span>
+              <sc-for list="{{ legende }}" as="lg" hint-placeholder-count="2">
+                <span style="display:flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:50%; background:{{ lg.farbe }}; display:inline-block;"></span>{{ lg.name }}</span>
+              </sc-for>
             </div>
           </div>
 
@@ -408,18 +406,14 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             <sc-for list="{{ monatChart }}" as="m" hint-placeholder-count="12">
               <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;" title="{{ m.tip }}">
                 <div style="width:100%; max-width:38px; display:flex; gap:2px; align-items:flex-end;">
-                  <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
-                    <span style="font-size:10px; font-weight:600; color:#3E7CB8; white-space:nowrap; margin-bottom:2px;">{{ m.obenJ }}</span>
-                    <div style="width:100%; background:#3E7CB8; border-radius:4px 4px 0 0; height:{{ m.hJ }}px; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
-                      <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9.5px; font-weight:600; color:#FFFFFF; white-space:nowrap; padding-bottom:3px;">{{ m.labelJ }}</span>
+                  <sc-for list="{{ m.balken }}" as="b" hint-placeholder-count="2">
+                    <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
+                      <span style="font-size:10px; font-weight:600; color:{{ b.farbe }}; white-space:nowrap; margin-bottom:2px;">{{ b.oben }}</span>
+                      <div style="width:100%; background:{{ b.farbe }}; border-radius:4px 4px 0 0; height:{{ b.h }}px; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
+                        <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9.5px; font-weight:600; color:#FFFFFF; white-space:nowrap; padding-bottom:3px;">{{ b.label }}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
-                    <span style="font-size:10px; font-weight:600; color:#9A6BB8; white-space:nowrap; margin-bottom:2px;">{{ m.obenK }}</span>
-                    <div style="width:100%; background:#9A6BB8; border-radius:4px 4px 0 0; height:{{ m.hK }}px; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
-                      <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9.5px; font-weight:600; color:#FFFFFF; white-space:nowrap; padding-bottom:3px;">{{ m.labelK }}</span>
-                    </div>
-                  </div>
+                  </sc-for>
                 </div>
                 <div style="font-size:11px; color:#68787F;">{{ m.label }}</div>
               </div>
@@ -452,7 +446,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
     <sc-if value="{{ tabAbgleich }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="Abgleich" style="display:flex; flex-direction:column; gap:16px; animation:fadeUp .25s ease;">
         <div style="background:#E9F1F7; border:1px solid #C7DCEC; border-radius:6px; padding:14px 18px; font-size:13.5px; color:#2C4A63; line-height:1.5;">
-          Ein direkter Abruf aus Hallesche 4u ist nicht möglich. <strong>So geht der Abgleich:</strong> Lade Leistungsabrechnungen (PDF) aus der App hier im Chat hoch — ich lese sie und trage die Erstattungen unten ein. Oder du pflegst die Beträge direkt hier.
+          Ein direkter Abruf aus der Versicherer-App ist nicht möglich. <strong>So geht der Abgleich:</strong> Lade Leistungsabrechnungen (PDF) aus der App hier im Chat hoch — ich lese sie und trage die Erstattungen unten ein. Oder du pflegst die Beträge direkt hier.
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px;">
           <sc-for list="{{ abgleichKpis }}" as="k" hint-placeholder-count="3">
@@ -590,7 +584,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           <div style="border:1.5px solid #BFD4DA; background:#F2F7F8; border-radius:6px; padding:12px 14px; display:flex; flex-direction:column; gap:10px;">
             <div>
               <div style="font-size:13px; font-weight:600; color:#175260;">Vorsorge-Check — voraussichtliche Erstattung</div>
-              <div style="font-size:12px; color:#46565E; margin-top:3px; line-height:1.45;">Trage die GOÄ/GOZ-Ziffern und Beträge von der Rechnung ein. Ziffern aus dem Hallesche-Vorsorgeverzeichnis (PM 174) werden erstattet, ohne auf Bonus oder Beitragsrückerstattung angerechnet zu werden.</div>
+              <div style="font-size:12px; color:#46565E; margin-top:3px; line-height:1.45;">Trage die GOÄ/GOZ-Ziffern und Beträge von der Rechnung ein. Ziffern aus dem Vorsorgeverzeichnis des Tarifs (PM 174) werden erstattet, ohne auf Bonus oder Beitragsrückerstattung angerechnet zu werden.</div>
             </div>
             <sc-if value="{{ hatVorsorgePos }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex; flex-direction:column; gap:6px;">
@@ -692,22 +686,29 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </sc-if>
         <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:13px; color:#68787F; line-height:1.5;">Jährlicher Gesundheitsbonus pro Person. Die Beitragsrückerstattung folgt ab 2026 der neuen Staffel mit festen Beträgen: 1 Jahr 300 € · 2 J. 400 € · 3 J. 500 € · 4 J. 600 € · 5 J. 700 € · ab 6 J. 800 €. Vorsorge laut Verzeichnis zählt nicht als Leistungsbezug. Wird eingereicht, startet der Zähler wieder bei 1.</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Bonus Johannes (€/Jahr)
-            <input type="number" value="{{ sBonusJ }}" onChange="{{ setBonusJ }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
-          </label>
-          <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Bonus Konrad (€/Jahr)
-            <input type="number" value="{{ sBonusK }}" onChange="{{ setBonusK }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
-          </label>
-          <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Berücksichtigungsfähige Jahre Johannes
-            <input type="number" min="1" max="6" value="{{ sJahreJ }}" onChange="{{ setJahreJ }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
-            <span style="font-weight:500;">BRE 2026: {{ sBreJFmt }}</span>
-          </label>
-          <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Berücksichtigungsfähige Jahre Konrad
-            <input type="number" min="1" max="6" value="{{ sJahreK }}" onChange="{{ setJahreK }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
-            <span style="font-weight:500;">BRE 2026: {{ sBreKFmt }}</span>
-          </label>
-        </div>
+        <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Tarif-Bezeichnung (Kopfzeile, optional)
+          <input type="text" value="{{ sTarif }}" onChange="{{ setTarif }}" placeholder="z. B. Versicherer · Tarifname" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+        </label>
+        <sc-for list="{{ sPersonen }}" as="sp" hint-placeholder-count="2">
+          <div style="border:1px solid #EDF0F2; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="text" value="{{ sp.name }}" onChange="{{ sp.setName }}" style="flex:1; padding:8px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; font-weight:600; color:#1E2B32;">
+              <sc-if value="{{ sp.kannEntfernen }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ sp.entfernen }}" title="Person entfernen (nur ohne Einträge möglich)" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#A03E3E; border-radius:5px; padding:8px 12px; font-size:12.5px; font-weight:600;">Entfernen</button>
+              </sc-if>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Bonus (€/Jahr)
+                <input type="number" value="{{ sp.bonus }}" onChange="{{ sp.setBonus }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
+              </label>
+              <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Berücksichtigungsf. Jahre
+                <input type="number" min="1" max="6" value="{{ sp.jahre }}" onChange="{{ sp.setJahre }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px;">
+                <span style="font-weight:500;">BRE 2026: {{ sp.breFmt }}</span>
+              </label>
+            </div>
+          </div>
+        </sc-for>
+        <button onClick="{{ personHinzu }}" style="border:1px dashed #C6D0D5; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:6px; padding:10px; font-size:13.5px; font-weight:600;">+ Person hinzufügen</button>
         </sc-if>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">Geräte-Sync über GitHub</div>
@@ -783,7 +784,7 @@ class Component extends DCLogic {
     this.state = {
       eintraege: eintraege || [],
       geladen: !!eintraege,
-      settings: settings || { bonusJ: 1200, bonusK: 600, jahreJ: 2, jahreK: 2 },
+      settings: settings || { personen: [{ name: 'Person 1', bonus: 0, jahre: 1 }, { name: 'Person 2', bonus: 0, jahre: 1 }] },
       tab: 'uebersicht',
       jahr: 2026,
       fPerson: 'Alle',
@@ -795,12 +796,13 @@ class Component extends DCLogic {
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
-      awFilter: { Johannes: true, Konrad: true },
+      awFilter: {},
       suche: { laden: false, ergebnisse: [], fehler: null }
     };
     try { this.behandler = JSON.parse(localStorage.getItem('pkv.behandler.v1') || '{}'); } catch (e) { this.behandler = {}; }
-    this.farben = { Johannes: '#3E7CB8', Konrad: '#9A6BB8' };
-    this.farbenHell = { Johannes: '#E4EDF5', Konrad: '#F0E8F5' };
+    this.palette = [['#3E7CB8', '#E4EDF5'], ['#9A6BB8', '#F0E8F5'], ['#3E9C86', '#E2F1EC'], ['#C08A3E', '#F7EDDD'], ['#B85A5A', '#F6E6E6'], ['#5A7D8C', '#E8EFF2']];
+    this.farben = {};
+    this.farbenHell = {};
     this.arten = ['Arztbesuch', 'Zahnarztbesuch', 'Medikamente', 'Heilmittel', 'Hilfsmittel', 'Stationäre Behandlung', 'Sonstiges'];
     this.fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
     this.staffel = [300, 400, 500, 600, 700, 800]; // BRE ab 2026: 1-6 berücksichtigungsfähige Jahre
@@ -829,6 +831,38 @@ class Component extends DCLogic {
       this.setState({ pinFehler: 'PIN falsch.', pinEingabe: '' });
     }
   }
+  // ---------- Personen (aus Settings, neutral bei frischer Instanz) ----------
+  personListe() {
+    const s = this.state.settings;
+    let p = Array.isArray(s.personen) && s.personen.length ? s.personen : null;
+    if (!p) {
+      // Migration alter Stände: Namen aus den Einträgen ableiten, Bonus/Jahre aus den alten Feldern
+      const namen = [...new Set(this.state.eintraege.map(e => e.patient))].filter(Boolean).sort();
+      if (namen.length) p = namen.map((name, i) => ({ name, bonus: i === 0 ? (s.bonusJ || 0) : (s.bonusK || 0), jahre: i === 0 ? (s.jahreJ || 1) : (s.jahreK || 1) }));
+      else p = [{ name: 'Person 1', bonus: 0, jahre: 1 }, { name: 'Person 2', bonus: 0, jahre: 1 }];
+    }
+    return p.map((x, i) => ({ ...x, farbe: this.palette[i % this.palette.length][0], farbeHell: this.palette[i % this.palette.length][1] }));
+  }
+  personenRoh() { return this.personListe().map(p => ({ name: p.name, bonus: p.bonus, jahre: p.jahre })); }
+  personAendern(i, patch) {
+    this.update(x => {
+      const personen = this.personenRoh();
+      if (patch === null) {
+        if (personen.length <= 1) return null;
+        personen.splice(i, 1);
+        return { settings: { ...x.settings, personen } };
+      }
+      const alt = personen[i].name;
+      personen[i] = { ...personen[i], ...patch };
+      const neu = personen[i].name;
+      let eintraege = x.eintraege;
+      if (patch.name !== undefined && neu !== alt) {
+        eintraege = x.eintraege.map(e => e.patient === alt ? { ...e, patient: neu } : e);
+      }
+      return { settings: { ...x.settings, personen }, eintraege };
+    });
+  }
+
   jahreListe() {
     const s = new Set([2025, 2026]);
     this.state.eintraege.forEach(e => { if (e.jahr) s.add(e.jahr); });
@@ -1341,8 +1375,9 @@ class Component extends DCLogic {
     const gesamt = es.reduce((x, e) => x + e.betrag, 0);
     const erstattet = es.reduce((x, e) => x + e.erstattet, 0);
     const selbst = gesamt - erstattet;
-    const bonus = name === 'Johannes' ? s.bonusJ : s.bonusK;
-    const jahre = name === 'Johannes' ? s.jahreJ : s.jahreK;
+    const pers = this.personListe().find(p => p.name === name) || { bonus: 0, jahre: 0 };
+    const bonus = pers.bonus || 0;
+    const jahre = pers.jahre || 0;
     // Nur abgerechnete Einreichungen zählen: der nicht erstattete Teil wurde mit dem Bonus verrechnet.
     // Wartende Einreichungen (noch keine Erstattung erfasst) zählen nicht als Verbrauch.
     const bonusVerbraucht = Math.min(bonus, es.filter(e => e.eingereicht && e.erstattet > 0).reduce((x, e) => x + Math.max(0, e.betrag - e.erstattet), 0));
@@ -1371,6 +1406,13 @@ class Component extends DCLogic {
     const fmt = v => this.fmt.format(v);
     const heute = new Date().toISOString().slice(0, 10);
 
+    // Personen dynamisch aus den Settings
+    const persListe = this.personListe();
+    const pNamen = persListe.map(p => p.name);
+    this.farben = {}; this.farbenHell = {};
+    persListe.forEach(p => { this.farben[p.name] = p.farbe; this.farbenHell[p.name] = p.farbeHell; });
+    const legende = persListe.map(p => ({ name: p.name, farbe: p.farbe }));
+
     // Ersteinrichtung: ohne Daten und ohne Sync-Konfiguration nur den Start-Bildschirm zeigen
     const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag;
 
@@ -1382,7 +1424,7 @@ class Component extends DCLogic {
     }));
 
     // ---- Personen-Berechnung ----
-    const personen = ['Johannes', 'Konrad'].map(name => {
+    const personen = pNamen.map(name => {
       const d = this.personDaten(name, st.jahr);
       const lohnt = d.netto > 0;
       let empfehlungKurz, empfehlungDetail, typ;
@@ -1497,7 +1539,7 @@ class Component extends DCLogic {
       zeigeErstattet: e.eingereicht && e.erstattet > 0, erstattetFmt: fmt(e.erstattet),
       hatBeleg: !!e.belegName, onEdit: () => this.editEntry(e.id)
     }));
-    const personFilter = ['Alle', 'Johannes', 'Konrad'].map(p => ({
+    const personFilter = ['Alle', ...pNamen].map(p => ({
       label: p, go: () => this.setState({ fPerson: p }),
       bg: st.fPerson === p ? (this.farben[p] || '#175260') : '#FFFFFF', fg: st.fPerson === p ? '#FFFFFF' : '#46565E'
     }));
@@ -1507,16 +1549,16 @@ class Component extends DCLogic {
     }));
 
     // ---- Auswertungen ----
-    const awAktiv = ['Johannes', 'Konrad'].filter(n => st.awFilter[n]);
-    const awPersonToggles = ['Johannes', 'Konrad'].map(n => {
-      const an = st.awFilter[n];
+    const awAktiv = pNamen.filter(n => st.awFilter[n] !== false);
+    const awPersonToggles = pNamen.map(n => {
+      const an = st.awFilter[n] !== false;
       return {
         label: n,
         bg: an ? this.farben[n] : '#FFFFFF', fg: an ? '#FFFFFF' : '#68787F',
         rand: an ? this.farben[n] : '#DCE3E6',
         go: () => this.setState(s => {
-          const f = { ...s.awFilter, [n]: !s.awFilter[n] };
-          if (!f.Johannes && !f.Konrad) return null; // mindestens eine Person aktiv
+          const f = { ...s.awFilter, [n]: !an };
+          if (!pNamen.some(x => f[x] !== false)) return null; // mindestens eine Person aktiv
           return { awFilter: f };
         })
       };
@@ -1528,48 +1570,44 @@ class Component extends DCLogic {
     const artNamen = [...new Set(basis.map(e => e.art))];
     const artSummen = artNamen.map(a => {
       const es = basis.filter(e => e.art === a);
-      return { art: a, sum: es.reduce((x, e) => x + e.betrag, 0), sJ: es.filter(e => e.patient === 'Johannes').reduce((x, e) => x + e.betrag, 0), sK: es.filter(e => e.patient === 'Konrad').reduce((x, e) => x + e.betrag, 0) };
+      return { art: a, sum: es.reduce((x, e) => x + e.betrag, 0), betraege: persListe.map(p => es.filter(e => e.patient === p.name).reduce((x, e) => x + e.betrag, 0)) };
     }).sort((a, b) => b.sum - a.sum);
     const artMax = Math.max(1, ...artSummen.map(a => a.sum));
     const artChart = artSummen.map(a => {
-      const pctJ = Math.round(a.sJ / artMax * 100), pctK = Math.round(a.sK / artMax * 100);
-      const labelJ = pctJ >= 14 ? fmt(a.sJ) : '';
-      const labelK = pctK >= 14 ? fmt(a.sK) : '';
-      const restJ = (!labelJ && a.sJ > 0) ? fmt(a.sJ) : '';
-      const restK = (!labelK && a.sK > 0) ? fmt(a.sK) : '';
-      return {
-        art: a.art, summeFmt: fmt(a.sum),
-        pctJ, pctK,
-        sJFmt: fmt(a.sJ), sKFmt: fmt(a.sK),
-        labelJ, labelK, restJ, restK,
-        zeigeRest: !!(restJ || restK)
-      };
+      const segs = [], reste = [];
+      persListe.forEach((p, i) => {
+        const s = a.betraege[i];
+        const pct = Math.round(s / artMax * 100);
+        const label = pct >= 14 ? fmt(s) : '';
+        if (!label && s > 0) reste.push({ text: fmt(s), farbe: p.farbe });
+        segs.push({ pct, farbe: p.farbe, label, tip: p.name + ': ' + fmt(s) });
+      });
+      return { art: a.art, summeFmt: fmt(a.sum), segs, reste, zeigeRest: reste.length > 0 };
     });
 
     const monNamen = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
     const monWerte = monNamen.map((label, i) => {
       const es = basis.filter(e => parseInt(e.datum.slice(5, 7)) === i + 1);
-      return { label, sum: es.reduce((x, e) => x + e.betrag, 0), sJ: es.filter(e => e.patient === 'Johannes').reduce((x, e) => x + e.betrag, 0), sK: es.filter(e => e.patient === 'Konrad').reduce((x, e) => x + e.betrag, 0) };
+      return { label, betraege: persListe.map(p => es.filter(e => e.patient === p.name).reduce((x, e) => x + e.betrag, 0)) };
     });
-    const monMax = Math.max(1, ...monWerte.map(m => Math.max(m.sJ, m.sK)));
+    const monMax = Math.max(1, ...monWerte.flatMap(m => m.betraege));
     const fmt0 = v => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
     // Bis zu welchem Monat "0 €" ausgewiesen wird (keine Nullen für Zukunftsmonate)
     const heuteD = new Date();
     const monatGrenze = st.jahr < heuteD.getFullYear() ? 12 : (st.jahr > heuteD.getFullYear() ? 0 : heuteD.getMonth() + 1);
     const monatChart = monWerte.map((m, i) => {
-      const hJ = Math.round(m.sJ / monMax * 100), hK = Math.round(m.sK / monMax * 100);
-      const labelJ = hJ >= 48 ? fmt0(m.sJ) : '', labelK = hK >= 48 ? fmt0(m.sK) : '';
-      const oben = (name, s, label) => {
-        if (!awAktiv.includes(name)) return '';
-        if (s === 0) return i < monatGrenze ? '0 €' : '';
-        return label ? '' : fmt0(s);
-      };
-      return {
-        label: m.label, tip: 'Johannes ' + fmt(m.sJ) + ' · Konrad ' + fmt(m.sK),
-        obenJ: oben('Johannes', m.sJ, labelJ),
-        obenK: oben('Konrad', m.sK, labelK),
-        h: 100, hJ, hK, labelJ, labelK
-      };
+      const balken = [];
+      persListe.forEach((p, pi) => {
+        if (!awAktiv.includes(p.name)) return;
+        const s = m.betraege[pi];
+        const h = Math.round(s / monMax * 100);
+        const label = h >= 48 ? fmt0(s) : '';
+        let oben = '';
+        if (s === 0) oben = i < monatGrenze ? '0 €' : '';
+        else if (!label) oben = fmt0(s);
+        balken.push({ farbe: p.farbe, h, label, oben });
+      });
+      return { label: m.label, tip: persListe.map((p, pi) => p.name + ' ' + fmt(m.betraege[pi])).join(' · '), balken };
     });
 
     const jahreAlle = this.jahreListe();
@@ -1629,7 +1667,7 @@ class Component extends DCLogic {
     const formVals = m ? {
       modalTitel: m.id ? 'Eintrag bearbeiten' : 'Neuer Eintrag',
       istBearbeitung: !!m.id,
-      formPatientOpts: ['Johannes', 'Konrad'].map(p => ({
+      formPatientOpts: pNamen.map(p => ({
         label: p, go: () => this.setState({ modal: { ...m, patient: p } }),
         bg: m.patient === p ? this.farbenHell[p] : '#FFFFFF',
         fg: m.patient === p ? this.farben[p] : '#68787F',
@@ -1782,7 +1820,7 @@ class Component extends DCLogic {
       hatEingereichte: abgleichListe.length > 0, keineEingereichten: abgleichListe.length === 0,
       // Modal
       modalOffen: !!m, arten: this.arten, empfaengerVorschlaege,
-      openNeu: () => this.setState({ modal: { id: null, patient: 'Johannes', datum: heute, art: 'Arztbesuch', empfaenger: '', adresse: '', vorsorge: false, betrag: '', bezahlt: true, eingereicht: false, erstattet: '', belegName: null }, suche: { laden: false, ergebnisse: [], fehler: null }, auslese: null }),
+      openNeu: () => this.setState({ modal: { id: null, patient: pNamen[0], datum: heute, art: 'Arztbesuch', empfaenger: '', adresse: '', vorsorge: false, betrag: '', bezahlt: true, eingereicht: false, erstattet: '', belegName: null }, suche: { laden: false, ergebnisse: [], fehler: null }, auslese: null }),
       closeModal: () => this.setState({ modal: null, suche: { laden: false, ergebnisse: [], fehler: null }, auslese: null }),
       saveEntry: () => this.saveEntry(),
       deleteEntry: () => { const id = m && m.id; if (id) this.update(x => ({ eintraege: x.eintraege.filter(e => e.id !== id), modal: null })); },
@@ -1847,12 +1885,23 @@ class Component extends DCLogic {
         this.update(x => ({ settings: { ...x.settings, sperreHash: hash } }));
         this.setState({ pinNeu: '', pinInfo: 'Sperre aktiv — gilt über den Sync auf allen Geräten ab dem nächsten Öffnen.' });
       },
-      sBonusJ: s.bonusJ, sBonusK: s.bonusK, sJahreJ: s.jahreJ, sJahreK: s.jahreK,
-      sBreJFmt: fmt(this.breBetrag(s.jahreJ)), sBreKFmt: fmt(this.breBetrag(s.jahreK)),
-      setBonusJ: ev => this.update(x => ({ settings: { ...x.settings, bonusJ: parseFloat(ev.target.value) || 0 } })),
-      setBonusK: ev => this.update(x => ({ settings: { ...x.settings, bonusK: parseFloat(ev.target.value) || 0 } })),
-      setJahreJ: ev => this.update(x => ({ settings: { ...x.settings, jahreJ: Math.max(1, Math.min(6, parseInt(ev.target.value) || 1)) } })),
-      setJahreK: ev => this.update(x => ({ settings: { ...x.settings, jahreK: Math.max(1, Math.min(6, parseInt(ev.target.value) || 1)) } }))
+      legende,
+      tarifLabel: s.tarif || '',
+      sTarif: s.tarif || '',
+      setTarif: ev => this.update(x => ({ settings: { ...x.settings, tarif: ev.target.value } })),
+      sPersonen: persListe.map((p, i) => ({
+        name: p.name, bonus: p.bonus, jahre: p.jahre, breFmt: fmt(this.breBetrag(p.jahre)),
+        kannEntfernen: persListe.length > 1 && !st.eintraege.some(e => e.patient === p.name),
+        setName: ev => this.personAendern(i, { name: ev.target.value }),
+        setBonus: ev => this.personAendern(i, { bonus: parseFloat(ev.target.value) || 0 }),
+        setJahre: ev => this.personAendern(i, { jahre: Math.max(1, Math.min(6, parseInt(ev.target.value) || 1)) }),
+        entfernen: () => this.personAendern(i, null)
+      })),
+      personHinzu: () => this.update(x => {
+        const personen = this.personenRoh();
+        personen.push({ name: 'Person ' + (personen.length + 1), bonus: 0, jahre: 1 });
+        return { settings: { ...x.settings, personen } };
+      })
     };
   }
 }
