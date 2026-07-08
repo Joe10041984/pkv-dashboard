@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; }
+body { font-family: 'Hanken Grotesk', sans-serif; color: #1E2B32; }
+a { color: #C40D4E; } a:hover { color: #9E0A3F; }
+doc-page:not(:defined) { visibility: hidden; }
+</style>
+</helmet>
+<x-import component-from-global-scope="doc-page" from="./doc-page.js" size="a4" margin="2cm" hint-size="100%,1400px">
+
+  <div slot="footer" style="display:flex; justify-content:space-between; font-size:9pt; color:#68787F; border-top:1px solid #DCE3E6; padding-top:6px;">
+    <span>PKV-Aufwände — Bedienungsanleitung</span>
+    <span>Stand: 8. Juli 2026</span>
+  </div>
+
+  <div style="border-bottom:4px solid #C40D4E; padding-bottom:16px; margin-bottom:24px;">
+    <div style="font-size:11pt; font-weight:600; color:#C40D4E; letter-spacing:.04em; text-transform:uppercase;">Bedienungsanleitung</div>
+    <h1 style="font-size:26pt; font-weight:800; margin:6px 0 4px 0; line-height:1.1;">PKV-Aufwände</h1>
+    <div style="font-size:12pt; color:#46565E;">Privates Dashboard für Krankheitskosten, Bonus &amp; Beitragsrückerstattung — Hallesche NK.select XL Bonus</div>
+  </div>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">1. Wozu dient die App?</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Das Dashboard sammelt alle bezahlten Gesundheitsausgaben für <strong>Johannes</strong> (blau) und <strong>Konrad</strong> (lila) und beantwortet die zentrale Frage: <strong>Lohnt es sich, die Rechnungen bei der Hallesche einzureichen — oder ist es besser, Bonus und Beitragsrückerstattung (BRE) zu behalten?</strong> Dazu vergleicht es die nicht eingereichten Beträge mit der Schwelle aus Bonus + BRE. Als Vorsorge gekennzeichnete Leistungen (GOÄ/GOZ-Ziffern aus dem Hallesche-Vorsorgeverzeichnis) zählen nicht gegen Bonus/BRE und können immer eingereicht werden.</p>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">2. Aufbau</h2>
+  <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;"><strong>Kopfzeile:</strong> Jahr-Umschalter und „Einstellungen“. Der „+“-Knopf neben den Jahren legt das nächste Jahr an (z.&#8239;B. 2027) — es erscheint auf allen Geräten und im Jahresvergleich automatisch mit.</li>
+    <li style="margin-bottom:4px;"><strong>Übersicht:</strong> Karten pro Person mit Aufwänden, Erstattungen, Bonus-Verbrauch und der Einreich-Empfehlung; darunter die offenen Posten (bezahlt, aber nicht eingereicht).</li>
+    <li style="margin-bottom:4px;"><strong>Einträge:</strong> alle Belege des Jahres, filterbar nach Person und Status. Antippen öffnet den Eintrag.</li>
+    <li style="margin-bottom:4px;"><strong>Auswertungen:</strong> Ausgaben nach Art und Verlauf, je Person zuschaltbar.</li>
+    <li style="margin-bottom:4px;"><strong>Abgleich:</strong> eingereichte Beträge gegen tatsächliche Erstattungen der Hallesche.</li>
+    <li><strong>„+ Eintrag“</strong> (roter Knopf unten rechts): neuen Beleg erfassen.</li>
+  </ul>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">3. Eintrag erfassen</h2>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">„+ Eintrag“ antippen, Person wählen.</li>
+    <li style="margin-bottom:4px;"><strong>Favoriten</strong> antippen übernimmt Behandler samt Adresse (es erscheinen nur Behandler mit gepflegter Adresse). Alternativ Name eintippen und mit „Suchen“ die Adresse online nachschlagen (OpenStreetMap).</li>
+    <li style="margin-bottom:4px;">Datum, Betrag und Art erfassen; <strong>Vorsorge</strong> ankreuzen, wenn die Leistung anrechnungsfrei ist. Beim KI-Auslesen mit Gebührenziffern wird das automatisch eingeschätzt.</li>
+    <li>Status pflegen: <em>bezahlt</em> → <em>eingereicht</em> → Erstattungsbetrag eintragen, sobald die Leistungsabrechnung da ist.</li>
+  </ol>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">4. Belege: Datei, Handy-Scan &amp; KI-Auslesen</h2>
+  <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;"><strong>Datei wählen:</strong> PDF (z.&#8239;B. aus der Hallesche4u-App) oder Foto anhängen. Belege landen in der lokalen Browser-Datenbank des Geräts.</li>
+    <li style="margin-bottom:4px;"><strong>Scannen (rot, mit Kamera-Symbol):</strong> öffnet auf dem Handy direkt die Rückkamera. Das Foto wird automatisch zugeschnitten (helles Dokument vor dunklem Hintergrund), per Texterkennung (OCR, deutsch) gelesen und als <strong>durchsuchbares PDF</strong> gespeichert. Jeder weitere Tipp auf „Scannen“ hängt eine Seite an dasselbe PDF an. Tipp: möglichst gerade von oben, gutes Licht — eine Perspektiv-Entzerrung gibt es nicht.</li>
+    <li><strong>Beleg auslesen → Felder füllen:</strong> liest PDF oder Scan per KI aus und befüllt Behandler, Adresse, Daten, Betrag und Gebührenziffern (inkl. Vorsorge-Einschätzung). In der Claude-Umgebung läuft das über die eingebaute KI; selbst gehostet (z.&#8239;B. GitHub Pages) über einen eigenen <strong>Anthropic-API-Key</strong> — Einrichtung siehe Abschnitt 8.</li>
+  </ul>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">5. Einstellungen: Bonus, BRE &amp; App-Sperre</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Pro Person werden der jährliche <strong>Bonus</strong> (derzeit 1.200&#8239;€ / 600&#8239;€) und die Zahl der <strong>berücksichtigungsfähigen BRE-Jahre</strong> gepflegt (Staffel ab 2026: 300–800&#8239;€ für 1–6 Jahre). Daraus errechnet sich die Schwelle für die Einreich-Empfehlung. Ist die BRE-Höhe nicht hinterlegt, rechnet die Empfehlung nur mit dem Bonus und weist darauf hin.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>App-Sperre (PIN):</strong> Unter Einstellungen lässt sich eine PIN festlegen (min. 4 Zeichen) — danach verlangt die App bei jedem Öffnen die Eingabe. Die Sperre gilt <strong>pro Gerät</strong> (auf jedem Gerät einmal einrichten); Feld leeren und speichern schaltet sie ab. Wichtig zur Einordnung: Es ist ein Sichtschutz gegen neugierige Blicke am geöffneten Browser — keine Verschlüsselung der Daten. Der eigentliche Schutz deiner Daten bleibt der private Gist und die Gerätesperre von Handy/Rechner. PIN vergessen? Browserdaten der Seite löschen und den Stand per „Jetzt laden“ aus dem Gist zurückholen.</p>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">6. Daten sichern &amp; Geräte verbinden</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 8px 0;">Alle Daten liegen zunächst nur im Browser des jeweiligen Geräts (localStorage bzw. lokale Datenbank für Belege). Drei Wege, sie zu bewegen — alle in den Einstellungen:</p>
+  <table style="width:100%; border-collapse:collapse; font-size:10.5pt; margin:0 0 10px 0;">
+    <tbody>
+      <tr>
+        <td style="border:1px solid #DCE3E6; padding:8px 10px; font-weight:700; width:32%; vertical-align:top;">Stand exportieren / importieren</td>
+        <td style="border:1px solid #DCE3E6; padding:8px 10px; vertical-align:top;">Erzeugt bzw. liest eine Datei <em>pkv-stand.json</em> (Einträge, Einstellungen, Behandler). Am Handy öffnet „Exportieren“ das Teilen-Menü (AirDrop, Mail&nbsp;…), am Rechner startet ein Download. Gut für den gelegentlichen Gerätewechsel ohne GitHub.</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #DCE3E6; padding:8px 10px; font-weight:700; vertical-align:top;">GitHub-Sync (empfohlen)</td>
+        <td style="border:1px solid #DCE3E6; padding:8px 10px; vertical-align:top;">Automatischer Abgleich über einen <strong>privaten Gist</strong>: beim Öffnen wird der neuere Stand geladen, nach jeder Änderung automatisch hochgeladen (der zeitlich neuere Stand gewinnt). Einrichtung siehe Abschnitt 7.</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">7. GitHub-Sync einrichten (einmalig)</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 8px 0;">Es wird <strong>ein einziges Token</strong> verwendet — es muss also beide Berechtigungen zugleich tragen: <em>Gists</em> (für den Daten-Sync) und <em>Contents auf dem Beleg-Repo</em> (für den Dokumenten-Upload). Am besten in dieser Reihenfolge vorgehen: erst Repo anlegen, dann Token, dann App.</p>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt A — Privates Beleg-Repo anlegen</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">github.com → oben rechts <strong>„+“ → New repository</strong>.</li>
+    <li style="margin-bottom:4px;">Repository name: z.&#8239;B. <strong>pkv-belege</strong>. Sichtbarkeit: unbedingt <strong>Private</strong> auswählen.</li>
+    <li style="margin-bottom:4px;">Haken bei <strong>„Add a README file“</strong> setzen — damit existiert der <em>main</em>-Branch von Anfang an und der erste Upload aus der App kann nicht ins Leere laufen.</li>
+    <li>„Create repository“. Den vollen Namen merken, wie er in der Adresszeile steht: <strong>deinbenutzername/pkv-belege</strong> — genau in dieser Schreibweise braucht ihn die App.</li>
+  </ol>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt B — Token mit beiden Berechtigungen erstellen</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Profilbild → <strong>Settings</strong> → ganz unten links <strong>Developer settings</strong> → <strong>Personal access tokens → Fine-grained tokens → Generate new token</strong>.</li>
+    <li style="margin-bottom:4px;">Token name: „PKV-Sync“. <strong>Expiration:</strong> möglichst lang (z.&#8239;B. 1 Jahr; „No expiration“ falls angeboten). Nach Ablauf einfach ein neues Token erzeugen und in der App ersetzen.</li>
+    <li style="margin-bottom:4px;"><strong>Repository access:</strong> „Only select repositories“ → in der Liste <strong>pkv-belege</strong> auswählen. (Nicht „All repositories“ — das Token soll so wenig wie möglich dürfen.)</li>
+    <li style="margin-bottom:4px;"><strong>Permissions → Repository permissions:</strong> bei <strong>Contents</strong> „Read and write“ einstellen. („Metadata: Read-only“ setzt GitHub automatisch dazu — das ist normal.)</li>
+    <li style="margin-bottom:4px;"><strong>Permissions → Account permissions:</strong> bei <strong>Gists</strong> „Read and write“ einstellen. <em>Dieser Punkt wird am häufigsten vergessen</em> — ohne ihn schlägt der Daten-Sync mit „GitHub-Fehler 404“ fehl.</li>
+    <li>„Generate token“ → Token beginnt mit <em>github_pat_…</em> → <strong>sofort kopieren</strong>, es wird nur dieses eine Mal angezeigt.</li>
+  </ol>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt C — In der App eintragen (Gerät 1)</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Einstellungen → Bereich „Geräte-Sync über GitHub“: Token einfügen. <strong>Gist-ID leer lassen.</strong></li>
+    <li style="margin-bottom:4px;">Feld „Privates Repo für Belege“: <strong>deinbenutzername/pkv-belege</strong> eintragen (mit Schrägstrich, ohne https://, ohne .git).</li>
+    <li style="margin-bottom:4px;"><strong>„Jetzt hochladen“</strong> antippen. Die App legt automatisch einen privaten Gist namens „PKV-Aufwände — privater Daten-Stand“ an und trägt dessen ID selbst ins Feld ein.</li>
+    <li>Die <strong>Gist-ID notieren</strong> (steht jetzt im Feld; alternativ auf gist.github.com nachsehen — die ID ist die lange Zeichenfolge in der Adresse hinter deinem Benutzernamen).</li>
+  </ol>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt D — Weitere Geräte verbinden</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Auf dem Handy/Zweitrechner die App öffnen → Einstellungen → dasselbe Token, die notierte <strong>Gist-ID</strong> und dasselbe <strong>Repo</strong> eintragen.</li>
+    <li style="margin-bottom:4px;"><strong>„Jetzt laden“</strong> antippen — der Stand vom ersten Gerät wird übernommen.</li>
+    <li>Ab jetzt automatisch: Beim Öffnen wird der neuere Stand geladen, jede Änderung nach ca. 2–3 Sekunden hochgeladen.</li>
+  </ol>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">So läuft der Dokumenten-Upload danach ab</h3>
+  <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Beim <strong>Speichern</strong> eines Eintrags mit Beleg (Datei oder Handy-Scan) committet die App die Datei automatisch als <em>belege/&lt;eintrags-id&gt;-&lt;dateiname&gt;</em> ins Repo — im Repo unter „Code → belege/“ sichtbar. Wird der Beleg ersetzt, wird die Datei im Repo überschrieben.</li>
+    <li style="margin-bottom:4px;"><strong>„Öffnen“ auf einem anderen Gerät:</strong> liegt der Beleg dort nicht lokal vor, lädt die App ihn aus dem Repo nach und merkt ihn sich lokal.</li>
+    <li style="margin-bottom:4px;"><strong>Bestehende alte Belege</strong> werden nicht rückwirkend hochgeladen. Nachziehen: Eintrag öffnen → Beleg neu anhängen → Speichern.</li>
+    <li>Es ist keine weitere Konfiguration im Repo nötig — keine Actions, keine Webhooks, keine Branch-Regeln. Das Repo ist reiner Ablageort.</li>
+  </ul>
+
+  <div style="background:#FBF3E2; border:1px solid #E8D9B5; border-radius:6px; padding:10px 14px; font-size:10.5pt; color:#6B5A2E; line-height:1.5; margin:0 0 10px 0;">
+    <strong>Fehlersuche:</strong> „GitHub-Fehler 401“ = Token falsch/abgelaufen. „404“ beim Daten-Sync = Gist-Berechtigung fehlt oder Gist-ID falsch. „404“ beim Beleg-Upload = Repo-Name falsch geschrieben oder Token hat kein Contents-Recht auf genau diesem Repo. Nach Token-Änderungen auf GitHub ggf. 1–2 Minuten warten.
+  </div>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">8. KI-Auslesen selbst gehostet: Anthropic-API-Key einrichten</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 8px 0;">Läuft die App außerhalb der Claude-Umgebung, braucht „Beleg auslesen“ einen eigenen API-Key von Anthropic. Die App erkennt automatisch, wo sie läuft: in der Claude-Umgebung nutzt sie die eingebaute KI (der Key wird ignoriert), überall sonst deinen Key.</p>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;"><strong>Konto anlegen:</strong> <em>console.anthropic.com</em> öffnen → „Sign up“ (E-Mail oder Google-Konto).</li>
+    <li style="margin-bottom:4px;"><strong>Guthaben laden:</strong> In der Console unter <strong>Settings → Billing</strong> eine Zahlungsmethode hinterlegen und Guthaben aufladen (5&#8239;$ reichen sehr lange — eine Rechnung kostet grob 1–2&#8239;Cent). Empfehlung: <strong>Auto-Reload aus</strong> lassen und ggf. unter „Limits“ ein Monatslimit setzen — so kann nie mehr abgebucht werden als geplant.</li>
+    <li style="margin-bottom:4px;"><strong>Key erzeugen:</strong> <strong>Settings → API keys → Create key</strong>, Name z.&#8239;B. „PKV-Dashboard“. Den Key (beginnt mit <em>sk-ant-…</em>) <strong>sofort kopieren</strong> — er wird nur einmal angezeigt.</li>
+    <li style="margin-bottom:4px;"><strong>In der App eintragen:</strong> Einstellungen → Bereich „KI-Auslesen (selbst gehostet)“ → Key einfügen. Fertig — er wird wie das GitHub-Token nur lokal auf dem Gerät gespeichert; auf jedem Gerät einmal eintragen.</li>
+    <li><strong>Testen:</strong> Eintrag öffnen, Beleg anhängen, „Beleg auslesen“ — bei Fehlern zeigt die Statuszeile die Ursache (401 = Key falsch, 400 = Guthaben leer, 429 = kurz warten).</li>
+  </ol>
+  <div style="background:#FBF3E2; border:1px solid #E8D9B5; border-radius:6px; padding:10px 14px; font-size:10.5pt; color:#6B5A2E; line-height:1.5; margin:0 0 10px 0;">
+    <strong>Sicherheit:</strong> Der Key liegt im Browser-Speicher deiner Geräte — für eine private Einzelnutzer-App in Ordnung, aber: Key niemals ins Repo committen oder weitergeben, Ausgabenlimit setzen, und bei Verdacht in der Console löschen und neu erzeugen.
+  </div>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">9. Selbst hosten &amp; neue Funktionen deployen</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 8px 0;">Die App ist reines statisches HTML — kein Build, kein Server. Deployen heißt: Dateien ins Repo laden, fertig.</p>
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Einmalig: GitHub Pages einrichten</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Neues Repo anlegen (z.&#8239;B. <em>pkv-dashboard</em>). Achtung: Pages ist im Free-Account nur mit <strong>öffentlichem</strong> Repo möglich. Der Projekt-Download aus Claude enthält einen Ordner <em>data/</em> mit der Datei <em>stand.json</em> (Beispiel-Startdaten) — <strong>diesen Ordner beim Hochladen einfach weglassen</strong> (nicht mit ins Repo laden); die App startet dann leer und holt deine echten Daten aus dem privaten Gist. Falls er versehentlich schon im Repo liegt: Ordner öffnen → stand.json → Mülleimer-Symbol → Commit.</li>
+    <li style="margin-bottom:4px;">Alle App-Dateien hochladen (Add file → Upload files): die HTML-Datei (am besten umbenannt in <strong>index.html</strong>) und <strong>support.js</strong>.</li>
+    <li style="margin-bottom:4px;">Repo → <strong>Settings → Pages</strong> → „Source: Deploy from a branch“ → Branch <strong>main</strong>, Ordner „/ (root)“ → Save.</li>
+    <li>Nach 1–2 Minuten ist die App unter <em>deinname.github.io/pkv-dashboard</em> erreichbar — auch am Handy, dort ggf. „Zum Home-Bildschirm hinzufügen“.</li>
+  </ol>
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Neue Funktionen entwickeln und deployen</h3>
+  <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;"><strong>Empfohlener Weg — hier entwickeln lassen:</strong> Im Claude-Projekt das Feature beschreiben („bau mir …“), testen, dann die geänderte HTML-Datei herunterladen und im Repo die alte Version ersetzen (Datei im Repo öffnen → Stift/„Upload files“ → Commit). Jeder Commit auf <em>main</em> ist automatisch ein Deploy — Pages aktualisiert sich in 1–2 Minuten, am Gerät einmal neu laden.</li>
+    <li style="margin-bottom:4px;"><strong>Selbst Hand anlegen:</strong> Die HTML-Datei ist gut lesbar aufgebaut (Markup oben, Logik unten in einer Klasse). Kleine Änderungen gehen direkt im GitHub-Webeditor (Datei öffnen → Stift-Symbol → Commit) — Vorsicht bei größeren Umbauten ohne Test.</li>
+    <li style="margin-bottom:4px;"><strong>Risikolos ausprobieren:</strong> Änderungen erst auf einem Branch committen (beim Commit „Create a new branch“ wählen) und per Pull Request auf <em>main</em> übernehmen, wenn alles passt. Geht etwas schief: im Reiter „History“ der Datei die alte Version öffnen und wiederherstellen.</li>
+    <li><strong>Wichtig:</strong> Deine Daten sind vom Deploy komplett getrennt (privater Gist + Beleg-Repo) — ein kaputtes Deploy kann keine Daten löschen; einfach die vorige Version wiederherstellen.</li>
+  </ul>
+
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">10. Grenzen &amp; Hinweise</h2>
+  <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;"><strong>Datenschutz:</strong> Es sind Gesundheitsdaten — Gist und Beleg-Repo unbedingt <strong>privat</strong> halten; Token und API-Key nirgends teilen. Beide werden nur lokal auf dem Gerät gespeichert und sind im Export nicht enthalten.</li>
+    <li style="margin-bottom:4px;"><strong>KI-Auslesen</strong> braucht selbst gehostet einen Anthropic-API-Key (Abschnitt 8) und verursacht dort geringe Kosten pro Rechnung; OCR-Scan, Sync und alles andere sind überall kostenlos.</li>
+    <li style="margin-bottom:4px;"><strong>OCR und Auto-Zuschnitt</strong> brauchen beim ersten Scan kurz Internet (Bibliotheken werden nachgeladen) und ein möglichst gerades, scharfes Foto.</li>
+    <li style="margin-bottom:4px;"><strong>Sync-Konflikte:</strong> Es gewinnt der zeitlich neuere Gesamtstand — nicht gleichzeitig auf zwei Geräten erfassen, ohne zwischendurch zu synchronisieren.</li>
+    <li style="margin-bottom:4px;"><strong>Zugriffsschutz:</strong> Die gehostete Seite selbst ist öffentlich erreichbar — ein Fremder sieht dort aber nur eine leere App, denn Daten laden erst mit deinem Token. Die PIN-Sperre (Abschnitt 5) schützt zusätzlich die Ansicht auf deinen eigenen Geräten.</li>
+    <li style="margin-bottom:4px;"><strong>Gelöschte Einträge</strong> räumen das Beleg-Repo nicht auf; die Dateien bleiben in der Git-Historie erhalten.</li>
+  </ul>
+
+  <div style="margin-top:24px; background:#F5F6F7; border:1px solid #DCE3E6; border-radius:6px; padding:12px 16px; font-size:10.5pt; color:#46565E; line-height:1.5;">
+    <strong>PDF erzeugen:</strong> Dieses Dokument im Browser öffnen und mit Strg+P / Cmd+P als PDF speichern — Seitenformat A4 und Umbrüche sind bereits eingerichtet.
+  </div>
+
+</x-import>
+</x-dc>
+</body>
+</html>
