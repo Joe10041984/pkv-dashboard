@@ -50,6 +50,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
 
   <main style="flex:1; max-width:1200px; width:100%; margin:0 auto; padding:20px 20px 110px 20px; box-sizing:border-box;">
 
+    <!-- ============ ERSTEINRICHTUNG ============ -->
+    <sc-if value="{{ einrichtungNoetig }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:460px; margin:60px auto 0 auto; background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:32px; display:flex; flex-direction:column; gap:14px; text-align:center;">
+        <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:20px; color:#1E2B32;">Noch nicht eingerichtet</div>
+        <div style="font-size:14px; color:#68787F; line-height:1.55;">Diese App zeigt erst Inhalte, wenn sie mit deinem Datenbestand verbunden ist. Trage in den Einstellungen dein GitHub-Token und die Gist-ID ein und lade den Stand.</div>
+        <button onClick="{{ openSettings }}" style="border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:6px; padding:13px; font-size:15px; font-weight:600;">Einrichtung starten</button>
+      </div>
+    </sc-if>
+
     <!-- ============ TAB: ÜBERSICHT ============ -->
     <sc-if value="{{ tabUebersicht }}" hint-placeholder-val="{{ true }}">
       <div data-screen-label="Übersicht" style="display:flex; flex-direction:column; gap:16px; animation:fadeUp .25s ease;">
@@ -481,7 +490,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
   </main>
 
   <!-- ============ NEUER EINTRAG (FAB) ============ -->
-  <button onClick="{{ openNeu }}" style="position:fixed; right:20px; bottom:20px; z-index:40; border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:4px; padding:14px 20px; font-size:15px; font-weight:600; box-shadow:0 6px 20px rgba(196,13,78,.30); display:flex; align-items:center; gap:8px;" style-hover="background:#9E0A3F;">+ Eintrag</button>
+  <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ openNeu }}" style="position:fixed; right:20px; bottom:20px; z-index:40; border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:4px; padding:14px 20px; font-size:15px; font-weight:600; box-shadow:0 6px 20px rgba(196,13,78,.30); display:flex; align-items:center; gap:8px;" style-hover="background:#9E0A3F;">+ Eintrag</button>
+  </sc-if>
 
   <!-- ============ MODAL: EINTRAG ============ -->
   <sc-if value="{{ modalOffen }}" hint-placeholder-val="{{ false }}">
@@ -1345,6 +1356,9 @@ class Component extends DCLogic {
     const fmt = v => this.fmt.format(v);
     const heute = new Date().toISOString().slice(0, 10);
 
+    // Ersteinrichtung: ohne Daten und ohne Sync-Konfiguration nur den Start-Bildschirm zeigen
+    const eingerichtet = st.eintraege.length > 0 || !!(st.sync && st.sync.token);
+
     // ---- Tabs / Layout / Jahr ----
     const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich']];
     const tabs = tabDefs.map(([id, label]) => ({
@@ -1725,11 +1739,13 @@ class Component extends DCLogic {
         this.update(x => ({ settings: { ...x.settings, zusatzJahre: [...(x.settings.zusatzJahre || []), neu] }, jahr: neu }));
       },
       jahrHinzuTitel: 'Jahr ' + (Math.max(...jahreAlle) + 1) + ' hinzufügen',
-      tabs,
-      tabUebersicht: st.tab === 'uebersicht',
-      tabEintraege: st.tab === 'eintraege',
-      tabAuswertungen: st.tab === 'auswertungen',
-      tabAbgleich: st.tab === 'abgleich',
+      tabs: eingerichtet ? tabs : [],
+      einrichtungNoetig: !eingerichtet,
+      eingerichtet,
+      tabUebersicht: eingerichtet && st.tab === 'uebersicht',
+      tabEintraege: eingerichtet && st.tab === 'eintraege',
+      tabAuswertungen: eingerichtet && st.tab === 'auswertungen',
+      tabAbgleich: eingerichtet && st.tab === 'abgleich',
       breHinweis: false,
       // Übersicht
       personen,
