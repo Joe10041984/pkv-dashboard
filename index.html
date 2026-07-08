@@ -687,6 +687,10 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
     <div onClick="{{ closeSettings }}" style="position:fixed; inset:0; background:rgba(17,32,40,.45); z-index:50; display:flex; align-items:center; justify-content:center; padding:16px;">
       <div onClick="{{ stopClick }}" style="background:#FFFFFF; border-radius:20px; width:100%; max-width:460px; max-height:90vh; overflow-y:auto; padding:22px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
         <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:18px;">Einstellungen</div>
+        <sc-if value="{{ einrichtungNoetig }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px; color:#68787F; line-height:1.5;">Zum Start nur die Sync-Verbindung eintragen — alle weiteren Einstellungen (Bonus, PIN usw.) kommen mit dem geladenen Stand automatisch mit.</div>
+        </sc-if>
+        <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:13px; color:#68787F; line-height:1.5;">Jährlicher Gesundheitsbonus pro Person. Die Beitragsrückerstattung folgt ab 2026 der neuen Staffel mit festen Beträgen: 1 Jahr 300 € · 2 J. 400 € · 3 J. 500 € · 4 J. 600 € · 5 J. 700 € · ab 6 J. 800 €. Vorsorge laut Verzeichnis zählt nicht als Leistungsbezug. Wird eingereicht, startet der Zähler wieder bei 1.</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Bonus Johannes (€/Jahr)
@@ -704,12 +708,16 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             <span style="font-weight:500;">BRE 2026: {{ sBreKFmt }}</span>
           </label>
         </div>
+        </sc-if>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">Geräte-Sync über GitHub</div>
           <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Personal Access Token mit „gist“-Berechtigung eintragen. Gist-ID leer lassen — „Jetzt hochladen“ legt automatisch einen privaten Gist an. Das Token bleibt nur auf diesem Gerät; danach gleicht die App beim Öffnen und nach jeder Änderung automatisch ab. Fürs Beleg-Repo braucht das Token zusätzlich „Contents: Read/Write“ auf genau diesem Repo.</div>
           <input type="password" placeholder="GitHub-Token (github_pat_… / ghp_…)" value="{{ syncToken }}" onChange="{{ setSyncToken }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
           <input type="text" placeholder="Gist-ID (leer = beim Hochladen neu anlegen)" value="{{ syncGistId }}" onChange="{{ setSyncGistId }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
           <input type="text" placeholder="Privates Repo für Belege, z. B. name/pkv-belege (optional)" value="{{ syncRepo }}" onChange="{{ setSyncRepo }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+          <sc-if value="{{ einrichtungNoetig }}" hint-placeholder-val="{{ false }}">
+            <input type="password" placeholder="Anthropic-API-Key für KI-Auslesen (sk-ant-…, optional)" value="{{ aiKey }}" onChange="{{ setAiKey }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+          </sc-if>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
             <button onClick="{{ syncHoch }}" style="border:none; cursor:pointer; background:#175260; color:#fff; border-radius:5px; padding:10px; font-size:13.5px; font-weight:600;">Jetzt hochladen</button>
             <button onClick="{{ syncRunter }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:10px; font-size:13.5px; font-weight:600;">Jetzt laden</button>
@@ -718,6 +726,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ syncStatus }}</div>
           </sc-if>
         </div>
+        <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">KI-Auslesen (selbst gehostet)</div>
           <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Nur nötig, wenn die App außerhalb dieser Umgebung läuft (z. B. GitHub Pages): eigenen Anthropic-API-Key eintragen, damit „Beleg auslesen“ funktioniert. Hier in der Claude-Umgebung wird die eingebaute KI genutzt und der Key ignoriert.</div>
@@ -748,6 +757,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             </label>
           </div>
         </div>
+        </sc-if>
         <button onClick="{{ closeSettings }}" style="border:none; cursor:pointer; background:#175260; color:#fff; border-radius:6px; padding:12px; font-size:15px; font-weight:600;">Fertig</button>
       </div>
     </div>
