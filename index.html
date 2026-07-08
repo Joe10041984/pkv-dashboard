@@ -714,7 +714,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </div>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">App-Sperre (PIN)</div>
-          <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Verlangt beim Öffnen der App eine PIN — pro Gerät einzurichten. Feld leeren und speichern entfernt die Sperre. Hinweis: Das ist ein Sichtschutz für Browser und Gerät, keine Verschlüsselung.</div>
+          <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Verlangt beim Öffnen der App eine PIN — wird über den GitHub-Sync auf alle Geräte übertragen. Feld leeren und speichern entfernt die Sperre überall. Hinweis: Das ist ein Sichtschutz für Browser und Gerät, keine Verschlüsselung.</div>
           <div style="display:flex; gap:8px;">
             <input type="password" inputMode="numeric" placeholder="{{ pinPlatzhalter }}" value="{{ pinNeu }}" onChange="{{ setPinNeu }}" style="flex:1; padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
             <button onClick="{{ pinSpeichern }}" style="border:none; cursor:pointer; background:#175260; color:#fff; border-radius:5px; padding:9px 16px; font-size:13.5px; font-weight:600;">Speichern</button>
@@ -751,6 +751,14 @@ class Component extends DCLogic {
     try { eintraege = JSON.parse(localStorage.getItem('pkv.eintraege.v1') || 'null'); } catch (e) {}
     try { settings = JSON.parse(localStorage.getItem('pkv.settings.v1') || 'null'); } catch (e) {}
     if (settings && settings.jahreJ === undefined) { settings.jahreJ = 2; settings.jahreK = 2; }
+    // PIN-Migration: früher lag der Hash nur lokal — jetzt wandert er in die (gesyncten) Settings
+    const alteSperre = localStorage.getItem('pkv.sperre.v1');
+    if (alteSperre) {
+      settings = settings || { bonusJ: 1200, bonusK: 600, jahreJ: 2, jahreK: 2 };
+      if (!settings.sperreHash) settings.sperreHash = alteSperre;
+      localStorage.removeItem('pkv.sperre.v1');
+      localStorage.setItem('pkv.settings.v1', JSON.stringify(settings));
+    }
     this.state = {
       eintraege: eintraege || [],
       geladen: !!eintraege,
@@ -761,7 +769,7 @@ class Component extends DCLogic {
       fStatus: 'Alle',
       modal: null,      // {id|null, patient, datum, art, empfaenger, adresse, vorsorge, betrag, bezahlt, eingereicht, erstattet, belegName}
       settingsOffen: false,
-      gesperrt: !!localStorage.getItem('pkv.sperre.v1') && sessionStorage.getItem('pkv.entsperrt') !== '1',
+      gesperrt: !!(settings && settings.sperreHash) && sessionStorage.getItem('pkv.entsperrt') !== '1',
       pinEingabe: '', pinFehler: null, pinNeu: '', pinInfo: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
@@ -792,7 +800,7 @@ class Component extends DCLogic {
   }
   async entsperren() {
     const hash = await this.pinHash(this.state.pinEingabe || '');
-    if (hash === localStorage.getItem('pkv.sperre.v1')) {
+    if (hash === this.state.settings.sperreHash) {
       sessionStorage.setItem('pkv.entsperrt', '1');
       this.setState({ gesperrt: false, pinEingabe: '', pinFehler: null });
     } else {
@@ -1792,20 +1800,21 @@ class Component extends DCLogic {
       pinKeyDown: ev => { if (ev.key === 'Enter') this.entsperren(); },
       entsperren: () => this.entsperren(),
       pinNeu: st.pinNeu, pinInfo: st.pinInfo,
-      pinPlatzhalter: localStorage.getItem('pkv.sperre.v1') ? 'Neue PIN (leer = Sperre aus)' : 'PIN festlegen (min. 4 Zeichen)',
+      pinPlatzhalter: s.sperreHash ? 'Neue PIN (leer = Sperre aus)' : 'PIN festlegen (min. 4 Zeichen)',
       setPinNeu: ev => this.setState({ pinNeu: ev.target.value }),
       pinSpeichern: async () => {
         const p = (st.pinNeu || '').trim();
         if (!p) {
-          localStorage.removeItem('pkv.sperre.v1');
           sessionStorage.removeItem('pkv.entsperrt');
-          this.setState({ pinNeu: '', pinInfo: 'Sperre entfernt.' });
+          this.update(x => { const se = { ...x.settings }; delete se.sperreHash; return { settings: se }; });
+          this.setState({ pinNeu: '', pinInfo: 'Sperre entfernt — gilt über den Sync auf allen Geräten.' });
           return;
         }
         if (p.length < 4) { this.setState({ pinInfo: 'Bitte mindestens 4 Zeichen.' }); return; }
-        localStorage.setItem('pkv.sperre.v1', await this.pinHash(p));
+        const hash = await this.pinHash(p);
         sessionStorage.setItem('pkv.entsperrt', '1');
-        this.setState({ pinNeu: '', pinInfo: 'Sperre aktiv — gilt ab dem nächsten Öffnen der App auf diesem Gerät.' });
+        this.update(x => ({ settings: { ...x.settings, sperreHash: hash } }));
+        this.setState({ pinNeu: '', pinInfo: 'Sperre aktiv — gilt über den Sync auf allen Geräten ab dem nächsten Öffnen.' });
       },
       sBonusJ: s.bonusJ, sBonusK: s.bonusK, sJahreJ: s.jahreJ, sJahreK: s.jahreK,
       sBreJFmt: fmt(this.breBetrag(s.jahreJ)), sBreKFmt: fmt(this.breBetrag(s.jahreK)),
