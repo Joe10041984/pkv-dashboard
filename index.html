@@ -794,6 +794,7 @@ class Component extends DCLogic {
       pinEingabe: '', pinFehler: null, pinNeu: '', pinInfo: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
+      eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
       awFilter: { Johannes: true, Konrad: true },
       suche: { laden: false, ergebnisse: [], fehler: null }
     };
@@ -970,8 +971,9 @@ class Component extends DCLogic {
         if (lokalTs && remoteTs && remoteTs < lokalTs) { this.syncUpload(true); return; } // lokal ist neuer
       }
       if (s.behandler) { this.behandler = s.behandler; localStorage.setItem('pkv.behandler.v1', JSON.stringify(s.behandler)); }
-      this.setState({ eintraege: s.eintraege, settings: s.settings || this.state.settings, geladen: true }, () => this.persist(true));
+      this.setState({ eintraege: s.eintraege, settings: s.settings || this.state.settings, geladen: true, eingerichtetFlag: true }, () => this.persist(true));
       localStorage.setItem('pkv.sync.ts', remoteTs);
+      localStorage.setItem('pkv.eingerichtet.v1', '1');
       this.setState({ syncStatus: (auto ? 'Automatisch geladen' : 'Geladen') + ' — ' + s.eintraege.length + ' Einträge (Stand ' + String(remoteTs).slice(0, 16).replace('T', ' ') + ').' });
     } catch (err) {
       this.setState({ syncStatus: 'Laden fehlgeschlagen: ' + (err && err.message ? err.message : err) });
@@ -1367,7 +1369,7 @@ class Component extends DCLogic {
     const heute = new Date().toISOString().slice(0, 10);
 
     // Ersteinrichtung: ohne Daten und ohne Sync-Konfiguration nur den Start-Bildschirm zeigen
-    const eingerichtet = st.eintraege.length > 0 || !!(st.sync && st.sync.token);
+    const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag;
 
     // ---- Tabs / Layout / Jahr ----
     const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich']];
