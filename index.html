@@ -506,7 +506,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
   <!-- ============ MODAL: EINTRAG ============ -->
   <sc-if value="{{ modalOffen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeModal }}" style="position:fixed; inset:0; background:rgba(17,32,40,.45); z-index:50; display:flex; align-items:flex-end; justify-content:center; padding:0;">
-      <div onClick="{{ stopClick }}" style="background:#FFFFFF; border-radius:5px 10px 0 0; width:100%; max-width:560px; max-height:92vh; overflow-y:auto; padding:22px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
+      <div onClick="{{ stopClick }}" style="background:#FFFFFF; border-radius:5px 10px 0 0; width:100%; max-width:560px; max-height:88dvh; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:22px; padding-bottom:calc(22px + env(safe-area-inset-bottom)); box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:18px;">{{ modalTitel }}</div>
           <button onClick="{{ closeModal }}" style="border:none; background:#EDF0F2; cursor:pointer; border-radius:4px; padding:6px 12px; font-size:13px; font-weight:600; color:#46565E;">Schließen</button>
@@ -518,7 +518,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </sc-for>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px;">
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Behandlungsdatum
             <input type="date" value="{{ formDatum }}" onChange="{{ setFormDatum }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
           </label>
@@ -527,14 +527,14 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </label>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; align-items:start;">
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Rechnungsdatum <span style="font-weight:500;">(optional)</span>
             <input type="date" value="{{ formRechnungsdatum }}" onChange="{{ setFormRechnungsdatum }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
           </label>
           <div style="font-size:11.5px; color:#68787F; line-height:1.45; padding-top:20px;">Für Jahr, Bonus und Beitragsrückerstattung zählt das <strong>Behandlungsdatum</strong> — Rechnungen nach dem Jahreswechsel gehören ins Behandlungsjahr.</div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px;">
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Art der Ausgabe
             <select value="{{ formArt }}" onChange="{{ setFormArt }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; background:#fff; color:#1E2B32;">
               <sc-for list="{{ arten }}" as="a" hint-placeholder-count="6"><option value="{{ a }}">{{ a }}</option></sc-for>
@@ -544,7 +544,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             <div style="position:relative;">
               <div style="display:flex; gap:6px;">
                 <input type="text" value="{{ formEmpfaenger }}" onChange="{{ setFormEmpfaenger }}" onKeyDown="{{ sucheEnter }}" placeholder="z. B. Dr. Printz" style="flex:1; min-width:0; padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
-                <button onClick="{{ sucheOnline }}" title="Online nach Adresse suchen (OpenStreetMap)" style="border:none; cursor:pointer; background:#175260; color:#F5F6F7; border-radius:5px; padding:0 13px; font-size:13px; font-weight:600; white-space:nowrap;" style-hover="background:#113E49;">{{ sucheButtonLabel }}</button>
+                <button onClick="{{ sucheOnline }}" title="Online nach Adresse suchen (OpenStreetMap)" style="border:none; cursor:pointer; background:#175260; color:#F5F6F7; border-radius:5px; padding:0 13px; font-size:13px; font-weight:600; white-space:nowrap; flex-shrink:0;" style-hover="background:#113E49;">{{ sucheButtonLabel }}</button>
               </div>
               <sc-if value="{{ sucheLaeuft }}" hint-placeholder-val="{{ false }}">
                 <div style="position:absolute; top:100%; left:0; right:0; margin-top:4px; z-index:20; font-size:12.5px; color:#175260; background:#E3EDF0; border:1px solid #BFD4DA; border-radius:5px; padding:8px 12px; box-shadow:0 8px 24px rgba(17,32,40,.15);">Suche läuft — einen Moment …</div>
@@ -604,9 +604,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             <sc-if value="{{ hatVorsorgePos }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex; flex-direction:column; gap:6px;">
                 <sc-for list="{{ vorsorgePos }}" as="p" hint-placeholder-count="2">
-                  <div style="display:flex; gap:6px; align-items:center;">
-                    <input type="text" value="{{ p.z }}" onChange="{{ p.setZ }}" placeholder="Ziffer" style="width:84px; padding:8px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:13.5px;">
-                    <input type="number" step="0.01" inputMode="decimal" value="{{ p.b }}" onChange="{{ p.setB }}" placeholder="Betrag €" style="width:92px; padding:8px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:13.5px; text-align:right;">
+                  <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; row-gap:6px;">
+                    <input type="text" value="{{ p.z }}" onChange="{{ p.setZ }}" placeholder="Ziffer" style="width:72px; box-sizing:border-box; padding:8px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:13.5px;">
+                    <input type="number" step="0.01" inputMode="decimal" value="{{ p.b }}" onChange="{{ p.setB }}" placeholder="Betrag €" style="width:88px; box-sizing:border-box; padding:8px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:13.5px; text-align:right;">
                     <span style="flex:1; font-size:11.5px; font-weight:600; border-radius:6px; padding:4px 8px; text-align:center; background:{{ p.statusBg }}; color:{{ p.statusFg }};">{{ p.statusLabel }}</span>
                     <button onClick="{{ p.remove }}" style="border:none; cursor:pointer; background:#EDF0F2; color:#68787F; border-radius:4px; padding:6px 10px; font-size:13px; font-weight:700;">×</button>
                   </div>
