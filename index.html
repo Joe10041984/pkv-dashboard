@@ -460,9 +460,42 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
     <!-- ============ TAB: ABGLEICH ============ -->
     <sc-if value="{{ tabAbgleich }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="Abgleich" style="display:flex; flex-direction:column; gap:16px; animation:fadeUp .25s ease;">
-        <div style="background:#E9F1F7; border:1px solid #C7DCEC; border-radius:6px; padding:14px 18px; font-size:13.5px; color:#2C4A63; line-height:1.5;">
-          Ein direkter Abruf aus der Versicherer-App ist nicht möglich. <strong>So geht der Abgleich:</strong> Lade Leistungsabrechnungen (PDF) aus der App hier im Chat hoch — ich lese sie und trage die Erstattungen unten ein. Oder du pflegst die Beträge direkt hier.
+        <div style="background:#E9F1F7; border:1px solid #C7DCEC; border-radius:6px; padding:14px 18px; font-size:13.5px; color:#2C4A63; line-height:1.5; display:flex; flex-direction:column; gap:10px;">
+          <div>Ein direkter Abruf aus der Versicherer-App ist nicht möglich. <strong>So geht der Abgleich:</strong> Leistungsabrechnung (PDF) aus der Versicherer-App laden und hier hochladen — die App liest sie aus und ordnet die erstatteten Beträge den eingereichten Rechnungen zu. Oder du pflegst die Beträge direkt in der Liste.</div>
+          <div>
+            <label style="cursor:pointer; display:inline-flex; align-items:center; gap:8px; background:#175260; color:#FFFFFF; border-radius:5px; padding:9px 14px; font-size:13px; font-weight:600;">
+              Leistungsabrechnung (PDF) auslesen
+              <input type="file" accept="application/pdf" onChange="{{ onAbrechnungFile }}" style="display:none;">
+            </label>
+          </div>
+          <sc-if value="{{ abrechnungStatus }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px; color:{{ abrechnungStatusFarbe }}; background:#FFFFFF; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ abrechnungStatus }}</div>
+          </sc-if>
         </div>
+
+        <sc-if value="{{ hatVorschlaege }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px 8px 16px; flex-wrap:wrap;">
+              <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Gefundene Erstattungen</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button onClick="{{ vorschlaegeAlle }}" style="border:none; cursor:pointer; background:#175260; color:#fff; border-radius:5px; padding:7px 12px; font-size:12.5px; font-weight:600;">Alle zugeordneten übernehmen</button>
+                <button onClick="{{ vorschlaegeVerwerfen }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#68787F; border-radius:5px; padding:7px 12px; font-size:12.5px; font-weight:600;">Verwerfen</button>
+              </div>
+            </div>
+            <sc-for list="{{ abrechnungVorschlaege }}" as="v" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:12px; padding:11px 16px; border-top:1px solid #EDF0F2; flex-wrap:wrap; row-gap:6px;">
+                <div style="flex:1; min-width:170px;">
+                  <div style="font-size:14px; font-weight:600;">{{ v.titel }}</div>
+                  <div style="font-size:12.5px; color:#68787F; margin-top:1px;">{{ v.unterzeile }}</div>
+                </div>
+                <span style="font-size:11px; font-weight:600; background:{{ v.badgeBg }}; color:{{ v.badgeFg }}; border-radius:6px; padding:3px 8px; white-space:nowrap;">{{ v.badge }}</span>
+                <sc-if value="{{ v.kannUebernehmen }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ v.uebernehmen }}" style="border:1px solid #175260; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:6px 12px; font-size:12.5px; font-weight:600;" style-hover="background:#E3EDF0;">Übernehmen</button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px;">
           <sc-for list="{{ abgleichKpis }}" as="k" hint-placeholder-count="3">
             <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:14px 16px;">
@@ -818,6 +851,7 @@ class Component extends DCLogic {
       gesperrt: !!(settings && settings.sperreHash) && sessionStorage.getItem('pkv.entsperrt') !== '1',
       pinEingabe: '', pinFehler: null, pinNeu: '', pinInfo: null,
       setupBlob: null, setupPass: '', setupFehler: null, setupLaeuft: false, setupCodePass: '', setupCodeInfo: null,
+      abrechnungVorschlaege: null, abrechnungStatus: null, abrechnungTyp: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
@@ -1212,6 +1246,56 @@ class Component extends DCLogic {
     } catch (err) {
       setStatus('Scan fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
     }
+  }
+
+  // ---------- Leistungsabrechnung (PDF) im Abgleich-Tab auslesen ----------
+  async abrechnungVerarbeiten(file) {
+    const setStatus = (status, typ) => this.setState({ abrechnungStatus: status, abrechnungTyp: typ || 'laeuft' });
+    try {
+      if ((!window.claude || !window.claude.complete) && !(this.state.sync && this.state.sync.aiKey)) {
+        setStatus('Bitte in den Einstellungen einen Anthropic-API-Key hinterlegen (Abschnitt „KI-Auslesen“).', 'fehler'); return;
+      }
+      setStatus('Lese PDF …');
+      const { PDFParse } = await import('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf-parse.es.js');
+      PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf.worker.min.mjs');
+      const parser = new PDFParse({ data: new Uint8Array(await file.arrayBuffer()) });
+      const text = ((await parser.getText()).text || '').trim().slice(0, 20000);
+      if (text.length < 40) { setStatus('In diesem PDF ist kein auswertbarer Text.', 'fehler'); return; }
+      setStatus('Werte Leistungsabrechnung aus …');
+      const antwort = await this.kiComplete({
+        max_tokens: 2500,
+        system: 'Du extrahierst Erstattungspositionen aus Leistungsabrechnungen deutscher privater Krankenversicherungen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown. Dezimalzahlen mit Punkt.',
+        messages: [{ role: 'user', content: 'Extrahiere aus dieser Leistungsabrechnung alle abgerechneten Rechnungen als JSON: {"positionen":[{"empfaenger":"Name des Arztes/Apotheke/Rechnungsstellers","rechnungsdatum":"JJJJ-MM-TT oder null","rechnungsbetrag":Zahl,"erstattet":Zahl}]}. "erstattet" ist der tatsächlich von der Versicherung erstattete Betrag der Position.\n\n' + text }]
+      });
+      let daten;
+      try { daten = JSON.parse(antwort.replace(/^```json?\s*|```\s*$/g, '')); } catch (e) { throw new Error('KI-Antwort war kein gültiges JSON.'); }
+      const pos = Array.isArray(daten.positionen) ? daten.positionen : [];
+      if (!pos.length) { setStatus('Keine Erstattungspositionen im Dokument gefunden.', 'fehler'); return; }
+      // Zuordnung zu eingereichten Einträgen: 1) exakter Betrag, 2) Betrag ±1 Cent + Empfänger-Ähnlichkeit
+      const offenIds = new Set();
+      const vorschlaege = pos.map(p => {
+        const fmt = v => this.fmt.format(v || 0);
+        const kand = this.state.eintraege.filter(e => e.eingereicht && !offenIds.has(e.id) && Math.abs(e.betrag - (p.rechnungsbetrag || 0)) < 0.02);
+        let match = kand.length === 1 ? kand[0] : null;
+        if (!match && kand.length > 1 && p.empfaenger) {
+          const norm = s => String(s || '').toLowerCase().replace(/[^a-zäöüß]/g, '');
+          match = kand.find(e => norm(e.empfaenger).includes(norm(p.empfaenger).slice(0, 6)) || norm(p.empfaenger).includes(norm(e.empfaenger).slice(0, 6))) || null;
+        }
+        if (match) offenIds.add(match.id);
+        return { empfaenger: p.empfaenger || '—', datum: p.rechnungsdatum || null, betrag: p.rechnungsbetrag || 0, erstattet: p.erstattet || 0, matchId: match ? match.id : null, matchEmpfaenger: match ? match.empfaenger : null, erledigt: false };
+      });
+      const treffer = vorschlaege.filter(v => v.matchId).length;
+      this.setState({ abrechnungVorschlaege: vorschlaege, abrechnungStatus: pos.length + ' Positionen gefunden, ' + treffer + ' automatisch zugeordnet. Bitte unten prüfen und übernehmen.', abrechnungTyp: 'ok' });
+    } catch (err) {
+      setStatus('Auslesen fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
+    }
+  }
+  vorschlagUebernehmen(v) {
+    if (!v.matchId || v.erledigt) return;
+    this.update(x => ({
+      eintraege: x.eintraege.map(e => e.id === v.matchId ? { ...e, erstattet: v.erstattet } : e),
+      abrechnungVorschlaege: (x.abrechnungVorschlaege || []).map(w => w === v ? { ...w, erledigt: true } : w)
+    }));
   }
 
   // KI-Aufruf: eingebaute Umgebung (Claude hier) oder eigener Anthropic-Key (selbst gehostet)
@@ -1897,6 +1981,21 @@ class Component extends DCLogic {
       // Auswertungen
       artChart, monatChart, jahresVergleich, awPersonToggles, awPersonen, artGesamtFmt,
       // Abgleich
+      onAbrechnungFile: ev => { const f = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (f) this.abrechnungVerarbeiten(f); },
+      abrechnungStatus: st.abrechnungStatus || null,
+      abrechnungStatusFarbe: st.abrechnungTyp === 'fehler' ? '#A03E3E' : st.abrechnungTyp === 'ok' ? '#175260' : '#68787F',
+      hatVorschlaege: !!(st.abrechnungVorschlaege && st.abrechnungVorschlaege.length),
+      abrechnungVorschlaege: (st.abrechnungVorschlaege || []).map(v => ({
+        titel: v.empfaenger + ' — ' + fmt(v.betrag),
+        unterzeile: (v.datum ? this.fmtDatum(v.datum) + ' · ' : '') + 'erstattet ' + fmt(v.erstattet) + (v.matchEmpfaenger ? ' → ' + v.matchEmpfaenger : ''),
+        badge: v.erledigt ? 'übernommen' : v.matchId ? 'zugeordnet' : 'keine Zuordnung',
+        badgeBg: v.erledigt ? '#E3EDF0' : v.matchId ? '#FBF3E2' : '#EDF0F2',
+        badgeFg: v.erledigt ? '#175260' : v.matchId ? '#A0762A' : '#68787F',
+        kannUebernehmen: !!v.matchId && !v.erledigt,
+        uebernehmen: () => this.vorschlagUebernehmen(v)
+      })),
+      vorschlaegeAlle: () => (st.abrechnungVorschlaege || []).forEach(v => this.vorschlagUebernehmen(v)),
+      vorschlaegeVerwerfen: () => this.setState({ abrechnungVorschlaege: null, abrechnungStatus: null }),
       abgleichKpis, abgleichListe,
       hatEingereichte: abgleichListe.length > 0, keineEingereichten: abgleichListe.length === 0,
       // Modal
