@@ -548,6 +548,63 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
     <button onClick="{{ openNeu }}" style="position:fixed; right:20px; bottom:20px; z-index:40; border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:4px; padding:14px 20px; font-size:15px; font-weight:600; box-shadow:0 6px 20px rgba(196,13,78,.30); display:flex; align-items:center; gap:8px;" style-hover="background:#9E0A3F;">+ Eintrag</button>
   </sc-if>
 
+    <!-- ============ TAB: DOKUMENTE ============ -->
+    <sc-if value="{{ tabDokumente }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Dokumente" style="display:flex; flex-direction:column; gap:14px; animation:fadeUp .25s ease;">
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Dokument</span>
+            <sc-for list="{{ dokFilterArt }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Person</span>
+            <sc-for list="{{ dokFilterPatient }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Monat</span>
+            <sc-for list="{{ dokFilterMonat }}" as="o" hint-placeholder-count="6">
+              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Behandler</span>
+            <sc-for list="{{ dokFilterBehandler }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
+          <div style="padding:14px 16px 8px 16px; display:flex; align-items:baseline; gap:10px;">
+            <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Dokumentenbibliothek {{ jahr }}</div>
+            <div style="font-size:12.5px; color:#68787F;">{{ dokAnzahl }}</div>
+          </div>
+          <sc-for list="{{ dokumente }}" as="d" hint-placeholder-count="4">
+            <div onClick="{{ d.oeffnen }}" style="display:flex; align-items:center; gap:12px; padding:11px 16px; border-top:1px solid #EDF0F2; cursor:pointer; flex-wrap:wrap; row-gap:6px;" style-hover="background:#FAFBFB;">
+              <span style="width:16px; height:16px; flex-shrink:0; background:{{ d.badgeFg }}; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat;"></span>
+              <div style="flex:1; min-width:170px;">
+                <div style="font-size:14px; font-weight:600; overflow:hidden; text-overflow:ellipsis;">{{ d.name }}</div>
+                <div style="font-size:12.5px; color:#68787F; margin-top:1px;">{{ d.unterzeile }}</div>
+              </div>
+              <span style="font-size:11px; font-weight:600; background:{{ d.badgeBg }}; color:{{ d.badgeFg }}; border-radius:6px; padding:3px 8px; white-space:nowrap;">{{ d.art }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ keineDokumente }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 16px; font-size:13.5px; color:#68787F; border-top:1px solid #EDF0F2;">Für dieses Jahr sind noch keine Dokumente gespeichert. Rechnungen hängst du beim Eintrag an, Leistungsabrechnungen lädst du im Abgleich-Tab hoch.</div>
+          </sc-if>
+          <sc-if value="{{ keineTreffer }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 16px; font-size:13.5px; color:#68787F; border-top:1px solid #EDF0F2;">Keine Dokumente für diese Filterkombination.</div>
+          </sc-if>
+        </div>
+
+      </div>
+    </sc-if>
+
   <!-- ============ DOKUMENT-VIEWER ============ -->
   <sc-if value="{{ docViewer }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ docViewerZu }}" style="position:fixed; inset:0; background:rgba(20,30,35,.55); z-index:60; display:flex; align-items:stretch; justify-content:center; padding:0;">
@@ -890,6 +947,7 @@ class Component extends DCLogic {
       setupBlob: null, setupPass: '', setupFehler: null, setupLaeuft: false, setupCodePass: '', setupCodeInfo: null,
       abrechnungVorschlaege: null, abrechnungStatus: null, abrechnungTyp: null,
       docViewer: null,
+      dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' },
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
@@ -1515,6 +1573,66 @@ class Component extends DCLogic {
     );
   }
 
+  // ---------- Dokumentenbibliothek ----------
+  dokumenteVals(fmt) {
+    const st = this.state;
+    const f = st.dokFilter || { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' };
+    const jahr = st.jahr;
+    // Alle Dokumente der Jahresscheibe einsammeln
+    const docs = [];
+    const abrGesehen = new Set();
+    st.eintraege.filter(e => e.jahr === jahr).forEach(e => {
+      if (e.belegName) docs.push({
+        art: 'Rechnung', key: e.id, name: e.belegName, patient: e.patient,
+        behandler: e.empfaenger || '—', datum: e.datum, betrag: e.betrag,
+        oeffnen: () => this.openBelegFile(e.id)
+      });
+      if (e.abrKey && !abrGesehen.has(e.abrKey)) {
+        abrGesehen.add(e.abrKey);
+        docs.push({
+          art: 'Leistungsabrechnung', key: e.abrKey, name: e.abrName || 'Leistungsabrechnung', patient: e.patient,
+          behandler: e.empfaenger || '—', datum: e.datum, betrag: null,
+          zugeordnet: st.eintraege.filter(x => x.abrKey === e.abrKey).length,
+          oeffnen: () => this.openAbrechnungFile(e.abrKey, e.abrName)
+        });
+      }
+    });
+    docs.sort((a, b) => (b.datum || '').localeCompare(a.datum || ''));
+    // Filteroptionen aus den vorhandenen Dokumenten ableiten
+    const monNamen = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+    const opt = (key, werte) => ['Alle', ...werte].map(w => {
+      const aktiv = f[key] === w;
+      return {
+        label: w,
+        bg: aktiv ? '#175260' : '#FFFFFF', fg: aktiv ? '#FFFFFF' : '#46565E', bc: aktiv ? '#175260' : '#DCE3E6',
+        go: () => this.setState({ dokFilter: { ...f, [key]: w } })
+      };
+    });
+    const gefiltert = docs.filter(d =>
+      (f.behandler === 'Alle' || d.behandler === f.behandler) &&
+      (f.art === 'Alle' || d.art === f.art) &&
+      (f.patient === 'Alle' || d.patient === f.patient) &&
+      (f.monat === 'Alle' || monNamen[parseInt((d.datum || '').slice(5, 7)) - 1] === f.monat)
+    );
+    return {
+      dokFilterBehandler: opt('behandler', [...new Set(docs.map(d => d.behandler))].sort()),
+      dokFilterArt: opt('art', [...new Set(docs.map(d => d.art))]),
+      dokFilterMonat: opt('monat', [...new Set(docs.map(d => parseInt((d.datum || '').slice(5, 7))))].filter(m => m >= 1).sort((a, b) => a - b).map(m => monNamen[m - 1])),
+      dokFilterPatient: opt('patient', [...new Set(docs.map(d => d.patient))].filter(Boolean)),
+      dokumente: gefiltert.map(d => ({
+        name: d.name, oeffnen: d.oeffnen,
+        istAbrechnung: d.art === 'Leistungsabrechnung',
+        badgeBg: d.art === 'Leistungsabrechnung' ? '#EFEBFA' : '#E3EDF0',
+        badgeFg: d.art === 'Leistungsabrechnung' ? '#5B4CA8' : '#175260',
+        art: d.art,
+        unterzeile: [d.patient, this.fmtDatum(d.datum), d.behandler, d.betrag != null ? fmt(d.betrag) : null, d.zugeordnet > 1 ? d.zugeordnet + ' Einträge' : null].filter(Boolean).join(' · ')
+      })),
+      dokAnzahl: gefiltert.length + ' von ' + docs.length + (docs.length === 1 ? ' Dokument' : ' Dokumenten'),
+      keineDokumente: docs.length === 0,
+      keineTreffer: docs.length > 0 && gefiltert.length === 0
+    };
+  }
+
   // ---------- Daten-Helfer ----------
   update(fn) { this.setState(fn, () => this.persist()); }
 
@@ -1670,7 +1788,7 @@ class Component extends DCLogic {
     const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag;
 
     // ---- Tabs / Layout / Jahr ----
-    const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich']];
+    const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich'], ['dokumente', 'Dokumente']];
     const tabs = tabDefs.map(([id, label]) => ({
       label, go: () => this.setState({ tab: id }),
       bg: st.tab === id ? '#F5F6F7' : 'transparent', fg: st.tab === id ? '#C40D4E' : '#F0BCCE'
@@ -2095,6 +2213,7 @@ class Component extends DCLogic {
       tabEintraege: eingerichtet && st.tab === 'eintraege',
       tabAuswertungen: eingerichtet && st.tab === 'auswertungen',
       tabAbgleich: eingerichtet && st.tab === 'abgleich',
+      tabDokumente: eingerichtet && st.tab === 'dokumente',
       breHinweis: false,
       // Übersicht
       personen,
@@ -2111,6 +2230,8 @@ class Component extends DCLogic {
       listeAnzahl: liste.length, listeSummeFmt: fmt(liste.reduce((x, e) => x + e.betrag, 0)),
       // Auswertungen
       artChart, monatChart, jahresVergleich, awPersonToggles, awPersonen, artGesamtFmt,
+      // ---- Dokumentenbibliothek ----
+      ...this.dokumenteVals(fmt),
       // Abgleich
       onAbrechnungFile: ev => { const f = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (f) this.abrechnungVerarbeiten(f); },
       docViewer: st.docViewer,
