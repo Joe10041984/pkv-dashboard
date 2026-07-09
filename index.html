@@ -541,69 +541,160 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </div>
       </div>
     </sc-if>
+    <!-- ============ TAB: DOKUMENTE ============ -->
+    <sc-if value="{{ tabDokumente }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Dokumente" style="display:flex; flex-direction:column; gap:14px; animation:fadeUp .25s ease;">
+
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Dokumentenbibliothek {{ jahr }}</div>
+          <div style="font-size:12.5px; color:#68787F;">{{ dokAnzahl }}</div>
+          <div style="flex:1;"></div>
+          <button onClick="{{ dokFilterToggle }}" style="display:inline-flex; align-items:center; gap:7px; border:1px solid {{ dokFilterBtnBc }}; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;">
+            <span style="width:14px; height:14px; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/filter.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/filter.svg) center/contain no-repeat;"></span>
+            Filter
+            <sc-if value="{{ dokFilterAnzahl }}" hint-placeholder-val="{{ false }}">
+              <span style="background:#C40D4E; color:#fff; font-size:11px; font-weight:700; border-radius:9px; padding:1px 7px;">{{ dokFilterAnzahl }}</span>
+            </sc-if>
+          </button>
+          <button onClick="{{ dokExport }}" title="Alle Dokumente des aktuellen Filters als ZIP herunterladen" style="display:inline-flex; align-items:center; gap:7px; border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;">
+            <span style="width:14px; height:14px; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat;"></span>
+            Export
+          </button>
+          <sc-if value="{{ hatMappen }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ dokAlleToggle }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#68787F; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;">{{ dokAlleLabel }}</button>
+          </sc-if>
+        </div>
+        <sc-if value="{{ dokExportStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; margin-top:-4px;">{{ dokExportStatus }}</div>
+        </sc-if>
+        <sc-if value="{{ dokFilterAktivText }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px; color:#68787F; margin-top:-8px;">{{ dokFilterAktivText }}</div>
+        </sc-if>
+
+        <sc-if value="{{ dokFilterOffen }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:12px; display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:11.5px; font-weight:600; color:#68787F; width:70px;">Dokument</span>
+              <sc-for list="{{ dokFilterArt }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:4px 10px; border-radius:13px; font-size:12px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:11.5px; font-weight:600; color:#68787F; width:70px;">Person</span>
+              <sc-for list="{{ dokFilterPatient }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:4px 10px; border-radius:13px; font-size:12px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:11.5px; font-weight:600; color:#68787F; width:70px;">Monat</span>
+              <sc-for list="{{ dokFilterMonat }}" as="o" hint-placeholder-count="6">
+                <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:4px 10px; border-radius:13px; font-size:12px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ dokFilterAnzahl }}" hint-placeholder-val="{{ false }}">
+              <div><button onClick="{{ dokFilterReset }}" style="border:none; background:none; cursor:pointer; font-size:12.5px; font-weight:600; color:#C40D4E; padding:2px 0;">Filter zurücksetzen</button></div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ dokPersonen }}" as="pp" hint-placeholder-count="2">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
+            <div onClick="{{ pp.toggle }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer;" style-hover="background:#FAFBFB;">
+              <span style="width:28px; height:28px; border-radius:50%; background:{{ pp.farbeHell }}; color:{{ pp.farbe }}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;">{{ pp.initial }}</span>
+              <div style="flex:1; min-width:0; font-size:14px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ pp.name }}</div>
+              <span style="font-size:11.5px; font-weight:600; color:#68787F; background:#EDF0F2; border-radius:10px; padding:2px 8px;">{{ pp.anzahl }}</span>
+              <span style="color:#9AA7AD; font-size:12px;">{{ pp.pfeil }}</span>
+            </div>
+            <sc-if value="{{ pp.offen }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ pp.mappen }}" as="mp" hint-placeholder-count="2">
+                <div>
+                  <div onClick="{{ mp.toggle }}" style="display:flex; align-items:center; gap:10px; padding:10px 14px 10px 26px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
+                    <span style="width:16px; height:16px; flex-shrink:0; background:#A0762A; -webkit-mask:url({{ mp.icon }}) center/contain no-repeat; mask:url({{ mp.icon }}) center/contain no-repeat;"></span>
+                    <div style="flex:1; min-width:0; display:flex; align-items:baseline; gap:8px; overflow:hidden;">
+                      <span style="font-size:13.5px; font-weight:600; white-space:nowrap;">{{ mp.name }}</span>
+                      <sc-if value="{{ mp.adresse }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:12px; color:#9AA7AD; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ mp.adresse }}</span>
+                      </sc-if>
+                    </div>
+                    <span style="font-size:11.5px; font-weight:600; color:#68787F; background:#EDF0F2; border-radius:10px; padding:2px 8px;">{{ mp.anzahl }}</span>
+                    <span style="color:#9AA7AD; font-size:12px;">{{ mp.pfeil }}</span>
+                  </div>
+                  <sc-if value="{{ mp.offen }}" hint-placeholder-val="{{ false }}">
+                    <sc-for list="{{ mp.docs }}" as="d" hint-placeholder-count="2">
+                      <div onClick="{{ d.oeffnen }}" style="display:flex; align-items:center; gap:10px; padding:9px 14px 9px 52px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
+                        <span style="width:8px; height:8px; border-radius:50%; background:{{ d.farbe }}; flex-shrink:0;"></span>
+                        <span style="font-size:13px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums;">{{ d.datumFmt }}</span>
+                        <div style="flex:1; min-width:0; font-size:13px; color:#46565E; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ d.zeile }}</div>
+                      </div>
+                    </sc-for>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+        </sc-for>
+        <div style="display:flex; gap:12px; font-size:11.5px; color:#68787F;">
+          <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#175260; display:inline-block;"></span>Rechnung</span>
+          <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#5B4CA8; display:inline-block;"></span>Leistungsabrechnung</span>
+        </div>
+        <sc-if value="{{ keineDokumente }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px 16px; font-size:13.5px; color:#68787F;">Für dieses Jahr sind noch keine Dokumente gespeichert. Rechnungen hängst du beim Eintrag an, Leistungsabrechnungen lädst du im Abgleich-Tab hoch.</div>
+        </sc-if>
+        <sc-if value="{{ keineTreffer }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px 16px; font-size:13.5px; color:#68787F;">Keine Dokumente für diese Filterkombination.</div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+    <!-- ============ TAB: DIAGNOSEN ============ -->
+    <sc-if value="{{ tabDiagnosen }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Diagnosen" style="display:flex; flex-direction:column; gap:14px; animation:fadeUp .25s ease;">
+
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Diagnosen {{ jahr }}</div>
+          <div style="font-size:12.5px; color:#68787F;">{{ diagAnzahl }}</div>
+          <div style="flex:1;"></div>
+          <button onClick="{{ diagExport }}" title="Diagnosen-Übersicht als Textdatei herunterladen (z. B. für einen PKV-Wechsel)" style="display:inline-flex; align-items:center; gap:7px; border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;">
+            <span style="width:14px; height:14px; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat;"></span>
+            Export
+          </button>
+        </div>
+
+        <sc-for list="{{ diagPersonen }}" as="dp" hint-placeholder-count="2">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px;">
+              <span style="width:28px; height:28px; border-radius:50%; background:{{ dp.farbeHell }}; color:{{ dp.farbe }}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;">{{ dp.initial }}</span>
+              <div style="font-size:14px; font-weight:700;">{{ dp.name }}</div>
+            </div>
+            <sc-for list="{{ dp.behandler }}" as="db" hint-placeholder-count="2">
+              <div>
+                <div style="padding:8px 14px 8px 26px; border-top:1px solid #EDF0F2; font-size:13px; font-weight:600; color:#46565E; background:#FAFBFB;">{{ db.name }}</div>
+                <sc-for list="{{ db.diagnosen }}" as="dg" hint-placeholder-count="2">
+                  <div onClick="{{ dg.oeffnen }}" title="Eintrag öffnen" style="display:flex; align-items:baseline; gap:10px; padding:9px 14px 9px 40px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
+                    <span style="font-size:13px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums;">{{ dg.datumFmt }}</span>
+                    <div style="flex:1; min-width:0; font-size:13px; color:#46565E; line-height:1.45;">{{ dg.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ keineDiagnosen }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px 16px; font-size:13.5px; color:#68787F; line-height:1.55;">Für dieses Jahr sind noch keine Diagnosen erfasst. Diagnosen kommen auf zwei Wegen hierher: <strong>„Beleg auslesen“</strong> im Eintrag übernimmt in der Rechnung genannte Diagnosen (inkl. ICD-Code) automatisch — oder du trägst sie im Eintrag im Feld <strong>„Diagnosen“</strong> selbst ein.</div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+
   </main>
 
   <!-- ============ NEUER EINTRAG (FAB) ============ -->
   <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
     <button onClick="{{ openNeu }}" style="position:fixed; right:20px; bottom:20px; z-index:40; border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:4px; padding:14px 20px; font-size:15px; font-weight:600; box-shadow:0 6px 20px rgba(196,13,78,.30); display:flex; align-items:center; gap:8px;" style-hover="background:#9E0A3F;">+ Eintrag</button>
   </sc-if>
-
-    <!-- ============ TAB: DOKUMENTE ============ -->
-    <sc-if value="{{ tabDokumente }}" hint-placeholder-val="{{ false }}">
-      <div data-screen-label="Dokumente" style="display:flex; flex-direction:column; gap:14px; animation:fadeUp .25s ease;">
-
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Dokument</span>
-            <sc-for list="{{ dokFilterArt }}" as="o" hint-placeholder-count="3">
-              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
-            </sc-for>
-          </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Person</span>
-            <sc-for list="{{ dokFilterPatient }}" as="o" hint-placeholder-count="3">
-              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
-            </sc-for>
-          </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Monat</span>
-            <sc-for list="{{ dokFilterMonat }}" as="o" hint-placeholder-count="6">
-              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
-            </sc-for>
-          </div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <span style="font-size:11.5px; font-weight:600; color:#68787F; width:76px;">Behandler</span>
-            <sc-for list="{{ dokFilterBehandler }}" as="o" hint-placeholder-count="4">
-              <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:5px 11px; border-radius:14px; font-size:12.5px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
-            </sc-for>
-          </div>
-        </div>
-
-        <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
-          <div style="padding:14px 16px 8px 16px; display:flex; align-items:baseline; gap:10px;">
-            <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Dokumentenbibliothek {{ jahr }}</div>
-            <div style="font-size:12.5px; color:#68787F;">{{ dokAnzahl }}</div>
-          </div>
-          <sc-for list="{{ dokumente }}" as="d" hint-placeholder-count="4">
-            <div onClick="{{ d.oeffnen }}" style="display:flex; align-items:center; gap:12px; padding:11px 16px; border-top:1px solid #EDF0F2; cursor:pointer; flex-wrap:wrap; row-gap:6px;" style-hover="background:#FAFBFB;">
-              <span style="width:16px; height:16px; flex-shrink:0; background:{{ d.badgeFg }}; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat;"></span>
-              <div style="flex:1; min-width:170px;">
-                <div style="font-size:14px; font-weight:600; overflow:hidden; text-overflow:ellipsis;">{{ d.name }}</div>
-                <div style="font-size:12.5px; color:#68787F; margin-top:1px;">{{ d.unterzeile }}</div>
-              </div>
-              <span style="font-size:11px; font-weight:600; background:{{ d.badgeBg }}; color:{{ d.badgeFg }}; border-radius:6px; padding:3px 8px; white-space:nowrap;">{{ d.art }}</span>
-            </div>
-          </sc-for>
-          <sc-if value="{{ keineDokumente }}" hint-placeholder-val="{{ false }}">
-            <div style="padding:20px 16px; font-size:13.5px; color:#68787F; border-top:1px solid #EDF0F2;">Für dieses Jahr sind noch keine Dokumente gespeichert. Rechnungen hängst du beim Eintrag an, Leistungsabrechnungen lädst du im Abgleich-Tab hoch.</div>
-          </sc-if>
-          <sc-if value="{{ keineTreffer }}" hint-placeholder-val="{{ false }}">
-            <div style="padding:20px 16px; font-size:13.5px; color:#68787F; border-top:1px solid #EDF0F2;">Keine Dokumente für diese Filterkombination.</div>
-          </sc-if>
-        </div>
-
-      </div>
-    </sc-if>
 
   <!-- ============ DOKUMENT-VIEWER ============ -->
   <sc-if value="{{ docViewer }}" hint-placeholder-val="{{ false }}">
@@ -663,6 +754,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               <option value="Medikamente">Medikamente</option>
               <option value="Heilmittel">Heilmittel</option>
               <option value="Hilfsmittel">Hilfsmittel</option>
+              <option value="Labor">Labor</option>
               <option value="Stationäre Behandlung">Stationäre Behandlung</option>
               <option value="Sonstiges">Sonstiges</option>
             </select>
@@ -714,6 +806,10 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
 
         <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Anschrift
           <input type="text" value="{{ formAdresse }}" onChange="{{ setFormAdresse }}" placeholder="Straße Nr., PLZ Ort" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+        </label>
+
+        <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Diagnosen (laut Rechnung)
+          <input type="text" value="{{ formDiagnosen }}" onChange="{{ setFormDiagnosen }}" placeholder="z. B. J06.9 — Akute Infektion der oberen Atemwege; mehrere mit ; trennen" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
         </label>
 
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -948,6 +1044,7 @@ class Component extends DCLogic {
       abrechnungVorschlaege: null, abrechnungStatus: null, abrechnungTyp: null,
       docViewer: null,
       dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' },
+      dokFilterOffen: false, dokMappenOffen: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
@@ -958,7 +1055,7 @@ class Component extends DCLogic {
     this.palette = [['#3E7CB8', '#E4EDF5'], ['#9A6BB8', '#F0E8F5'], ['#3E9C86', '#E2F1EC'], ['#C08A3E', '#F7EDDD'], ['#B85A5A', '#F6E6E6'], ['#5A7D8C', '#E8EFF2']];
     this.farben = {};
     this.farbenHell = {};
-    this.arten = ['Arztbesuch', 'Zahnarztbesuch', 'Medikamente', 'Heilmittel', 'Hilfsmittel', 'Stationäre Behandlung', 'Sonstiges'];
+    this.arten = ['Arztbesuch', 'Zahnarztbesuch', 'Medikamente', 'Heilmittel', 'Hilfsmittel', 'Labor', 'Stationäre Behandlung', 'Sonstiges'];
     this.fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
     this.staffel = [300, 400, 500, 600, 700, 800]; // BRE ab 2026: 1-6 berücksichtigungsfähige Jahre
     // Hallesche Vorsorgeverzeichnis NK.select (PM 174 – 12.24): anrechnungsfreie GOÄ/GOZ-Ziffern (normalisiert, ohne Punkte)
@@ -1524,7 +1621,7 @@ class Component extends DCLogic {
         system: 'Du extrahierst Daten aus deutschen Arzt-, Zahnarzt- und Apothekenrechnungen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown, ohne Erklärung. Dezimalzahlen mit Punkt.',
         messages: [{
           role: 'user',
-          content: 'Extrahiere aus folgendem Rechnungstext:\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
+          content: 'Extrahiere aus folgendem Rechnungstext:\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
         }]
       });
       const jm = antwort.match(/\{[\s\S]*\}/);
@@ -1551,9 +1648,12 @@ class Component extends DCLogic {
           betrag: d.betrag != null ? String(d.betrag) : mAkt.betrag,
           art: this.arten.includes(d.art) ? d.art : mAkt.art,
           positionen: positionen.length ? positionen : mAkt.positionen,
+          diagnosen: (Array.isArray(d.diagnosen) && d.diagnosen.length)
+            ? d.diagnosen.filter(x => x && (x.text || x.code)).map(x => [x.code, x.text].filter(Boolean).join(' — ')).join('; ')
+            : (mAkt.diagnosen || ''),
           vorsorge: vorsorgeAuto || mAkt.vorsorge
         },
-        auslese: { laeuft: false, typ: 'ok', status: 'Felder befüllt' + (positionen.length ? ' — ' + positionen.length + ' Gebührenziffern in den Vorsorge-Check übernommen' : '') + (vorsorgeAuto ? '. Als Vorsorge eingestuft (Ziffern überwiegend im Verzeichnis) — bitte prüfen.' : '. Bitte kurz kontrollieren.') }
+        auslese: { laeuft: false, typ: 'ok', status: 'Felder befüllt' + (positionen.length ? ' — ' + positionen.length + ' Gebührenziffern in den Vorsorge-Check übernommen' : '') + (Array.isArray(d.diagnosen) && d.diagnosen.length ? ' — ' + d.diagnosen.length + ' Diagnose(n) erkannt' : '') + (vorsorgeAuto ? '. Als Vorsorge eingestuft (Ziffern überwiegend im Verzeichnis) — bitte prüfen.' : '. Bitte kurz kontrollieren.') }
       });
     } catch (err) {
       setStatus('Auslesen fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
@@ -1584,14 +1684,17 @@ class Component extends DCLogic {
     st.eintraege.filter(e => e.jahr === jahr).forEach(e => {
       if (e.belegName) docs.push({
         art: 'Rechnung', key: e.id, name: e.belegName, patient: e.patient,
-        behandler: e.empfaenger || '—', datum: e.datum, betrag: e.betrag,
+        behandler: e.empfaenger || '—', datum: e.datum, betrag: e.betrag, ausgabeArt: e.art,
         oeffnen: () => this.openBelegFile(e.id)
       });
-      if (e.abrKey && !abrGesehen.has(e.abrKey)) {
+      // Duplikate ausblenden: gleiche Abrechnung kann unter mehreren Schlüsseln existieren (alte Zeitstempel-Uploads) — Dateiname entscheidet
+      const abrNameNorm = (e.abrName || '').toLowerCase().trim();
+      if (e.abrKey && !abrGesehen.has(e.abrKey) && !(abrNameNorm && abrGesehen.has('n:' + abrNameNorm))) {
         abrGesehen.add(e.abrKey);
+        if (abrNameNorm) abrGesehen.add('n:' + abrNameNorm);
         docs.push({
           art: 'Leistungsabrechnung', key: e.abrKey, name: e.abrName || 'Leistungsabrechnung', patient: e.patient,
-          behandler: e.empfaenger || '—', datum: e.datum, betrag: null,
+          behandler: e.empfaenger || '—', datum: e.datum, betrag: null, ausgabeArt: e.art,
           zugeordnet: st.eintraege.filter(x => x.abrKey === e.abrKey).length,
           oeffnen: () => this.openAbrechnungFile(e.abrKey, e.abrName)
         });
@@ -1614,22 +1717,169 @@ class Component extends DCLogic {
       (f.patient === 'Alle' || d.patient === f.patient) &&
       (f.monat === 'Alle' || monNamen[parseInt((d.datum || '').slice(5, 7)) - 1] === f.monat)
     );
+    // Hierarchie: 1. Patient, 2. Behandler-Mappen
+    const offenSet = st.dokMappenOffen || {};
+    const filterAnzahl = ['art', 'patient', 'monat'].filter(k => f[k] !== 'Alle').length;
+    const patNamen = [...new Set(gefiltert.map(d => d.patient))].filter(Boolean).sort((a, b) => a.localeCompare(b, 'de'));
+    const alleSchluessel = [];
+    const dokPersonen = patNamen.map(pat => {
+      const pd = gefiltert.filter(d => d.patient === pat);
+      const pKey = 'p:' + pat;
+      alleSchluessel.push(pKey);
+      const pOffen = offenSet[pKey] != null ? offenSet[pKey] : (filterAnzahl > 0 || patNamen.length === 1);
+      const mappenNamen = [...new Set(pd.map(d => d.behandler))].sort((a, b) => a.localeCompare(b, 'de'));
+      const mappen = mappenNamen.map(name => {
+        const mKey = 'm:' + pat + '/' + name;
+        alleSchluessel.push(mKey);
+        const md = pd.filter(d => d.behandler === name).sort((a, b) => (b.datum || '').localeCompare(a.datum || ''));
+        const offen = offenSet[mKey] != null ? offenSet[mKey] : (filterAnzahl > 0 || mappenNamen.length === 1);
+        return {
+          name, anzahl: md.length, offen, pfeil: offen ? '▾' : '▸',
+          adresse: (this.behandler[name] && this.behandler[name].adresse) || null,
+          icon: (() => {
+            // häufigste Behandlungsart der Mappe bestimmt das Icon
+            const zaehl = {};
+            md.forEach(d => { if (d.ausgabeArt) zaehl[d.ausgabeArt] = (zaehl[d.ausgabeArt] || 0) + 1; });
+            const top = Object.keys(zaehl).sort((a, b) => zaehl[b] - zaehl[a])[0];
+            const icons = {
+              'Arztbesuch': 'stethoscope', 'Zahnarztbesuch': 'dental', 'Medikamente': 'pill',
+              'Heilmittel': 'massage', 'Hilfsmittel': 'wheelchair', 'Labor': 'microscope', 'Stationäre Behandlung': 'building-hospital'
+            };
+            return 'https://unpkg.com/@tabler/icons@2.47.0/icons/' + (icons[top] || 'receipt') + '.svg';
+          })(),
+          toggle: () => this.setState({ dokMappenOffen: { ...offenSet, [mKey]: !offen } }),
+          docs: md.map(d => ({
+            oeffnen: d.oeffnen,
+            farbe: d.art === 'Leistungsabrechnung' ? '#5B4CA8' : '#175260',
+            zeile: [d.art, d.betrag != null ? fmt(d.betrag) : null, d.zugeordnet > 1 ? d.zugeordnet + ' Einträge' : null].filter(Boolean).join(' · '),
+            datumFmt: this.fmtDatum(d.datum)
+          }))
+        };
+      });
+      return {
+        name: pat, anzahl: pd.length, offen: pOffen, pfeil: pOffen ? '▾' : '▸',
+        initial: pat.slice(0, 1).toUpperCase(),
+        farbe: this.farben[pat] || '#68787F', farbeHell: this.farbenHell[pat] || '#EDF0F2',
+        toggle: () => this.setState({ dokMappenOffen: { ...offenSet, [pKey]: !pOffen } }),
+        mappen
+      };
+    });
+    const dokMappen = dokPersonen.flatMap(p => p.mappen); // für „alle offen?“-Prüfung
+    const alleWirklichOffen = dokPersonen.length > 0 && dokPersonen.every(p => p.offen) && dokMappen.every(mp => mp.offen);
+    const aktivTeile = [];
+    if (f.art !== 'Alle') aktivTeile.push(f.art);
+    if (f.patient !== 'Alle') aktivTeile.push(f.patient);
+    if (f.monat !== 'Alle') aktivTeile.push(f.monat);
     return {
-      dokFilterBehandler: opt('behandler', [...new Set(docs.map(d => d.behandler))].sort()),
       dokFilterArt: opt('art', [...new Set(docs.map(d => d.art))]),
       dokFilterMonat: opt('monat', [...new Set(docs.map(d => parseInt((d.datum || '').slice(5, 7))))].filter(m => m >= 1).sort((a, b) => a - b).map(m => monNamen[m - 1])),
       dokFilterPatient: opt('patient', [...new Set(docs.map(d => d.patient))].filter(Boolean)),
-      dokumente: gefiltert.map(d => ({
-        name: d.name, oeffnen: d.oeffnen,
-        istAbrechnung: d.art === 'Leistungsabrechnung',
-        badgeBg: d.art === 'Leistungsabrechnung' ? '#EFEBFA' : '#E3EDF0',
-        badgeFg: d.art === 'Leistungsabrechnung' ? '#5B4CA8' : '#175260',
-        art: d.art,
-        unterzeile: [d.patient, this.fmtDatum(d.datum), d.behandler, d.betrag != null ? fmt(d.betrag) : null, d.zugeordnet > 1 ? d.zugeordnet + ' Einträge' : null].filter(Boolean).join(' · ')
-      })),
+      dokMappen,
+      dokFilterOffen: !!st.dokFilterOffen,
+      dokFilterToggle: () => this.setState({ dokFilterOffen: !st.dokFilterOffen }),
+      dokFilterBtnBc: st.dokFilterOffen || filterAnzahl ? '#175260' : '#DCE3E6',
+      dokFilterAnzahl: filterAnzahl || null,
+      dokFilterAktivText: filterAnzahl ? aktivTeile.join(' · ') : null,
+      dokFilterReset: () => this.setState({ dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' } }),
       dokAnzahl: gefiltert.length + ' von ' + docs.length + (docs.length === 1 ? ' Dokument' : ' Dokumenten'),
+      dokExport: () => this.dokumenteExport(gefiltert),
+      dokAlleLabel: alleWirklichOffen ? 'Alle einklappen' : 'Alle ausklappen',
+      dokAlleToggle: () => {
+        const neu = {};
+        alleSchluessel.forEach(k => { neu[k] = !alleWirklichOffen; });
+        this.setState({ dokMappenOffen: neu });
+      },
+      hatMappen: alleSchluessel.length > 1,
+      dokPersonen,
+      dokExportStatus: st.dokExportStatus || null,
       keineDokumente: docs.length === 0,
       keineTreffer: docs.length > 0 && gefiltert.length === 0
+    };
+  }
+
+  // Export der gefilterten Dokumente als ZIP
+  async dokumenteExport(docs) {
+    const setStatus = s => this.setState({ dokExportStatus: s });
+    try {
+      if (!docs.length) { setStatus('Keine Dokumente im aktuellen Filter.'); return; }
+      setStatus('Sammle ' + docs.length + ' Dokumente …');
+      if (!window.JSZip) await this.ladeScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'ZIP-Bibliothek nicht erreichbar (offline?)');
+      const zip = new window.JSZip();
+      let ok = 0, fehlt = 0;
+      const namen = new Set();
+      for (const d of docs) {
+        let blob = await this.getBelegBlob(d.key);
+        if (!blob) blob = await this.belegLaden(d.key, d.name);
+        if (!blob) { fehlt++; continue; }
+        let name = String(d.name || 'dokument.pdf').replace(/[\\/:*?"<>|]+/g, '_');
+        if (!/\.pdf$/i.test(name)) name += '.pdf';
+        while (namen.has(name)) name = name.replace(/(\.pdf)$/i, '_' + (ok + 1) + '$1');
+        namen.add(name);
+        zip.file(name, blob);
+        ok++;
+        setStatus('Sammle Dokumente … ' + ok + '/' + docs.length);
+      }
+      if (!ok) { setStatus('Keines der Dokumente konnte geladen werden (weder lokal noch im Repo).'); return; }
+      setStatus('Erzeuge ZIP …');
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Dokumente ' + this.state.jahr + (fehlt ? '' : '') + '.zip';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      setStatus(ok + (ok === 1 ? ' Dokument' : ' Dokumente') + ' exportiert' + (fehlt ? ' — ' + fehlt + ' nicht gefunden (weder lokal noch im Repo)' : '') + '.');
+    } catch (err) {
+      setStatus('Export fehlgeschlagen: ' + (err && err.message ? err.message : err));
+    }
+  }
+
+  // ---------- Diagnosen-Seite ----------
+  diagnosenVals() {
+    const st = this.state;
+    // Diagnosen der gewählten Jahresscheibe (Versicherer fordern konkrete Zeiträume — pro Jahr exportieren)
+    const mitDiag = st.eintraege.filter(e => e.jahr === st.jahr && (e.diagnosen || '').trim());
+    const patNamen = [...new Set(mitDiag.map(e => e.patient))].filter(Boolean).sort((a, b) => a.localeCompare(b, 'de'));
+    const diagPersonen = patNamen.map(pat => {
+      const pe = mitDiag.filter(e => e.patient === pat);
+      const behNamen = [...new Set(pe.map(e => e.empfaenger || '—'))].sort((a, b) => a.localeCompare(b, 'de'));
+      return {
+        name: pat,
+        initial: pat.slice(0, 1).toUpperCase(),
+        farbe: this.farben[pat] || '#68787F', farbeHell: this.farbenHell[pat] || '#EDF0F2',
+        behandler: behNamen.map(beh => ({
+          name: beh,
+          diagnosen: pe.filter(e => (e.empfaenger || '—') === beh)
+            .sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
+            .map(e => ({
+              datumFmt: this.fmtDatum(e.datum),
+              text: e.diagnosen,
+              oeffnen: () => this.editEntry(e.id)
+            }))
+        }))
+      };
+    });
+    const diagExport = () => {
+      const zeilen = ['Diagnosen-Übersicht ' + st.jahr + ' (Stand ' + this.fmtDatum(new Date().toISOString().slice(0, 10)) + ')', ''];
+      diagPersonen.forEach(p => {
+        zeilen.push('=== ' + p.name + ' ===');
+        p.behandler.forEach(b => {
+          zeilen.push('');
+          zeilen.push(b.name);
+          b.diagnosen.forEach(d => zeilen.push('  ' + d.datumFmt + '  ' + d.text));
+        });
+        zeilen.push('');
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([zeilen.join('\n')], { type: 'text/plain;charset=utf-8' }));
+      a.download = 'Diagnosen-Uebersicht-' + st.jahr + '.txt';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    };
+    return {
+      diagPersonen,
+      keineDiagnosen: mitDiag.length === 0,
+      diagAnzahl: mitDiag.length + (mitDiag.length === 1 ? ' Eintrag mit Diagnose' : ' Einträge mit Diagnosen'),
+      diagExport
     };
   }
 
@@ -1651,7 +1901,8 @@ class Component extends DCLogic {
       vorsorge: m.vorsorge, betrag, bezahlt: m.bezahlt, eingereicht: m.eingereicht,
       erstattet: erst, jahr: parseInt(m.datum.slice(0, 4)), belegName: m.belegName || null,
       rechnungsdatum: m.rechnungsdatum || null,
-      positionen: (m.positionen || []).filter(p => p.z || p.b)
+      positionen: (m.positionen || []).filter(p => p.z || p.b),
+      diagnosen: (m.diagnosen || '').trim() || null
     };
     this.merkeBehandler(eintrag.empfaenger, eintrag.adresse);
     this.update(s => ({
@@ -1788,7 +2039,7 @@ class Component extends DCLogic {
     const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag;
 
     // ---- Tabs / Layout / Jahr ----
-    const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich'], ['dokumente', 'Dokumente']];
+    const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich'], ['dokumente', 'Dokumente'], ['diagnosen', 'Diagnosen']];
     const tabs = tabDefs.map(([id, label]) => ({
       label, go: () => this.setState({ tab: id }),
       bg: st.tab === id ? '#F5F6F7' : 'transparent', fg: st.tab === id ? '#C40D4E' : '#F0BCCE'
@@ -2095,6 +2346,8 @@ class Component extends DCLogic {
       setFormErstattet: ev => this.setState({ modal: { ...m, erstattet: ev.target.value } }),
       formAdresse: m.adresse || '',
       setFormAdresse: ev => this.setState({ modal: { ...m, adresse: ev.target.value } }),
+      formDiagnosen: m.diagnosen || '',
+      setFormDiagnosen: ev => this.setState({ modal: { ...m, diagnosen: ev.target.value } }),
       formVorsorge: m.vorsorge,
       ...(() => {
         const pos = m.positionen || [];
@@ -2165,7 +2418,7 @@ class Component extends DCLogic {
       kannAuslesen: false, ausleseStart: null, ausleseButtonLabel: '', ausleseHinweis: '',
       ausleseStatus: null, ausleseStatusBg: '', ausleseStatusFg: '',
       formRechnungsdatum: '', setFormRechnungsdatum: null,
-      formAdresse: '', hatFavoriten: false, favoriten: [], hatSucheErgebnisse: false,
+      formAdresse: '', formDiagnosen: '', setFormDiagnosen: null, hatFavoriten: false, favoriten: [], hatSucheErgebnisse: false,
       sucheErgebnisse: [], sucheFehler: null, sucheButtonLabel: 'Suchen', sucheLaeuft: false, sucheEnter: null,
       formVorsorge: false, vorsorgePos: [], hatVorsorgePos: false, hatVorsorgeSchaetzung: false,
       vorsorgeGedeckt: '', hatVorsorgeRest: false, vorsorgeRest: ''
@@ -2214,6 +2467,8 @@ class Component extends DCLogic {
       tabAuswertungen: eingerichtet && st.tab === 'auswertungen',
       tabAbgleich: eingerichtet && st.tab === 'abgleich',
       tabDokumente: eingerichtet && st.tab === 'dokumente',
+      tabDiagnosen: eingerichtet && st.tab === 'diagnosen',
+      ...this.diagnosenVals(),
       breHinweis: false,
       // Übersicht
       personen,
