@@ -487,6 +487,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 <div style="flex:1; min-width:170px;">
                   <div style="font-size:14px; font-weight:600;">{{ v.titel }}</div>
                   <div style="font-size:12.5px; color:#68787F; margin-top:1px;">{{ v.unterzeile }}</div>
+                  <sc-if value="{{ v.hatVorsorgeCheck }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:12.5px; font-weight:600; color:{{ v.vorsorgeFarbe }}; margin-top:3px;">{{ v.vorsorgeText }}</div>
+                  </sc-if>
                 </div>
                 <span style="font-size:11px; font-weight:600; background:{{ v.badgeBg }}; color:{{ v.badgeFg }}; border-radius:6px; padding:3px 8px; white-space:nowrap;">{{ v.badge }}</span>
                 <sc-if value="{{ v.kannUebernehmen }}" hint-placeholder-val="{{ false }}">
@@ -513,6 +516,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 <div style="flex:1; min-width:150px;">
                   <div style="font-size:14px; font-weight:600;">{{ e.empfaenger }}</div>
                   <div style="font-size:12.5px; color:#68787F;">{{ e.patient }} · {{ e.datumFmt }} · Rechnung {{ e.betragFmt }}</div>
+                  <sc-if value="{{ e.hatVorsorgeCheck }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:12.5px; font-weight:600; color:{{ e.vorsorgeFarbe }}; margin-top:3px;">{{ e.vorsorgeText }}</div>
+                  </sc-if>
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <label style="font-size:12.5px; color:#68787F;">erstattet</label>
@@ -520,6 +526,12 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   <span style="font-size:13px; color:#68787F;">€</span>
                 </div>
                 <span style="font-size:11px; font-weight:600; background:{{ e.abgleichBg }}; color:{{ e.abgleichFg }}; border-radius:6px; padding:3px 8px;">{{ e.abgleichLabel }}</span>
+                <sc-if value="{{ e.hatAbrechnung }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ e.openAbrechnung }}" title="Zugehörige Leistungsabrechnung öffnen" style="border:none; cursor:pointer; background:#EFEBFA; color:#5B4CA8; border-radius:5px; padding:6px 11px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                    <span style="width:13px; height:13px; background:#5B4CA8; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/file-text.svg) center/contain no-repeat;"></span>
+                    Abrechnung
+                  </button>
+                </sc-if>
               </div>
             </sc-for>
           </sc-if>
@@ -534,6 +546,25 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
   <!-- ============ NEUER EINTRAG (FAB) ============ -->
   <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
     <button onClick="{{ openNeu }}" style="position:fixed; right:20px; bottom:20px; z-index:40; border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:4px; padding:14px 20px; font-size:15px; font-weight:600; box-shadow:0 6px 20px rgba(196,13,78,.30); display:flex; align-items:center; gap:8px;" style-hover="background:#9E0A3F;">+ Eintrag</button>
+  </sc-if>
+
+  <!-- ============ DOKUMENT-VIEWER ============ -->
+  <sc-if value="{{ docViewer }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ docViewerZu }}" style="position:fixed; inset:0; background:rgba(20,30,35,.55); z-index:60; display:flex; align-items:stretch; justify-content:center; padding:0;">
+      <div onClick="{{ stopClick2 }}" style="background:#FFFFFF; width:100%; max-width:900px; display:flex; flex-direction:column; margin:12px; margin-bottom:calc(12px + env(safe-area-inset-bottom)); border-radius:8px; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid #EDF0F2;">
+          <div style="flex:1; min-width:0; font-size:13.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ docViewerName }}</div>
+          <button onClick="{{ docViewerDownload }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:7px 12px; font-size:12.5px; font-weight:600;">Herunterladen</button>
+          <button onClick="{{ docViewerZu }}" style="border:none; cursor:pointer; background:#EDF0F2; color:#46565E; border-radius:5px; padding:7px 12px; font-size:12.5px; font-weight:600;">Schließen</button>
+        </div>
+        <sc-if value="{{ docViewerLaedt }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; color:#68787F; font-size:14px;">Lade Dokument …</div>
+        </sc-if>
+        <sc-if value="{{ docViewerUrl }}" hint-placeholder-val="{{ false }}">
+          <iframe src="{{ docViewerUrl }}" title="Dokument" style="flex:1; width:100%; border:none; background:#F0F2F3;"></iframe>
+        </sc-if>
+      </div>
+    </div>
   </sc-if>
 
   <!-- ============ MODAL: EINTRAG ============ -->
@@ -570,7 +601,13 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px;">
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Art der Ausgabe
             <select value="{{ formArt }}" onChange="{{ setFormArt }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; background:#fff; color:#1E2B32;">
-              <sc-for list="{{ arten }}" as="a" hint-placeholder-count="6"><option value="{{ a }}">{{ a }}</option></sc-for>
+              <option value="Arztbesuch">Arztbesuch</option>
+              <option value="Zahnarztbesuch">Zahnarztbesuch</option>
+              <option value="Medikamente">Medikamente</option>
+              <option value="Heilmittel">Heilmittel</option>
+              <option value="Hilfsmittel">Hilfsmittel</option>
+              <option value="Stationäre Behandlung">Stationäre Behandlung</option>
+              <option value="Sonstiges">Sonstiges</option>
             </select>
           </label>
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Behandler / Apotheke
@@ -852,6 +889,7 @@ class Component extends DCLogic {
       pinEingabe: '', pinFehler: null, pinNeu: '', pinInfo: null,
       setupBlob: null, setupPass: '', setupFehler: null, setupLaeuft: false, setupCodePass: '', setupCodeInfo: null,
       abrechnungVorschlaege: null, abrechnungStatus: null, abrechnungTyp: null,
+      docViewer: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
@@ -1024,7 +1062,7 @@ class Component extends DCLogic {
   }
   async belegHochladen(id, file) {
     const c = this.repoCfg();
-    if (!c) return;
+    if (!c) { this.setState({ syncStatus: 'Dokument nur lokal gespeichert — in den Einstellungen ist kein Beleg-Repo hinterlegt (Feld „Privates Repo für Belege“, z. B. Joe10041984/pkv-belege).' }); return; }
     try {
       const pfad = this.belegPfad(id, file.name);
       const b64 = await new Promise((res, rej) => {
@@ -1103,7 +1141,17 @@ class Component extends DCLogic {
       const neueSettings = s.settings || this.state.settings;
       // Kommt per Sync eine PIN-Sperre an und dieses Gerät wurde in dieser Sitzung nicht entsperrt: sofort sperren
       const jetztSperren = !!neueSettings.sperreHash && sessionStorage.getItem('pkv.entsperrt') !== '1';
-      this.setState({ eintraege: s.eintraege, settings: neueSettings, geladen: true, eingerichtetFlag: true, gesperrt: jetztSperren }, () => this.persist(true));
+      // Schutz: Dokument-Verknüpfungen nie durch einen Stand ohne diese Felder verlieren (z. B. von einem Gerät mit älterer App-Version)
+      const lokalMap = new Map(this.state.eintraege.map(e => [e.id, e]));
+      const eintraegeGemergt = s.eintraege.map(e => {
+        const l = lokalMap.get(e.id);
+        if (!l) return e;
+        const patch = {};
+        if (!e.abrKey && l.abrKey) { patch.abrKey = l.abrKey; patch.abrName = l.abrName || null; }
+        if (!e.belegName && l.belegName) patch.belegName = l.belegName;
+        return Object.keys(patch).length ? { ...e, ...patch } : e;
+      });
+      this.setState({ eintraege: eintraegeGemergt, settings: neueSettings, geladen: true, eingerichtetFlag: true, gesperrt: jetztSperren }, () => this.persist(true));
       localStorage.setItem('pkv.sync.ts', remoteTs);
       localStorage.setItem('pkv.eingerichtet.v1', '1');
       this.setState({ syncStatus: (auto ? 'Automatisch geladen' : 'Geladen') + ' — ' + s.eintraege.length + ' Einträge (Stand ' + String(remoteTs).slice(0, 16).replace('T', ' ') + ').' });
@@ -1284,18 +1332,84 @@ class Component extends DCLogic {
         if (match) offenIds.add(match.id);
         return { empfaenger: p.empfaenger || '—', datum: p.rechnungsdatum || null, betrag: p.rechnungsbetrag || 0, erstattet: p.erstattet || 0, matchId: match ? match.id : null, matchEmpfaenger: match ? match.empfaenger : null, erledigt: false };
       });
+      // Vorsorge-Prüfung: wurde der maximale Vorsorgesatz leistungsbestätigt?
+      vorschlaege.forEach(v => {
+        if (!v.matchId) return;
+        const e = this.state.eintraege.find(x => x.id === v.matchId);
+        if (!e || !e.vorsorge) return;
+        let maxSatz = 0;
+        (e.positionen || []).forEach(p => { if (this.vorsorgeZiffern.has(this.normZiffer(p.z))) maxSatz += parseFloat(p.b) || 0; });
+        if (!(maxSatz > 0)) maxSatz = e.betrag; // keine Ziffern gepflegt: voller Rechnungsbetrag als Maßstab
+        v.vorsorgeMax = Math.round(maxSatz * 100) / 100;
+        v.vorsorgeVoll = v.erstattet >= v.vorsorgeMax - 0.005;
+      });
+      // Abrechnungs-Dokument dauerhaft speichern (lokal + privates Repo).
+      // Duplikat-Schutz: Inhalts-Hash als Schlüssel — dieselbe Datei erzeugt immer denselben Pfad.
+      const hashBuf = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+      const abrKey = 'abr-' + [...new Uint8Array(hashBuf)].slice(0, 10).map(b => b.toString(16).padStart(2, '0')).join('');
+      const abrName = file.name || ('Leistungsabrechnung ' + new Date().toISOString().slice(0, 10) + '.pdf');
+      const schonBekannt = !!(await this.getBelegBlob(abrKey));
+      this.saveBeleg(abrKey, file);
+      if (this.repoCfg()) { if (!schonBekannt) this.belegHochladen(abrKey, file); }
+      else this.setState({ abrechnungStatus: 'Hinweis: Abrechnung nur lokal gespeichert — kein Beleg-Repo in den Einstellungen hinterlegt. Auf anderen Geräten ist das Dokument dann nicht abrufbar.', abrechnungTyp: 'fehler' });
+      vorschlaege.forEach(v => { v.abrKey = abrKey; v.abrName = abrName; });
       const treffer = vorschlaege.filter(v => v.matchId).length;
-      this.setState({ abrechnungVorschlaege: vorschlaege, abrechnungStatus: pos.length + ' Positionen gefunden, ' + treffer + ' automatisch zugeordnet. Bitte unten prüfen und übernehmen.', abrechnungTyp: 'ok' });
+      this.setState({ abrechnungVorschlaege: vorschlaege, abrechnungStatus: pos.length + ' Positionen gefunden, ' + treffer + ' automatisch zugeordnet. Abrechnung wurde als Dokument gespeichert. Bitte unten prüfen und übernehmen.', abrechnungTyp: 'ok' });
     } catch (err) {
       setStatus('Auslesen fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
     }
   }
+  // Findet bei Vorsorge-Abweichung die Verzeichnis-Ziffern, die den Fehlbetrag erklären
+  vorsorgeFehlziffern(positionen, fehlbetrag) {
+    const pos = (positionen || [])
+      .filter(p => this.vorsorgeZiffern.has(this.normZiffer(p.z)) && (parseFloat(p.b) || 0) > 0)
+      .map(p => ({ z: String(p.z), b: Math.round((parseFloat(p.b) || 0) * 100) }));
+    if (!pos.length) return null;
+    const ziel = Math.round(fehlbetrag * 100);
+    // Teilmenge suchen, deren Summe exakt dem Fehlbetrag entspricht (±1 Cent)
+    let treffer = null;
+    const suche = (i, rest, gewaehlt) => {
+      if (treffer) return;
+      if (Math.abs(rest) <= 1 && gewaehlt.length) { treffer = gewaehlt.slice(); return; }
+      if (i >= pos.length || rest < -1) return;
+      suche(i + 1, rest - pos[i].b, gewaehlt.concat([pos[i]]));
+      suche(i + 1, rest, gewaehlt);
+    };
+    suche(0, ziel, []);
+    const fmt = v => this.fmt.format(v / 100);
+    if (treffer) return { sicher: true, text: treffer.map(p => 'Ziffer ' + p.z + ' (' + fmt(p.b) + ')').join(', ') };
+    return { sicher: false, text: pos.map(p => p.z + ' (' + fmt(p.b) + ')').join(', ') };
+  }
+
   vorschlagUebernehmen(v) {
     if (!v.matchId || v.erledigt) return;
     this.update(x => ({
-      eintraege: x.eintraege.map(e => e.id === v.matchId ? { ...e, erstattet: v.erstattet } : e),
+      eintraege: x.eintraege.map(e => e.id === v.matchId ? { ...e, erstattet: v.erstattet, abrKey: v.abrKey || e.abrKey || null, abrName: v.abrName || e.abrName || null } : e),
       abrechnungVorschlaege: (x.abrechnungVorschlaege || []).map(w => w === v ? { ...w, erledigt: true } : w)
     }));
+  }
+
+  // Zeigt ein Dokument im In-App-Viewer (kein window.open — scheitert auf iOS/eingebetteten Umgebungen)
+  async dokumentOeffnen(laden, fehlerCb, name) {
+    this.setState({ docViewer: { laedt: true, name: name || 'Dokument', url: null } });
+    let blob = null;
+    try { blob = await laden(); } catch (e) {}
+    if (blob) {
+      if (this._docUrl) URL.revokeObjectURL(this._docUrl);
+      this._docUrl = URL.createObjectURL(blob.type ? blob : new Blob([blob], { type: 'application/pdf' }));
+      this.setState({ docViewer: { laedt: false, name: name || 'Dokument', url: this._docUrl } });
+    } else {
+      this.setState({ docViewer: null });
+      fehlerCb();
+    }
+  }
+
+  openAbrechnungFile(key, name) {
+    return this.dokumentOeffnen(
+      async () => (await this.getBelegBlob(key)) || (await this.belegLaden(key, name)),
+      () => this.setState({ abrechnungStatus: 'Abrechnungs-Dokument nicht gefunden (weder lokal noch im Repo).', abrechnungTyp: 'fehler' }),
+      name || 'Leistungsabrechnung'
+    );
   }
 
   // KI-Aufruf: eingebaute Umgebung (Claude hier) oder eigener Anthropic-Key (selbst gehostet)
@@ -1388,25 +1502,17 @@ class Component extends DCLogic {
     }
   }
 
-  async openBelegFile(key) {
-    let blob = await this.getBelegBlob(key);
-    if (!blob) {
-      const e = this.state.eintraege.find(x => x.id === key);
-      if (e && e.belegName) {
-        this.setState({ syncStatus: 'Beleg wird aus dem Repo geladen …' });
-        blob = await this.belegLaden(key, e.belegName);
-      }
-    }
-    if (blob) { this.setState({ syncStatus: null }); window.open(URL.createObjectURL(blob), '_blank'); }
-    else this.setState({ syncStatus: 'Beleg weder lokal noch im Repo gefunden.' });
-  }
-
-  async openBelegFileAlt(key) {
-    const db = await this.db();
-    const rq = db.transaction('belege').objectStore('belege').get(key);
-    rq.onsuccess = () => {
-      if (rq.result) window.open(URL.createObjectURL(rq.result.blob), '_blank');
-    };
+  openBelegFile(key) {
+    const e = this.state.eintraege.find(x => x.id === key);
+    return this.dokumentOeffnen(
+      async () => {
+        let blob = await this.getBelegBlob(key);
+        if (!blob && e && e.belegName) blob = await this.belegLaden(key, e.belegName);
+        return blob;
+      },
+      () => this.setState({ syncStatus: 'Beleg weder lokal noch im Repo gefunden.' }),
+      (e && e.belegName) || 'Beleg'
+    );
   }
 
   // ---------- Daten-Helfer ----------
@@ -1418,7 +1524,9 @@ class Component extends DCLogic {
     const betrag = Math.round(parseFloat(String(m.betrag).replace(',', '.')) * 100) / 100;
     if (!(betrag > 0)) return;
     const erst = m.eingereicht ? (Math.round(parseFloat(String(m.erstattet || 0).replace(',', '.')) * 100) / 100 || 0) : 0;
+    const bestehend = m.id ? this.state.eintraege.find(e => e.id === m.id) : null;
     const eintrag = {
+      ...(bestehend || {}), // Felder erhalten, die das Formular nicht kennt (z. B. Abrechnungs-Verknüpfung)
       id: m.id || ('e' + Date.now()),
       patient: m.patient, datum: m.datum, art: m.art, empfaenger: m.empfaenger || '',
       adresse: m.adresse || '',
@@ -1775,10 +1883,33 @@ class Component extends DCLogic {
       { label: 'Erstattet', wert: fmt(erstattetSum), farbe: '#175260' },
       { label: 'Differenz (selbst / Bonus-Verrechnung)', wert: fmt(erwartet - erstattetSum), farbe: '#A0762A' }
     ];
-    const abgleichListe = eingereichte.map(e => ({
+    const abgleichListe = eingereichte.map(e => {
+      // Vorsorge-Prüfung: maximaler Vorsorgesatz aus den Verzeichnis-Ziffern (sonst Rechnungsbetrag)
+      let vsMax = 0;
+      if (e.vorsorge) {
+        (e.positionen || []).forEach(p => { if (this.vorsorgeZiffern.has(this.normZiffer(p.z))) vsMax += parseFloat(p.b) || 0; });
+        if (!(vsMax > 0)) vsMax = e.betrag;
+        vsMax = Math.round(vsMax * 100) / 100;
+      }
+      const vsVoll = e.vorsorge && (e.erstattet || 0) >= vsMax - 0.005;
+      return {
       empfaenger: e.empfaenger || '—', patient: e.patient,
       datumFmt: this.fmtDatum(e.datum), betragFmt: fmt(e.betrag),
       farbe: this.farben[e.patient], erstattet: e.erstattet || '',
+      hatVorsorgeCheck: !!e.vorsorge && (e.erstattet || 0) > 0,
+      vorsorgeText: !e.vorsorge ? '' : (vsVoll
+        ? 'Vorsorge: maximaler Satz (' + fmt(vsMax) + ') leistungsbestätigt ✓'
+        : (() => {
+            const fehl = Math.max(0, vsMax - (e.erstattet || 0));
+            let t = 'Vorsorge: ' + fmt(e.erstattet || 0) + ' von max. ' + fmt(vsMax) + ' bestätigt — ' + fmt(fehl) + ' unter Maximalsatz';
+            const fz = this.vorsorgeFehlziffern(e.positionen, fehl);
+            if (fz) t += fz.sicher ? '. Nicht erstattet lt. Vorsorgeverzeichnis: ' + fz.text : '. Verzeichnis-Ziffern zum Prüfen: ' + fz.text;
+            else t += '. Welche Ziffer fehlt, kann nur ermittelt werden, wenn am Eintrag GOÄ/GOZ-Ziffern gepflegt sind — Eintrag antippen und im Vorsorge-Check die Ziffern eintragen (oder „Beleg auslesen“).';
+            return t;
+          })()),
+      vorsorgeFarbe: vsVoll ? '#175260' : '#A0762A',
+      hatAbrechnung: !!e.abrKey,
+      openAbrechnung: ev => { ev.stopPropagation(); this.openAbrechnungFile(e.abrKey, e.abrName); },
       abgleichLabel: e.erstattet > 0 ? (e.erstattet >= e.betrag ? 'voll erstattet' : 'teilweise') : 'Abrechnung offen',
       abgleichBg: e.erstattet > 0 ? (e.erstattet >= e.betrag ? '#E3EDF0' : '#FBF3E2') : '#EDF0F2',
       abgleichFg: e.erstattet > 0 ? (e.erstattet >= e.betrag ? '#175260' : '#A0762A') : '#68787F',
@@ -1786,7 +1917,7 @@ class Component extends DCLogic {
         const v = Math.round(parseFloat(String(ev.target.value).replace(',', '.')) * 100) / 100 || 0;
         this.update(s => ({ eintraege: s.eintraege.map(x => x.id === e.id ? { ...x, erstattet: v } : x) }));
       }
-    }));
+    };});
 
     // ---- Modal / Form ----
     const m = st.modal;
@@ -1982,6 +2113,13 @@ class Component extends DCLogic {
       artChart, monatChart, jahresVergleich, awPersonToggles, awPersonen, artGesamtFmt,
       // Abgleich
       onAbrechnungFile: ev => { const f = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (f) this.abrechnungVerarbeiten(f); },
+      docViewer: st.docViewer,
+      docViewerName: st.docViewer ? st.docViewer.name : '',
+      docViewerUrl: st.docViewer ? st.docViewer.url : null,
+      docViewerLaedt: !!(st.docViewer && st.docViewer.laedt),
+      docViewerZu: () => this.setState({ docViewer: null }),
+      docViewerDownload: () => { if (this._docUrl) { const a = document.createElement('a'); a.href = this._docUrl; a.download = (st.docViewer && st.docViewer.name) || 'dokument.pdf'; a.click(); } },
+      stopClick2: ev => ev.stopPropagation(),
       abrechnungStatus: st.abrechnungStatus || null,
       abrechnungStatusFarbe: st.abrechnungTyp === 'fehler' ? '#A03E3E' : st.abrechnungTyp === 'ok' ? '#175260' : '#68787F',
       hatVorschlaege: !!(st.abrechnungVorschlaege && st.abrechnungVorschlaege.length),
@@ -1991,6 +2129,19 @@ class Component extends DCLogic {
         badge: v.erledigt ? 'übernommen' : v.matchId ? 'zugeordnet' : 'keine Zuordnung',
         badgeBg: v.erledigt ? '#E3EDF0' : v.matchId ? '#FBF3E2' : '#EDF0F2',
         badgeFg: v.erledigt ? '#175260' : v.matchId ? '#A0762A' : '#68787F',
+        hatVorsorgeCheck: v.vorsorgeMax != null,
+        vorsorgeText: v.vorsorgeMax == null ? '' : (v.vorsorgeVoll
+          ? 'Vorsorge: maximaler Satz (' + fmt(v.vorsorgeMax) + ') leistungsbestätigt ✓'
+          : (() => {
+              const fehl = Math.max(0, v.vorsorgeMax - v.erstattet);
+              const e = this.state.eintraege.find(x => x.id === v.matchId);
+              let t = 'Vorsorge: ' + fmt(v.erstattet) + ' von max. ' + fmt(v.vorsorgeMax) + ' bestätigt — ' + fmt(fehl) + ' unter Maximalsatz';
+              const fz = e ? this.vorsorgeFehlziffern(e.positionen, fehl) : null;
+              if (fz) t += fz.sicher ? '. Nicht erstattet lt. Vorsorgeverzeichnis: ' + fz.text : '. Verzeichnis-Ziffern zum Prüfen: ' + fz.text;
+              else t += '. Welche Ziffer fehlt, kann nur ermittelt werden, wenn am Eintrag GOÄ/GOZ-Ziffern gepflegt sind — Eintrag antippen und im Vorsorge-Check die Ziffern eintragen (oder „Beleg auslesen“).';
+              return t;
+            })()),
+        vorsorgeFarbe: v.vorsorgeVoll ? '#175260' : '#A0762A',
         kannUebernehmen: !!v.matchId && !v.erledigt,
         uebernehmen: () => this.vorschlagUebernehmen(v)
       })),

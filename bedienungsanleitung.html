@@ -22,7 +22,7 @@ doc-page:not(:defined) { visibility: hidden; }
 
   <div slot="footer" style="display:flex; justify-content:space-between; font-size:9pt; color:#68787F; border-top:1px solid #DCE3E6; padding-top:6px;">
     <span>PKV-Aufwände — Bedienungsanleitung</span>
-    <span>Stand: 8. Juli 2026</span>
+    <span>Stand: 9. Juli 2026</span>
   </div>
 
   <div style="border-bottom:4px solid #C40D4E; padding-bottom:16px; margin-bottom:24px;">
@@ -32,7 +32,7 @@ doc-page:not(:defined) { visibility: hidden; }
   </div>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">1. Wozu dient die App?</h2>
-  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Das Dashboard sammelt alle bezahlten Gesundheitsausgaben für <strong>Johannes</strong> (blau) und <strong>Konrad</strong> (lila) und beantwortet die zentrale Frage: <strong>Lohnt es sich, die Rechnungen bei der Hallesche einzureichen — oder ist es besser, Bonus und Beitragsrückerstattung (BRE) zu behalten?</strong> Dazu vergleicht es die nicht eingereichten Beträge mit der Schwelle aus Bonus + BRE. Als Vorsorge gekennzeichnete Leistungen (GOÄ/GOZ-Ziffern aus dem Hallesche-Vorsorgeverzeichnis) zählen nicht gegen Bonus/BRE und können immer eingereicht werden.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Das Dashboard sammelt alle bezahlten Gesundheitsausgaben der versicherten Personen (z.&#8239;B. Johannes und Konrad — Namen, Farben und Anzahl sind frei konfigurierbar, siehe Abschnitt 5) und beantwortet die zentrale Frage: <strong>Lohnt es sich, die Rechnungen bei der Hallesche einzureichen — oder ist es besser, Bonus und Beitragsrückerstattung (BRE) zu behalten?</strong> Dazu vergleicht es die nicht eingereichten Beträge mit der Schwelle aus Bonus + BRE. Als Vorsorge gekennzeichnete Leistungen (GOÄ/GOZ-Ziffern aus dem Hallesche-Vorsorgeverzeichnis) zählen nicht gegen Bonus/BRE und können immer eingereicht werden.</p>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">2. Aufbau</h2>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
@@ -59,7 +59,8 @@ doc-page:not(:defined) { visibility: hidden; }
     <li><strong>Beleg auslesen → Felder füllen:</strong> liest PDF oder Scan per KI aus und befüllt Behandler, Adresse, Daten, Betrag und Gebührenziffern (inkl. Vorsorge-Einschätzung). In der Claude-Umgebung läuft das über die eingebaute KI; selbst gehostet (z.&#8239;B. GitHub Pages) über einen eigenen <strong>Anthropic-API-Key</strong> — Einrichtung siehe Abschnitt 8.</li>
   </ul>
 
-  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">5. Einstellungen: Bonus, BRE &amp; App-Sperre</h2>
+  <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">5. Einstellungen: Personen, Bonus, BRE &amp; App-Sperre</h2>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Personen verwalten:</strong> Jede versicherte Person hat eine eigene Karte mit Name, Bonus und BRE-Jahren. <strong>„+ Person hinzufügen“</strong> legt eine weitere an (z.&#8239;B. ein Kind) — Farben, Filter und Auswertungen passen sich automatisch an. Umbenennen zieht alle vorhandenen Einträge mit um; Entfernen geht nur bei Personen ohne Einträge. Die <strong>Tarif-Bezeichnung</strong> in der Kopfzeile ist frei wählbar (Feld darüber). Namen, Bonuswerte und Tarif stehen nicht im Code der öffentlichen Seite — sie kommen erst mit dem geladenen Sync-Stand.</p>
   <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Pro Person werden der jährliche <strong>Bonus</strong> (derzeit 1.200&#8239;€ / 600&#8239;€) und die Zahl der <strong>berücksichtigungsfähigen BRE-Jahre</strong> gepflegt (Staffel ab 2026: 300–800&#8239;€ für 1–6 Jahre). Daraus errechnet sich die Schwelle für die Einreich-Empfehlung. Ist die BRE-Höhe nicht hinterlegt, rechnet die Empfehlung nur mit dem Bonus und weist darauf hin.</p>
   <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>App-Sperre (PIN):</strong> Unter Einstellungen lässt sich eine PIN festlegen (min. 4 Zeichen) — danach verlangt die App bei jedem Öffnen die Eingabe. Die Sperre wandert über den GitHub-Sync <strong>auf alle verbundenen Geräte</strong> (einmal einrichten genügt); Feld leeren und speichern schaltet sie überall ab. Wichtig zur Einordnung: Es ist ein Sichtschutz gegen neugierige Blicke am geöffneten Browser — keine Verschlüsselung der Daten. Der eigentliche Schutz deiner Daten bleibt der private Gist und die Gerätesperre von Handy/Rechner. PIN vergessen? Browserdaten der Seite löschen und den Stand per „Jetzt laden“ aus dem Gist zurückholen.</p>
 
@@ -110,10 +111,20 @@ doc-page:not(:defined) { visibility: hidden; }
 
   <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt D — Weitere Geräte verbinden</h3>
   <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
-    <li style="margin-bottom:4px;">Auf dem Handy/Zweitrechner die App öffnen → Einstellungen → dasselbe Token, die notierte <strong>Gist-ID</strong> und dasselbe <strong>Repo</strong> eintragen.</li>
-    <li style="margin-bottom:4px;"><strong>„Jetzt laden“</strong> antippen — der Stand vom ersten Gerät wird übernommen.</li>
+    <li style="margin-bottom:4px;"><strong>Bequemer Weg (empfohlen):</strong> Liegt eine <em>setup.json</em> im Repo (siehe Schritt E), fragt die App beim ersten Öffnen nur nach dem <strong>Einrichtungs-Passwort</strong> — „Verbinden“ antippen, fertig. Kein Token-Kopieren nötig.</li>
+    <li style="margin-bottom:4px;"><strong>Manueller Weg:</strong> Einstellungen → dasselbe Token, die notierte <strong>Gist-ID</strong> und dasselbe <strong>Repo</strong> eintragen → <strong>„Jetzt laden“</strong>.</li>
     <li>Ab jetzt automatisch: Beim Öffnen wird der neuere Stand geladen, jede Änderung nach ca. 2–3 Sekunden hochgeladen.</li>
   </ol>
+
+  <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">Schritt E — Schnell-Einrichtung per setup.json (optional, einmalig)</h3>
+  <ol style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
+    <li style="margin-bottom:4px;">Auf einem bereits eingerichteten Gerät: Einstellungen → Bereich <strong>„Schnell-Einrichtung für neue Geräte“</strong>.</li>
+    <li style="margin-bottom:4px;">Ein <strong>Einrichtungs-Passwort</strong> wählen — mindestens 8 Zeichen, besser deutlich mehr, und <strong>nicht</strong> die App-PIN. Die Datei liegt öffentlich im Repo; das Passwort ist ihr einziger Schutz.</li>
+    <li style="margin-bottom:4px;"><strong>„setup.json erzeugen &amp; herunterladen“</strong> antippen. Die Datei enthält Token, Gist-ID, Beleg-Repo und API-Key <strong>AES-verschlüsselt</strong> (PBKDF2, 600.000 Iterationen).</li>
+    <li style="margin-bottom:4px;">Die <em>setup.json</em> im GitHub-Repo <strong>neben die index.html</strong> hochladen (Add file → Upload files).</li>
+    <li>Neue Geräte zeigen dann beim ersten Öffnen direkt die Passwort-Abfrage. Nach Token-Wechsel einfach eine neue setup.json erzeugen und die Datei im Repo ersetzen.</li>
+  </ol>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Abgrenzung zur PIN:</strong> Das Einrichtungs-Passwort wird nur <em>einmal pro Gerät</em> gebraucht (beim Verbinden). Im Alltag fragt die App weiterhin die zentrale <strong>PIN</strong> ab, die über den Sync auf allen Geräten gleich ist.</p>
 
   <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">So läuft der Dokumenten-Upload danach ab</h3>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
