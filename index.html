@@ -54,8 +54,19 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
     <sc-if value="{{ einrichtungNoetig }}" hint-placeholder-val="{{ false }}">
       <div style="max-width:460px; margin:60px auto 0 auto; background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:32px; display:flex; flex-direction:column; gap:14px; text-align:center;">
         <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:20px; color:#1E2B32;">Noch nicht eingerichtet</div>
-        <div style="font-size:14px; color:#68787F; line-height:1.55;">Diese App zeigt erst Inhalte, wenn sie mit deinem Datenbestand verbunden ist. Trage in den Einstellungen dein GitHub-Token und die Gist-ID ein und lade den Stand.</div>
-        <button onClick="{{ openSettings }}" style="border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:6px; padding:13px; font-size:15px; font-weight:600;">Einrichtung starten</button>
+        <sc-if value="{{ setupVorhanden }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px; color:#68787F; line-height:1.55;">Einrichtungs-Passwort eingeben — Zugangsdaten und Stand werden automatisch geladen.</div>
+          <input type="password" autoFocus="{{ true }}" placeholder="Einrichtungs-Passwort" value="{{ setupPass }}" onChange="{{ setSetupPass }}" onKeyDown="{{ setupKeyDown }}" style="padding:12px 14px; border:1px solid #DCE3E6; border-radius:6px; font-size:16px; text-align:center; color:#1E2B32;">
+          <button onClick="{{ setupAnwenden }}" style="border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:6px; padding:13px; font-size:15px; font-weight:600;">Verbinden</button>
+          <sc-if value="{{ setupLaeuft }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13px; color:#68787F;">Entschlüssele und lade Stand …</div>
+          </sc-if>
+          <sc-if value="{{ setupFehler }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13px; color:#A03E3E;">{{ setupFehler }}</div>
+          </sc-if>
+        </sc-if>
+        <div style="font-size:12.5px; color:#9AA7AD; line-height:1.5;">Manuelle Einrichtung mit Token und Gist-ID:</div>
+        <button onClick="{{ openSettings }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:6px; padding:11px; font-size:13.5px; font-weight:600;">Einrichtung starten</button>
       </div>
     </sc-if>
 
@@ -729,6 +740,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </div>
         <sc-if value="{{ eingerichtet }}" hint-placeholder-val="{{ true }}">
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; font-weight:600;">Schnell-Einrichtung für neue Geräte (setup.json)</div>
+          <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Erzeugt eine verschlüsselte Datei mit Token, Gist-ID, Beleg-Repo und API-Key. Ins Repo neben die index.html legen — neue Geräte fragen dann nur noch nach diesem Passwort. Die Datei ist öffentlich sichtbar, daher ein langes Passwort wählen (min. 8 Zeichen, besser mehr — nicht die PIN).</div>
+          <input type="password" placeholder="Einrichtungs-Passwort (min. 8 Zeichen)" value="{{ setupCodePass }}" onChange="{{ setSetupCodePass }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+          <button onClick="{{ setupCodeErzeugen }}" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:10px; font-size:13.5px; font-weight:600;">setup.json erzeugen &amp; herunterladen</button>
+          <sc-if value="{{ setupCodeInfo }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ setupCodeInfo }}</div>
+          </sc-if>
+        </div>
+        <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">KI-Auslesen (selbst gehostet)</div>
           <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Nur nötig, wenn die App außerhalb dieser Umgebung läuft (z. B. GitHub Pages): eigenen Anthropic-API-Key eintragen, damit „Beleg auslesen“ funktioniert. Hier in der Claude-Umgebung wird die eingebaute KI genutzt und der Key ignoriert.</div>
           <input type="password" placeholder="Anthropic-API-Key (sk-ant-…)" value="{{ aiKey }}" onChange="{{ setAiKey }}" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
@@ -793,6 +813,7 @@ class Component extends DCLogic {
       settingsOffen: false,
       gesperrt: !!(settings && settings.sperreHash) && sessionStorage.getItem('pkv.entsperrt') !== '1',
       pinEingabe: '', pinFehler: null, pinNeu: '', pinInfo: null,
+      setupBlob: null, setupPass: '', setupFehler: null, setupLaeuft: false, setupCodePass: '', setupCodeInfo: null,
       sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
@@ -822,6 +843,21 @@ class Component extends DCLogic {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('pkv:' + pin));
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
   }
+  async setupAnwenden() {
+    const pass = (this.state.setupPass || '').trim();
+    if (!pass) { this.setState({ setupFehler: 'Bitte Passwort eingeben.' }); return; }
+    this.setState({ setupLaeuft: true, setupFehler: null });
+    try {
+      const c = await this.setupEntschluesseln(pass, this.state.setupBlob);
+      if (!c.token || !c.gistId) throw new Error('unvollständig');
+      this.speichereSync({ token: c.token, gistId: c.gistId, repo: c.repo || '', aiKey: c.aiKey || '' });
+      this.setState({ setupLaeuft: false, setupPass: '' });
+      await this.syncLoad(false);
+    } catch (e) {
+      this.setState({ setupLaeuft: false, setupFehler: 'Entschlüsselung fehlgeschlagen — Passwort falsch?' });
+    }
+  }
+
   async entsperren() {
     const hash = await this.pinHash(this.state.pinEingabe || '');
     if (hash === this.state.settings.sperreHash) {
@@ -874,8 +910,29 @@ class Component extends DCLogic {
     return this.staffel[Math.min(6, jahre) - 1];
   }
 
+  // ---------- Schnell-Einrichtung: verschlüsselte setup.json im Repo ----------
+  async setupSchluessel(pass, salt) {
+    const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 600000, hash: 'SHA-256' }, mat, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async setupVerschluesseln(pass, obj) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await this.setupSchluessel(pass, salt);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(obj)));
+    const b64 = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+    return JSON.stringify({ v: 1, salt: b64(salt), iv: b64(iv), daten: b64(ct) }, null, 1);
+  }
+  async setupEntschluesseln(pass, blob) {
+    const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+    const key = await this.setupSchluessel(pass, u8(blob.salt));
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: u8(blob.iv) }, key, u8(blob.daten));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+
   componentDidMount() {
     if (this.state.sync && this.state.sync.token && this.state.sync.gistId) this.syncLoad(true);
+    else fetch('setup.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(b => { if (b && b.daten) this.setState({ setupBlob: b }); }).catch(() => {});
     if (!this.state.geladen) {
       // Zuerst kompletter eingebackener Stand (stand.json), sonst Roh-Import aus der Excel
       fetch('data/stand.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(s => {
@@ -1794,6 +1851,26 @@ class Component extends DCLogic {
       jahrHinzuTitel: 'Jahr ' + (Math.max(...jahreAlle) + 1) + ' hinzufügen',
       tabs: eingerichtet ? tabs : [],
       einrichtungNoetig: !eingerichtet,
+      setupVorhanden: !eingerichtet && !!st.setupBlob,
+      setupPass: st.setupPass, setupFehler: st.setupFehler, setupLaeuft: st.setupLaeuft,
+      setSetupPass: ev => this.setState({ setupPass: ev.target.value }),
+      setupKeyDown: ev => { if (ev.key === 'Enter') this.setupAnwenden(); },
+      setupAnwenden: () => this.setupAnwenden(),
+      setupCodePass: st.setupCodePass, setupCodeInfo: st.setupCodeInfo,
+      setSetupCodePass: ev => this.setState({ setupCodePass: ev.target.value }),
+      setupCodeErzeugen: async () => {
+        const pass = (st.setupCodePass || '').trim();
+        if (pass.length < 8) { this.setState({ setupCodeInfo: 'Bitte mindestens 8 Zeichen — die Datei liegt öffentlich im Repo.' }); return; }
+        const c = st.sync || {};
+        if (!c.token || !c.gistId) { this.setState({ setupCodeInfo: 'Erst Token und Gist-ID einrichten.' }); return; }
+        const inhalt = await this.setupVerschluesseln(pass, { token: c.token, gistId: c.gistId, repo: c.repo || '', aiKey: c.aiKey || '' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([inhalt], { type: 'application/json' }));
+        a.download = 'setup.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+        this.setState({ setupCodeInfo: 'setup.json heruntergeladen — ins Repo neben die index.html hochladen. Neue Geräte brauchen dann nur noch dieses Passwort.', setupCodePass: '' });
+      },
       eingerichtet,
       tabUebersicht: eingerichtet && st.tab === 'uebersicht',
       tabEintraege: eingerichtet && st.tab === 'eintraege',
