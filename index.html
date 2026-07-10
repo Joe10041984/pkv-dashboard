@@ -428,7 +428,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 <div style="width:100%; max-width:38px; display:flex; gap:2px; align-items:flex-end;">
                   <sc-for list="{{ m.balken }}" as="b" hint-placeholder-count="2">
                     <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
-                      <span style="font-size:10px; font-weight:600; color:{{ b.farbe }}; white-space:nowrap; margin-bottom:2px;">{{ b.oben }}</span>
+                      <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; font-weight:600; color:{{ b.farbe }}; white-space:nowrap; margin-bottom:2px;">{{ b.oben }}</span>
                       <div style="width:100%; background:{{ b.farbe }}; border-radius:4px 4px 0 0; height:{{ b.h }}px; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
                         <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9.5px; font-weight:600; color:#FFFFFF; white-space:nowrap; padding-bottom:3px;">{{ b.label }}</span>
                       </div>
@@ -2357,7 +2357,7 @@ class Component extends DCLogic {
         if (!awAktiv.includes(p.name)) return;
         const s = m.betraege[pi];
         const h = Math.round(s / monMax * 100);
-        const label = h >= 48 ? fmt0(s) : '';
+        const label = h >= 36 ? fmt0(s) : '';
         let oben = '';
         if (s === 0) oben = i < monatGrenze ? '0 €' : '';
         else if (!label) oben = fmt0(s);
