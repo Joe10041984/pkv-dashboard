@@ -9,6 +9,11 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PKV Cockpit</title>
+<meta name="apple-mobile-web-app-title" content="PKV Cockpit">
+<meta name="theme-color" content="#C40D4E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23FBEFF3'/%3E%3Cpath d='M16 25c-5.2-3.4-9-6.6-9-10.5C7 11 9.4 9 12 9c1.7 0 3.2.8 4 2.2C16.8 9.8 18.3 9 20 9c2.6 0 5 2 5 5.5 0 3.9-3.8 7.1-9 10.5z' fill='%23C40D4E'/%3E%3Ctext x='16' y='19.5' text-anchor='middle' font-family='Arial' font-size='10' font-weight='bold' fill='%23FFFFFF'%3E%E2%82%AC%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FBEFF3'/%3E%3Cpath d='M16 25c-5.2-3.4-9-6.6-9-10.5C7 11 9.4 9 12 9c1.7 0 3.2.8 4 2.2C16.8 9.8 18.3 9 20 9c2.6 0 5 2 5 5.5 0 3.9-3.8 7.1-9 10.5z' fill='%23C40D4E'/%3E%3Ctext x='16' y='19.5' text-anchor='middle' font-family='Arial' font-size='10' font-weight='bold' fill='%23FFFFFF'%3E%E2%82%AC%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1627,7 +1632,7 @@ class Component extends DCLogic {
         system: 'Du extrahierst Daten aus deutschen Arzt-, Zahnarzt- und Apothekenrechnungen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown, ohne Erklärung. Dezimalzahlen mit Punkt.',
         messages: [{
           role: 'user',
-          content: 'Extrahiere aus folgendem Rechnungstext:\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
+          content: 'Extrahiere aus folgendem Rechnungstext:\nWICHTIG bei Apotheken-Rezepten (Privatrezept mit Apothekenstempel/-aufdruck): "empfaenger" ist die APOTHEKE (aus Stempel/Aufdruck erkennbar), NICHT der verordnende Arzt; "betrag" ist der von der Apotheke aufgedruckte Abgabepreis (Summe der Medikamentenpreise); "datum" ist das Abgabedatum der Apotheke; "art" ist "Medikamente".\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
         }]
       });
       const jm = antwort.match(/\{[\s\S]*\}/);
