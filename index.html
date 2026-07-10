@@ -1201,6 +1201,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </sc-if>
           <sc-if value="{{ pinAktiv }}" hint-placeholder-val="{{ false }}">
             <button onClick="{{ belegeVerschluesseln }}" title="Lädt alle verknüpften Belege einmal und lädt noch unverschlüsselte verschlüsselt neu hoch" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:10px; font-size:13.5px; font-weight:600; align-self:flex-start;">Alle Belege jetzt verschlüsseln</button>
+            <sc-if value="{{ belegEncInfo }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ belegEncInfo }}</div>
+            </sc-if>
           </sc-if>
         </div>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
@@ -3144,16 +3147,22 @@ class Component extends DCLogic {
       entsperren: () => this.entsperren(),
       pinNeu: st.pinNeu, pinInfo: st.pinInfo,
       pinAktiv: !!s.sperreHash,
+      belegEncInfo: st.belegEncInfo || false,
       belegeVerschluesseln: async () => {
+        const setI = t => this.setState({ belegEncInfo: t });
+        let key = await this.datenKeyErmitteln(null);
+        if (!key && this._pin) { try { key = await this.datenKeyErzeugen(); } catch (e) {} }
+        if (!key) { setI('In dieser Sitzung ist kein Datenschlüssel verfügbar — bitte die App neu laden, mit der PIN entsperren und den Button dann erneut drücken.'); return; }
+        if (!this.repoCfg()) { setI('Kein Beleg-Repo in den Einstellungen eingetragen — es gibt nichts zu verschlüsseln.'); return; }
         const kandidaten = this.state.eintraege.filter(e => e.belegName);
-        if (!kandidaten.length) { this.setState({ syncStatus: 'Keine Belege verknüpft.' }); return; }
-        let n = 0;
+        if (!kandidaten.length) { setI('Keine Belege verknüpft.'); return; }
+        let n = 0, ok = 0;
         for (const e of kandidaten) {
           n++;
-          this.setState({ syncStatus: 'Prüfe Beleg ' + n + '/' + kandidaten.length + ' …' });
-          try { await this.belegLaden(e.id, e.belegName); } catch (err) {}
+          setI('Prüfe Beleg ' + n + ' von ' + kandidaten.length + ' … (' + (e.belegName || '') + ')');
+          try { if (await this.belegLaden(e.id, e.belegName)) ok++; } catch (err) {}
         }
-        this.setState({ syncStatus: 'Fertig — ' + kandidaten.length + ' Belege geprüft; unverschlüsselte wurden verschlüsselt neu hochgeladen.' });
+        setI('Fertig — ' + ok + ' von ' + kandidaten.length + ' Belegen geprüft und verschlüsselt abgelegt' + (ok < kandidaten.length ? ' (' + (kandidaten.length - ok) + ' nicht erreichbar).' : '.'));
       },
       pinPlatzhalter: s.sperreHash ? 'Neue PIN (leer = Sperre aus)' : 'PIN festlegen (min. 8 Zeichen)',
       setPinNeu: ev => this.setState({ pinNeu: ev.target.value }),
