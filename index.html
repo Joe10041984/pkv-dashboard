@@ -1569,8 +1569,10 @@ class Component extends DCLogic {
       const r = await fetch(url, { method: 'PUT', headers: this.syncHeaders(), body: JSON.stringify({ message: 'Beleg: ' + pfad, content: b64, ...(sha ? { sha } : {}) }) });
       if (!r.ok) throw new Error('GitHub-Fehler ' + r.status + (r.status === 404 ? ' — Repo falsch oder Token ohne Contents-Recht?' : ''));
       this.setState({ syncStatus: 'Beleg ins Repo hochgeladen.' });
+      return true;
     } catch (err) {
       this.setState({ syncStatus: 'Beleg-Upload fehlgeschlagen: ' + (err && err.message ? err.message : err) });
+      return false;
     }
   }
   async belegLaden(id, name) {
@@ -3170,7 +3172,12 @@ class Component extends DCLogic {
           n++;
           setI('Prüfe Beleg ' + n + ' von ' + kandidaten.length + ' … (' + (e.name || '') + ')');
           let geladen = null;
-          try { geladen = await this.belegLaden(e.id, e.name); } catch (err) {}
+          try {
+            // Zuerst die lokale Kopie nehmen (funktioniert auch mit einem frischen, leeren Repo) — sonst aus dem Repo laden
+            const lokal = await this.getBelegBlob(e.id);
+            if (lokal) geladen = await this.belegHochladen(e.id, new File([lokal], e.name || 'beleg.pdf', { type: lokal.type || 'application/pdf' }));
+            else geladen = await this.belegLaden(e.id, e.name);
+          } catch (err) {}
           if (geladen) ok++;
           else fehler.push((e.datum || '') + ' ' + (e.empfaenger || '?') + ' — ' + (e.name || '?'));
         }
