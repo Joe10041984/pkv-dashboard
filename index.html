@@ -152,16 +152,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </div>
           <sc-if value="{{ hatOffene }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex; flex-direction:column; margin-top:10px;">
-              <sc-for list="{{ offenePosten }}" as="e" hint-placeholder-count="4">
+              <sc-for list="{{ offeneGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:12px 6px 3px 6px;">
+                <span style="width:15px; height:15px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:12px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="3">
                 <div onClick="{{ e.onEdit }}" style="display:flex; align-items:center; flex-wrap:wrap; row-gap:6px; gap:10px; padding:9px 6px; border-top:1px solid #EDF0F2; cursor:pointer; border-radius:4px;" style-hover="background:#F5F6F7;">
                   <div style="width:8px; height:8px; border-radius:50%; background:{{ e.farbe }}; flex-shrink:0;"></div>
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
-                  <div style="width:clamp(96px,24vw,150px); flex-shrink:0;">
-                    <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#46565E; background:#EDF0F2; border-radius:4px; padding:3px 9px; max-width:100%; box-sizing:border-box; white-space:nowrap;">
-                      <span style="width:14px; height:14px; flex-shrink:0; background:#175260; -webkit-mask:url({{ e.artIcon }}) center/contain no-repeat; mask:url({{ e.artIcon }}) center/contain no-repeat;"></span>
-                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.art }}</span>
-                    </span>
-                  </div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
                     <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
@@ -173,6 +172,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   </div>
                   <div style="width:90px; text-align:right; font-size:14px; font-weight:600; white-space:nowrap; flex-shrink:0;">{{ e.betragFmt }}</div>
                 </div>
+              </sc-for>
               </sc-for>
             </div>
           </sc-if>
@@ -188,16 +188,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </div>
           <sc-if value="{{ hatWartende }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex; flex-direction:column; margin-top:10px;">
-              <sc-for list="{{ wartendePosten }}" as="e" hint-placeholder-count="2">
+              <sc-for list="{{ wartendGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:12px 6px 3px 6px;">
+                <span style="width:15px; height:15px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:12px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="2">
                 <div onClick="{{ e.onEdit }}" style="display:flex; align-items:center; flex-wrap:wrap; row-gap:6px; gap:10px; padding:9px 6px; border-top:1px solid #EDF0F2; cursor:pointer; border-radius:4px;" style-hover="background:#F5F6F7;">
                   <div style="width:8px; height:8px; border-radius:50%; background:{{ e.farbe }}; flex-shrink:0;"></div>
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
-                  <div style="width:clamp(96px,24vw,150px); flex-shrink:0;">
-                    <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#46565E; background:#EDF0F2; border-radius:4px; padding:3px 9px; max-width:100%; box-sizing:border-box; white-space:nowrap;">
-                      <span style="width:14px; height:14px; flex-shrink:0; background:#175260; -webkit-mask:url({{ e.artIcon }}) center/contain no-repeat; mask:url({{ e.artIcon }}) center/contain no-repeat;"></span>
-                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.art }}</span>
-                    </span>
-                  </div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
                     <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
@@ -209,6 +208,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   </div>
                   <div style="width:90px; text-align:right; font-size:14px; font-weight:600; white-space:nowrap; flex-shrink:0;">{{ e.betragFmt }}</div>
                 </div>
+              </sc-for>
               </sc-for>
             </div>
           </sc-if>
@@ -236,16 +236,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   <div style="width:clamp(64px,19vw,82px); text-align:right;">Differenz</div>
                 </div>
               </div>
-              <sc-for list="{{ abgerechnetePosten }}" as="e" hint-placeholder-count="2">
+              <sc-for list="{{ abgerechnetGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:12px 6px 3px 6px;">
+                <span style="width:15px; height:15px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:12px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="2">
                 <div onClick="{{ e.onEdit }}" style="display:flex; align-items:center; flex-wrap:wrap; row-gap:6px; gap:10px; padding:9px 6px; border-top:1px solid #EDF0F2; cursor:pointer; border-radius:4px;" style-hover="background:#F5F6F7;">
                   <div style="width:8px; height:8px; border-radius:50%; background:{{ e.farbe }}; flex-shrink:0;"></div>
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
-                  <div style="width:clamp(96px,24vw,150px); flex-shrink:0;">
-                    <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#46565E; background:#EDF0F2; border-radius:4px; padding:3px 9px; max-width:100%; box-sizing:border-box; white-space:nowrap;">
-                      <span style="width:14px; height:14px; flex-shrink:0; background:#175260; -webkit-mask:url({{ e.artIcon }}) center/contain no-repeat; mask:url({{ e.artIcon }}) center/contain no-repeat;"></span>
-                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.art }}</span>
-                    </span>
-                  </div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
                     <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
@@ -261,6 +260,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                     <div style="width:clamp(64px,19vw,82px); text-align:right; font-size:14px; color:#A0762A; font-weight:600; white-space:nowrap;">{{ e.differenzFmt }}</div>
                   </div>
                 </div>
+              </sc-for>
               </sc-for>
             </div>
           </sc-if>
@@ -287,18 +287,17 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </div>
 
         <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
-          <sc-for list="{{ eintraegeListe }}" as="e" hint-placeholder-count="8">
+          <sc-for list="{{ eintraegeGruppen }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex; align-items:center; gap:7px; padding:11px 16px 7px 16px; background:#FAFBFB; border-bottom:1px solid #EDF0F2;">
+              <span style="width:15px; height:15px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+              <span style="font-size:12px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+            </div>
+            <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="4">
             <div onClick="{{ e.onEdit }}" style="display:flex; align-items:center; flex-wrap:wrap; row-gap:8px; gap:10px; padding:12px 16px; border-bottom:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
               <div style="width:34px; height:34px; border-radius:50%; background:{{ e.farbeHell }}; color:{{ e.farbe }}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">{{ e.initial }}</div>
               <div style="flex:1; min-width:170px; overflow:hidden;">
                 <div style="font-size:14.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
                 <div style="font-size:12.5px; color:#68787F; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
-              </div>
-              <div style="width:clamp(96px,24vw,150px); flex-shrink:0;">
-                <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#46565E; background:#EDF0F2; border-radius:4px; padding:3px 9px; max-width:100%; box-sizing:border-box; white-space:nowrap;">
-                  <span style="width:14px; height:14px; flex-shrink:0; background:#175260; -webkit-mask:url({{ e.artIcon }}) center/contain no-repeat; mask:url({{ e.artIcon }}) center/contain no-repeat;"></span>
-                  <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.art }}</span>
-                </span>
               </div>
               <div style="width:26px; flex-shrink:0; display:flex; justify-content:center;" title="Vorsorge — zählt nicht auf Bonus oder Beitragsrückerstattung">
                 <sc-if value="{{ e.vorsorge }}" hint-placeholder-val="{{ false }}">
@@ -320,6 +319,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 </sc-if>
               </div>
             </div>
+          </sc-for>
           </sc-for>
         </div>
       </div>
@@ -515,7 +515,12 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; overflow:hidden;">
           <div style="padding:16px 16px 8px 16px; font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Eingereichte Rechnungen {{ jahr }}</div>
           <sc-if value="{{ hatEingereichte }}" hint-placeholder-val="{{ true }}">
-            <sc-for list="{{ abgleichListe }}" as="e" hint-placeholder-count="4">
+            <sc-for list="{{ abgleichGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:11px 16px 3px 16px; border-top:1px solid #EDF0F2;">
+                <span style="width:15px; height:15px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:12px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="3">
               <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-top:1px solid #EDF0F2; flex-wrap:wrap;">
                 <div style="width:8px; height:8px; border-radius:50%; background:{{ e.farbe }}; flex-shrink:0;"></div>
                 <div style="flex:1; min-width:150px;">
@@ -538,6 +543,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   </button>
                 </sc-if>
               </div>
+            </sc-for>
             </sc-for>
           </sc-if>
           <sc-if value="{{ keineEingereichten }}" hint-placeholder-val="{{ false }}">
@@ -611,7 +617,12 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               <span style="color:#9AA7AD; font-size:12px;">{{ pp.pfeil }}</span>
             </div>
             <sc-if value="{{ pp.offen }}" hint-placeholder-val="{{ false }}">
-              <sc-for list="{{ pp.mappen }}" as="mp" hint-placeholder-count="2">
+              <sc-for list="{{ pp.artGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:10px 14px 3px 26px; border-top:1px solid #EDF0F2;">
+                <span style="width:14px; height:14px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:11.5px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="mp" hint-placeholder-count="2">
                 <div>
                   <div onClick="{{ mp.toggle }}" style="display:flex; align-items:center; gap:10px; padding:10px 14px 10px 26px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
                     <span style="width:16px; height:16px; flex-shrink:0; background:#A0762A; -webkit-mask:url({{ mp.icon }}) center/contain no-repeat; mask:url({{ mp.icon }}) center/contain no-repeat;"></span>
@@ -638,6 +649,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   </sc-if>
                 </div>
               </sc-for>
+              </sc-for>
             </sc-if>
           </div>
         </sc-for>
@@ -663,6 +675,10 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Diagnosen {{ jahr }}</div>
           <div style="font-size:12.5px; color:#68787F;">{{ diagAnzahl }}</div>
           <div style="flex:1;"></div>
+          <button onClick="{{ rezepteAuslesen }}" disabled="{{ diagBatchLaeuft }}" title="Bereits gespeicherte Medikamenten-Belege per KI auslesen (Medikamente + Dosierung)" style="display:inline-flex; align-items:center; gap:7px; border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;" style-hover="background:#F5F6F7;">
+            <span style="width:14px; height:14px; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/pill.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/pill.svg) center/contain no-repeat;"></span>
+            Rezepte auslesen
+          </button>
           <button onClick="{{ diagExport }}" title="Diagnosen-Übersicht als Textdatei herunterladen (z. B. für einen PKV-Wechsel)" style="display:inline-flex; align-items:center; gap:7px; border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:8px 13px; font-size:13px; font-weight:600;">
             <span style="width:14px; height:14px; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/download.svg) center/contain no-repeat;"></span>
             Export
@@ -675,19 +691,40 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               <span style="width:28px; height:28px; border-radius:50%; background:{{ dp.farbeHell }}; color:{{ dp.farbe }}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;">{{ dp.initial }}</span>
               <div style="font-size:14px; font-weight:700;">{{ dp.name }}</div>
             </div>
-            <sc-for list="{{ dp.behandler }}" as="db" hint-placeholder-count="2">
+            <sc-for list="{{ dp.artGruppen }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:7px; padding:10px 14px 3px 26px; border-top:1px solid #EDF0F2;">
+                <span style="width:14px; height:14px; flex-shrink:0; background:#68787F; -webkit-mask:url({{ g.icon }}) center/contain no-repeat; mask:url({{ g.icon }}) center/contain no-repeat;"></span>
+                <span style="font-size:11.5px; font-weight:700; color:#68787F; text-transform:uppercase; letter-spacing:.04em;">{{ g.art }}</span>
+              </div>
+              <sc-for list="{{ g.rows }}" as="db" hint-placeholder-count="2">
               <div>
                 <div style="padding:8px 14px 8px 26px; border-top:1px solid #EDF0F2; font-size:13px; font-weight:600; color:#46565E; background:#FAFBFB;">{{ db.name }}</div>
                 <sc-for list="{{ db.diagnosen }}" as="dg" hint-placeholder-count="2">
-                  <div onClick="{{ dg.oeffnen }}" title="Eintrag öffnen" style="display:flex; align-items:baseline; gap:10px; padding:9px 14px 9px 40px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
-                    <span style="font-size:13px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums;">{{ dg.datumFmt }}</span>
-                    <div style="flex:1; min-width:0; font-size:13px; color:#46565E; line-height:1.45;">{{ dg.text }}</div>
+                  <div onClick="{{ dg.oeffnen }}" title="Eintrag öffnen" style="display:flex; flex-direction:column; gap:3px; padding:9px 14px 9px 40px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
+                    <sc-if value="{{ dg.hatText }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex; align-items:baseline; gap:10px;">
+                        <span style="font-size:13px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums;">{{ dg.datumFmt }}</span>
+                        <span style="font-size:13.5px; color:#1E2B32; line-height:1.5;">{{ dg.text }}</span>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ dg.hatMedis }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex; align-items:baseline; gap:10px;">
+                        <span style="font-size:13px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums; min-width:74px;">{{ dg.medsDatum }}</span>
+                        <span style="width:13px; height:13px; flex-shrink:0; align-self:center; background:#175260; -webkit-mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/pill.svg) center/contain no-repeat; mask:url(https://unpkg.com/@tabler/icons@2.47.0/icons/pill.svg) center/contain no-repeat;"></span>
+                        <span style="font-size:13.5px; color:#175260; line-height:1.5;">{{ dg.medis }}</span>
+                      </div>
+                    </sc-if>
                   </div>
                 </sc-for>
               </div>
             </sc-for>
+            </sc-for>
           </div>
         </sc-for>
+
+        <sc-if value="{{ diagBatch }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ diagBatch.text }}</div>
+        </sc-if>
 
         <sc-if value="{{ keineDiagnosen }}" hint-placeholder-val="{{ false }}">
           <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px 16px; font-size:13.5px; color:#68787F; line-height:1.55;">Für dieses Jahr sind noch keine Diagnosen erfasst. Diagnosen kommen auf zwei Wegen hierher: <strong>„Beleg auslesen“</strong> im Eintrag übernimmt in der Rechnung genannte Diagnosen (inkl. ICD-Code) automatisch — oder du trägst sie im Eintrag im Feld <strong>„Diagnosen“</strong> selbst ein.</div>
@@ -814,6 +851,10 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
 
         <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Anschrift
           <input type="text" value="{{ formAdresse }}" onChange="{{ setFormAdresse }}" placeholder="Straße Nr., PLZ Ort" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+        </label>
+
+        <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Medikamente (laut Rezept)
+          <input type="text" value="{{ formMedikamente }}" onChange="{{ setFormMedikamente }}" placeholder="z. B. Ibuprofen 600 mg, 1-0-1; mehrere mit ; trennen" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
         </label>
 
         <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Diagnosen (laut Rechnung)
@@ -1077,9 +1118,18 @@ class Component extends DCLogic {
   artIcon(art) {
     const map = {
       'Arztbesuch': 'stethoscope', 'Zahnarztbesuch': 'dental', 'Medikamente': 'pill',
-      'Heilmittel': 'activity', 'Hilfsmittel': 'wheelchair', 'Stationäre Behandlung': 'building-hospital'
+      'Heilmittel': 'activity', 'Hilfsmittel': 'wheelchair', 'Stationäre Behandlung': 'building-hospital', 'Labor': 'microscope'
     };
     return 'https://unpkg.com/@tabler/icons@2.47.0/icons/' + (map[art] || 'receipt') + '.svg';
+  }
+  // Zeilen nach Behandlungsart gruppieren (Reihenfolge wie this.arten)
+  gruppiereNachArt(rows) {
+    const gr = {};
+    rows.forEach(r => { const a = r.art || 'Sonstiges'; (gr[a] = gr[a] || []).push(r); });
+    return Object.keys(gr).sort((a, b) => {
+      const ia = this.arten.indexOf(a), ib = this.arten.indexOf(b);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    }).map(a => ({ art: a, icon: this.artIcon(a), rows: gr[a] }));
   }
   async pinHash(pin) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('pkv:' + pin));
@@ -1632,7 +1682,7 @@ class Component extends DCLogic {
         system: 'Du extrahierst Daten aus deutschen Arzt-, Zahnarzt- und Apothekenrechnungen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown, ohne Erklärung. Dezimalzahlen mit Punkt.',
         messages: [{
           role: 'user',
-          content: 'Extrahiere aus folgendem Rechnungstext:\nWICHTIG bei Apotheken-Rezepten (Privatrezept mit Apothekenstempel/-aufdruck): "empfaenger" ist die APOTHEKE (aus Stempel/Aufdruck erkennbar), NICHT der verordnende Arzt; "betrag" ist der von der Apotheke aufgedruckte Abgabepreis (Summe der Medikamentenpreise); "datum" ist das Abgabedatum der Apotheke; "art" ist "Medikamente".\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
+          content: 'Extrahiere aus folgendem Rechnungstext:\nWICHTIG bei Apotheken-Rezepten (Privatrezept mit Apothekenstempel/-aufdruck): "empfaenger" ist die APOTHEKE (aus Stempel/Aufdruck erkennbar), NICHT der verordnende Arzt; "betrag" ist der von der Apotheke aufgedruckte Abgabepreis (Summe der Medikamentenpreise); "datum" ist das Abgabedatum der Apotheke; "art" ist "Medikamente".\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst [],\n "medikamente": [{"name": "Medikamentenname mit Stärke, z. B. Ibuprofen 600 mg", "dosierung": "Dosierungsangabe falls auf dem Rezept, z. B. 1-0-1, sonst null"}] — nur bei Rezepten/Apothekenbelegen mit erkennbaren Medikamenten, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
         }]
       });
       const jm = antwort.match(/\{[\s\S]*\}/);
@@ -1662,9 +1712,12 @@ class Component extends DCLogic {
           diagnosen: (Array.isArray(d.diagnosen) && d.diagnosen.length)
             ? d.diagnosen.filter(x => x && (x.text || x.code)).map(x => [x.code, x.text].filter(Boolean).join(' — ')).join('; ')
             : (mAkt.diagnosen || ''),
+          medikamente: (Array.isArray(d.medikamente) && d.medikamente.length)
+            ? d.medikamente.filter(x => x && x.name).map(x => [x.name, x.dosierung].filter(Boolean).join(', ')).join('; ')
+            : (mAkt.medikamente || ''),
           vorsorge: vorsorgeAuto || mAkt.vorsorge
         },
-        auslese: { laeuft: false, typ: 'ok', status: 'Felder befüllt' + (positionen.length ? ' — ' + positionen.length + ' Gebührenziffern in den Vorsorge-Check übernommen' : '') + (Array.isArray(d.diagnosen) && d.diagnosen.length ? ' — ' + d.diagnosen.length + ' Diagnose(n) erkannt' : '') + (vorsorgeAuto ? '. Als Vorsorge eingestuft (Ziffern überwiegend im Verzeichnis) — bitte prüfen.' : '. Bitte kurz kontrollieren.') }
+        auslese: { laeuft: false, typ: 'ok', status: 'Felder befüllt' + (positionen.length ? ' — ' + positionen.length + ' Gebührenziffern in den Vorsorge-Check übernommen' : '') + (Array.isArray(d.diagnosen) && d.diagnosen.length ? ' — ' + d.diagnosen.length + ' Diagnose(n) erkannt' : '') + (Array.isArray(d.medikamente) && d.medikamente.length ? ' — ' + d.medikamente.length + ' Medikament(e) erkannt' : '') + (vorsorgeAuto ? '. Als Vorsorge eingestuft (Ziffern überwiegend im Verzeichnis) — bitte prüfen.' : '. Bitte kurz kontrollieren.') }
       });
     } catch (err) {
       setStatus('Auslesen fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
@@ -1749,16 +1802,12 @@ class Component extends DCLogic {
         return {
           name, anzahl: md.length, offen, pfeil: offen ? '▾' : '▸',
           adresse: (this.behandler[name] && this.behandler[name].adresse) || null,
-          icon: (() => {
-            // häufigste Behandlungsart der Mappe bestimmt das Icon
+          ...(() => {
+            // häufigste Behandlungsart bestimmt Gruppe und Icon der Mappe
             const zaehl = {};
             md.forEach(d => { if (d.ausgabeArt) zaehl[d.ausgabeArt] = (zaehl[d.ausgabeArt] || 0) + 1; });
-            const top = Object.keys(zaehl).sort((a, b) => zaehl[b] - zaehl[a])[0];
-            const icons = {
-              'Arztbesuch': 'stethoscope', 'Zahnarztbesuch': 'dental', 'Medikamente': 'pill',
-              'Heilmittel': 'massage', 'Hilfsmittel': 'wheelchair', 'Labor': 'microscope', 'Stationäre Behandlung': 'building-hospital'
-            };
-            return 'https://unpkg.com/@tabler/icons@2.47.0/icons/' + (icons[top] || 'receipt') + '.svg';
+            const top = Object.keys(zaehl).sort((a, b) => zaehl[b] - zaehl[a])[0] || 'Sonstiges';
+            return { art: top, icon: this.artIcon(top) };
           })(),
           toggle: () => this.setState({ dokMappenOffen: { ...offenSet, [mKey]: !offen } }),
           docs: md.map(d => ({
@@ -1775,7 +1824,8 @@ class Component extends DCLogic {
         initial: pat.slice(0, 1).toUpperCase(),
         farbe: this.farben[pat] || '#68787F', farbeHell: this.farbenHell[pat] || '#EDF0F2',
         toggle: () => this.setState({ dokMappenOffen: { ...offenSet, [pKey]: !pOffen } }),
-        mappen
+        mappen,
+        artGruppen: this.gruppiereNachArt(mappen)
       };
     });
     const dokMappen = dokPersonen.flatMap(p => p.mappen); // für „alle offen?“-Prüfung
@@ -1851,7 +1901,7 @@ class Component extends DCLogic {
   diagnosenVals() {
     const st = this.state;
     // Diagnosen der gewählten Jahresscheibe (Versicherer fordern konkrete Zeiträume — pro Jahr exportieren)
-    const mitDiag = st.eintraege.filter(e => e.jahr === st.jahr && (e.diagnosen || '').trim());
+    const mitDiag = st.eintraege.filter(e => e.jahr === st.jahr && ((e.diagnosen || '').trim() || (e.medikamente || '').trim()));
     const patNamen = [...new Set(mitDiag.map(e => e.patient))].filter(Boolean).sort((a, b) => a.localeCompare(b, 'de'));
     const diagPersonen = patNamen.map(pat => {
       const pe = mitDiag.filter(e => e.patient === pat);
@@ -1860,16 +1910,29 @@ class Component extends DCLogic {
         name: pat,
         initial: pat.slice(0, 1).toUpperCase(),
         farbe: this.farben[pat] || '#68787F', farbeHell: this.farbenHell[pat] || '#EDF0F2',
-        behandler: behNamen.map(beh => ({
-          name: beh,
-          diagnosen: pe.filter(e => (e.empfaenger || '—') === beh)
-            .sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
-            .map(e => ({
-              datumFmt: this.fmtDatum(e.datum),
-              text: e.diagnosen,
-              oeffnen: () => this.editEntry(e.id)
-            }))
-        }))
+        ...(() => {
+          const behandler = behNamen.map(beh => {
+            const be = pe.filter(e => (e.empfaenger || '—') === beh);
+            const zaehl = {};
+            be.forEach(e => { if (e.art) zaehl[e.art] = (zaehl[e.art] || 0) + 1; });
+            return {
+              name: beh,
+              art: Object.keys(zaehl).sort((a, b) => zaehl[b] - zaehl[a])[0] || 'Sonstiges',
+              diagnosen: be
+                .sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
+                .map(e => ({
+                  datumFmt: this.fmtDatum(e.datum),
+                  text: (e.diagnosen || '').trim(),
+                  hatText: !!(e.diagnosen || '').trim(),
+                  medis: (e.medikamente || '').trim(),
+                  hatMedis: !!(e.medikamente || '').trim(),
+                  medsDatum: (e.diagnosen || '').trim() ? '' : this.fmtDatum(e.datum),
+                  oeffnen: () => this.editEntry(e.id)
+                }))
+            };
+          });
+          return { behandler, artGruppen: this.gruppiereNachArt(behandler) };
+        })()
       };
     });
     const diagExport = () => {
@@ -1879,7 +1942,10 @@ class Component extends DCLogic {
         p.behandler.forEach(b => {
           zeilen.push('');
           zeilen.push(b.name);
-          b.diagnosen.forEach(d => zeilen.push('  ' + d.datumFmt + '  ' + d.text));
+          b.diagnosen.forEach(d => {
+            if (d.hatText) zeilen.push('  ' + d.datumFmt + '  ' + d.text);
+            if (d.hatMedis) zeilen.push('  ' + d.datumFmt + '  Rp. ' + d.medis);
+          });
         });
         zeilen.push('');
       });
@@ -1892,9 +1958,62 @@ class Component extends DCLogic {
     return {
       diagPersonen,
       keineDiagnosen: mitDiag.length === 0,
-      diagAnzahl: mitDiag.length + (mitDiag.length === 1 ? ' Eintrag mit Diagnose' : ' Einträge mit Diagnosen'),
-      diagExport
+      diagAnzahl: mitDiag.length + (mitDiag.length === 1 ? ' Eintrag mit Diagnosen/Verordnungen' : ' Einträge mit Diagnosen/Verordnungen'),
+      diagExport,
+      rezepteAuslesen: () => this.rezepteAuslesen(),
+      diagBatch: st.diagBatch || null,
+      diagBatchLaeuft: !!(st.diagBatch && st.diagBatch.laeuft)
     };
+  }
+
+  // Bereits gespeicherte Rezepte/Apothekenbelege nachträglich auslesen (Medikamente + Diagnosen)
+  async rezepteAuslesen() {
+    if (this.state.diagBatch && this.state.diagBatch.laeuft) return;
+    const setB = (text, laeuft) => this.setState({ diagBatch: { text, laeuft } });
+    if ((!window.claude || !window.claude.complete) && !(this.state.sync && this.state.sync.aiKey)) { setB('KI-Auslesen: bitte in den Einstellungen einen Anthropic-API-Key hinterlegen.', false); return; }
+    const kandidaten = this.state.eintraege.filter(e => e.art === 'Medikamente' && e.belegName && !(e.medikamente || '').trim());
+    if (!kandidaten.length) { setB('Keine offenen Rezepte gefunden — alle Medikamenten-Belege sind bereits ausgelesen.', false); return; }
+    let ok = 0, leer = 0, fehler = 0;
+    for (let i = 0; i < kandidaten.length; i++) {
+      const e = kandidaten[i];
+      setB('Lese Rezept ' + (i + 1) + ' von ' + kandidaten.length + ' … (' + (e.empfaenger || e.belegName) + ')', true);
+      try {
+        let file = await this.getBelegBlob(e.id);
+        if (!file) file = await this.belegLaden(e.id, e.belegName);
+        if (!file) { fehler++; continue; }
+        let text = '';
+        if (file.type === 'application/pdf' || /\.pdf$/i.test(e.belegName)) {
+          const { PDFParse } = await import('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf-parse.es.js');
+          PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@2.4.5/dist/pdf-parse/web/pdf.worker.min.mjs');
+          const parser = new PDFParse({ data: new Uint8Array(await file.arrayBuffer()) });
+          text = ((await parser.getText()).text || '').trim();
+        } else {
+          const ocr = await this.ocrFoto(file, () => {});
+          text = (ocr.text || '').trim();
+        }
+        if (text.length < 20) { leer++; continue; }
+        const antwort = await this.kiComplete({
+          max_tokens: 1200,
+          system: 'Du extrahierst Medikamente und Diagnosen aus deutschen Privatrezepten und Apothekenbelegen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown.',
+          messages: [{
+            role: 'user',
+            content: 'Extrahiere aus folgendem Rezept-/Belegtext:\n{\n "medikamente": [{"name": "Medikamentenname mit Stärke, z. B. Ibuprofen 600 mg", "dosierung": "Dosierungsangabe falls angegeben, z. B. 1-0-1, sonst null"}],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut"}] — nur tatsächlich genannte Diagnosen, sonst []\n}\n\nTEXT:\n' + text.slice(0, 12000)
+          }]
+        });
+        const jm = antwort.match(/\{[\s\S]*\}/);
+        if (!jm) { fehler++; continue; }
+        const d = JSON.parse(jm[0]);
+        const meds = (Array.isArray(d.medikamente) ? d.medikamente : []).filter(x => x && x.name).map(x => [x.name, x.dosierung].filter(Boolean).join(', ')).join('; ');
+        const diags = (Array.isArray(d.diagnosen) ? d.diagnosen : []).filter(x => x && (x.text || x.code)).map(x => [x.code, x.text].filter(Boolean).join(' — ')).join('; ');
+        if (!meds && !diags) { leer++; continue; }
+        this.setState(s => ({
+          eintraege: s.eintraege.map(x => x.id === e.id ? { ...x, medikamente: meds || x.medikamente || null, diagnosen: (x.diagnosen || '').trim() ? x.diagnosen : (diags || null) } : x)
+        }));
+        ok++;
+      } catch (err) { fehler++; }
+    }
+    this.persist();
+    setB('Fertig: ' + ok + ' ausgelesen' + (leer ? ', ' + leer + ' ohne erkennbare Angaben' : '') + (fehler ? ', ' + fehler + ' fehlgeschlagen' : '') + '. Danach in den Einstellungen „Jetzt hochladen“ nicht vergessen.', false);
   }
 
   // ---------- Daten-Helfer ----------
@@ -1916,7 +2035,8 @@ class Component extends DCLogic {
       erstattet: erst, jahr: parseInt(m.datum.slice(0, 4)), belegName: m.belegName || null,
       rechnungsdatum: m.rechnungsdatum || null,
       positionen: (m.positionen || []).filter(p => p.z || p.b),
-      diagnosen: (m.diagnosen || '').trim() || null
+      diagnosen: (m.diagnosen || '').trim() || null,
+      medikamente: (m.medikamente || '').trim() || null
     };
     this.merkeBehandler(eintrag.empfaenger, eintrag.adresse);
     this.update(s => ({
@@ -2362,6 +2482,8 @@ class Component extends DCLogic {
       setFormAdresse: ev => this.setState({ modal: { ...m, adresse: ev.target.value } }),
       formDiagnosen: m.diagnosen || '',
       setFormDiagnosen: ev => this.setState({ modal: { ...m, diagnosen: ev.target.value } }),
+      formMedikamente: m.medikamente || '',
+      setFormMedikamente: ev => this.setState({ modal: { ...m, medikamente: ev.target.value } }),
       formVorsorge: m.vorsorge,
       ...(() => {
         const pos = m.positionen || [];
@@ -2432,7 +2554,7 @@ class Component extends DCLogic {
       kannAuslesen: false, ausleseStart: null, ausleseButtonLabel: '', ausleseHinweis: '',
       ausleseStatus: null, ausleseStatusBg: '', ausleseStatusFg: '',
       formRechnungsdatum: '', setFormRechnungsdatum: null,
-      formAdresse: '', formDiagnosen: '', setFormDiagnosen: null, hatFavoriten: false, favoriten: [], hatSucheErgebnisse: false,
+      formAdresse: '', formDiagnosen: '', setFormDiagnosen: null, formMedikamente: '', setFormMedikamente: null, hatFavoriten: false, favoriten: [], hatSucheErgebnisse: false,
       sucheErgebnisse: [], sucheFehler: null, sucheButtonLabel: 'Suchen', sucheLaeuft: false, sucheEnter: null,
       formVorsorge: false, vorsorgePos: [], hatVorsorgePos: false, hatVorsorgeSchaetzung: false,
       vorsorgeGedeckt: '', hatVorsorgeRest: false, vorsorgeRest: ''
@@ -2486,16 +2608,16 @@ class Component extends DCLogic {
       breHinweis: false,
       // Übersicht
       personen,
-      offenePosten, hatOffene: offenePosten.length > 0, keineOffenen: offenePosten.length === 0,
+      offeneGruppen: this.gruppiereNachArt(offenePosten), hatOffene: offenePosten.length > 0, keineOffenen: offenePosten.length === 0,
       offeneSummeFmt: fmt(offene.reduce((x, e) => x + e.betrag, 0)),
-      wartendePosten: wartend.map(mapZeile), hatWartende: wartend.length > 0, keineWartenden: wartend.length === 0,
+      wartendGruppen: this.gruppiereNachArt(wartend.map(mapZeile)), hatWartende: wartend.length > 0, keineWartenden: wartend.length === 0,
       wartendSummeFmt: fmt(wartend.reduce((x, e) => x + e.betrag, 0)),
-      abgerechnetePosten: abgerechnet.map(mapZeile), hatAbgerechnete: abgerechnet.length > 0, keineAbgerechneten: abgerechnet.length === 0,
+      abgerechnetGruppen: this.gruppiereNachArt(abgerechnet.map(mapZeile)), hatAbgerechnete: abgerechnet.length > 0, keineAbgerechneten: abgerechnet.length === 0,
       abgerechnetGezahltFmt: fmt(abgerechnet.reduce((x, e) => x + e.betrag, 0)),
       abgerechnetErstattetFmt: fmt(abgerechnet.reduce((x, e) => x + e.erstattet, 0)),
       abgerechnetDifferenzFmt: fmt(abgerechnet.reduce((x, e) => x + e.betrag - e.erstattet, 0)),
       // Einträge
-      personFilter, statusFilter, eintraegeListe,
+      personFilter, statusFilter, eintraegeGruppen: this.gruppiereNachArt(eintraegeListe),
       listeAnzahl: liste.length, listeSummeFmt: fmt(liste.reduce((x, e) => x + e.betrag, 0)),
       // Auswertungen
       artChart, monatChart, jahresVergleich, awPersonToggles, awPersonen, artGesamtFmt,
@@ -2537,7 +2659,7 @@ class Component extends DCLogic {
       })),
       vorschlaegeAlle: () => (st.abrechnungVorschlaege || []).forEach(v => this.vorschlagUebernehmen(v)),
       vorschlaegeVerwerfen: () => this.setState({ abrechnungVorschlaege: null, abrechnungStatus: null }),
-      abgleichKpis, abgleichListe,
+      abgleichKpis, abgleichGruppen: this.gruppiereNachArt(abgleichListe.map((r, i) => ({ ...r, art: eingereichte[i].art }))),
       hatEingereichte: abgleichListe.length > 0, keineEingereichten: abgleichListe.length === 0,
       // Modal
       modalOffen: !!m, arten: this.arten, empfaengerVorschlaege,
