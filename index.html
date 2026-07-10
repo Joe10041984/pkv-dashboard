@@ -131,7 +131,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                     <div style="font-size:12.5px; color:#46565E; margin-top:4px; line-height:1.4;">{{ p.empfehlungDetail }}</div>
                   </sc-if>
                   <sc-if value="{{ p.vorsorgeOffen }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:12.5px; color:#46565E; margin-top:6px; border-top:1px dashed #C7D1D6; padding-top:6px;">{{ p.vorsorgeHinweis }}</div>
+                    <div onClick="{{ p.vorsorgeKlick }}" title="{{ p.vorsorgeTitel }}" style="font-size:12.5px; color:#46565E; margin-top:6px; border-top:1px dashed #C7D1D6; padding-top:6px; cursor:pointer;" style-hover="color:#175260; text-decoration:underline;">{{ p.vorsorgeHinweis }}</div>
                   </sc-if>
                 </div>
               </div>
@@ -163,7 +163,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
-                    <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
+                    <div style="display:flex; align-items:center; gap:5px; font-size:11.5px; color:#68787F; overflow:hidden; white-space:nowrap;">
+                      <sc-if value="{{ e.fach }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex; align-items:center; gap:4px; color:{{ e.fachFg }}; background:{{ e.fachBg }}; border-radius:9px; padding:{{ e.fachPad }}; font-weight:600; flex-shrink:0;">
+                          <span style="width:12px; height:12px; background:{{ e.fachIconFg }}; -webkit-mask:url({{ e.fachIcon }}) center/contain no-repeat; mask:url({{ e.fachIcon }}) center/contain no-repeat;"></span>{{ e.fach }}
+                        </span>
+                        <span style="color:#C6D0D5;">·</span>
+                      </sc-if>
+                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.unterzeile }}</span>
+                    </div>
                   </div>
                   <div style="width:26px; flex-shrink:0; display:flex; justify-content:center;" title="Vorsorge — zählt nicht auf Bonus oder Beitragsrückerstattung">
                     <sc-if value="{{ e.vorsorge }}" hint-placeholder-val="{{ false }}">
@@ -199,7 +207,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
-                    <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
+                    <div style="display:flex; align-items:center; gap:5px; font-size:11.5px; color:#68787F; overflow:hidden; white-space:nowrap;">
+                      <sc-if value="{{ e.fach }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex; align-items:center; gap:4px; color:{{ e.fachFg }}; background:{{ e.fachBg }}; border-radius:9px; padding:{{ e.fachPad }}; font-weight:600; flex-shrink:0;">
+                          <span style="width:12px; height:12px; background:{{ e.fachIconFg }}; -webkit-mask:url({{ e.fachIcon }}) center/contain no-repeat; mask:url({{ e.fachIcon }}) center/contain no-repeat;"></span>{{ e.fach }}
+                        </span>
+                        <span style="color:#C6D0D5;">·</span>
+                      </sc-if>
+                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.unterzeile }}</span>
+                    </div>
                   </div>
                   <div style="width:26px; flex-shrink:0; display:flex; justify-content:center;" title="Vorsorge — zählt nicht auf Bonus oder Beitragsrückerstattung">
                     <sc-if value="{{ e.vorsorge }}" hint-placeholder-val="{{ false }}">
@@ -247,7 +263,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   <div style="font-size:13.5px; color:#68787F; width:78px; flex-shrink:0; white-space:nowrap;">{{ e.datumFmt }}</div>
                   <div style="flex:1; min-width:0; overflow:hidden;">
                     <div style="font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
-                    <div style="font-size:11.5px; color:#68787F; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
+                    <div style="display:flex; align-items:center; gap:5px; font-size:11.5px; color:#68787F; overflow:hidden; white-space:nowrap;">
+                      <sc-if value="{{ e.fach }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex; align-items:center; gap:4px; color:{{ e.fachFg }}; background:{{ e.fachBg }}; border-radius:9px; padding:{{ e.fachPad }}; font-weight:600; flex-shrink:0;">
+                          <span style="width:12px; height:12px; background:{{ e.fachIconFg }}; -webkit-mask:url({{ e.fachIcon }}) center/contain no-repeat; mask:url({{ e.fachIcon }}) center/contain no-repeat;"></span>{{ e.fach }}
+                        </span>
+                        <span style="color:#C6D0D5;">·</span>
+                      </sc-if>
+                      <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.unterzeile }}</span>
+                    </div>
                   </div>
                   <div style="width:26px; flex-shrink:0; display:flex; justify-content:center;" title="Vorsorge — zählt nicht auf Bonus oder Beitragsrückerstattung">
                     <sc-if value="{{ e.vorsorge }}" hint-placeholder-val="{{ false }}">
@@ -297,7 +321,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               <div style="width:34px; height:34px; border-radius:50%; background:{{ e.farbeHell }}; color:{{ e.farbe }}; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">{{ e.initial }}</div>
               <div style="flex:1; min-width:170px; overflow:hidden;">
                 <div style="font-size:14.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.empfaenger }}</div>
-                <div style="font-size:12.5px; color:#68787F; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.unterzeile }}</div>
+                <div style="display:flex; align-items:center; gap:5px; font-size:12.5px; color:#68787F; margin-top:1px; overflow:hidden; white-space:nowrap;">
+                  <sc-if value="{{ e.fach }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:inline-flex; align-items:center; gap:4px; color:{{ e.fachFg }}; background:{{ e.fachBg }}; border-radius:9px; padding:{{ e.fachPad }}; font-weight:600; flex-shrink:0;">
+                      <span style="width:12px; height:12px; background:{{ e.fachIconFg }}; -webkit-mask:url({{ e.fachIcon }}) center/contain no-repeat; mask:url({{ e.fachIcon }}) center/contain no-repeat;"></span>{{ e.fach }}
+                    </span>
+                    <span style="color:#C6D0D5;">·</span>
+                  </sc-if>
+                  <span style="overflow:hidden; text-overflow:ellipsis;">{{ e.unterzeile }}</span>
+                </div>
               </div>
               <div style="width:26px; flex-shrink:0; display:flex; justify-content:center;" title="Vorsorge — zählt nicht auf Bonus oder Beitragsrückerstattung">
                 <sc-if value="{{ e.vorsorge }}" hint-placeholder-val="{{ false }}">
@@ -373,7 +405,89 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             </div>
           </div>
 
-          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
+          <sc-if value="{{ hatFachrichtungen }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:14px;">
+                <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Nach Fachrichtung <span style="color:#68787F; font-weight:500; font-size:13px;">{{ jahr }}</span></div>
+                <div style="font-size:14px; font-weight:700;">{{ artGesamtFmt }}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ fachChart }}" as="a" hint-placeholder-count="3">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <div style="display:flex; justify-content:space-between; font-size:13px;">
+                      <span style="font-weight:600;">{{ a.art }}</span><span style="color:#68787F;">{{ a.summeFmt }}</span>
+                    </div>
+                    <div style="height:20px; background:#EDF0F2; border-radius:4px; overflow:hidden; display:flex;">
+                      <sc-for list="{{ a.segs }}" as="sg" hint-placeholder-count="2">
+                        <div style="height:100%; background:{{ sg.farbe }}; width:{{ sg.pct }}%; display:flex; align-items:center; justify-content:center; overflow:hidden;" title="{{ sg.tip }}">
+                          <span style="font-size:10.5px; font-weight:600; color:#FFFFFF; white-space:nowrap;">{{ sg.label }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ a.zeigeRest }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:flex; align-items:center; gap:8px; padding:0 8px; white-space:nowrap;">
+                          <sc-for list="{{ a.reste }}" as="r" hint-placeholder-count="1">
+                            <span style="font-size:10.5px; font-weight:700; color:{{ r.farbe }};">{{ r.text }}</span>
+                          </sc-for>
+                        </span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:14px; margin-top:12px; font-size:12px; color:#68787F;">
+                <sc-for list="{{ legende }}" as="lg" hint-placeholder-count="2">
+                  <span style="display:flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:50%; background:{{ lg.farbe }}; display:inline-block;"></span>{{ lg.name }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hatBehandlerChart }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:14px;">
+                <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px;">Nach Behandler <span style="color:#68787F; font-weight:500; font-size:13px;">{{ jahr }}</span></div>
+                <div style="font-size:14px; font-weight:700;">{{ artGesamtFmt }}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ behandlerChart }}" as="a" hint-placeholder-count="3">
+                  <div onClick="{{ a.toggleRest }}" style="display:flex; flex-direction:column; gap:4px; cursor:{{ a.cursor }}; padding-left:{{ a.einzug }};">
+                    <div style="display:flex; justify-content:space-between; font-size:13px; gap:10px;">
+                      <span style="display:inline-flex; align-items:center; gap:6px; font-weight:600; overflow:hidden; min-width:0;">
+                        <sc-if value="{{ a.istRest }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size:11px; color:#68787F;">{{ a.restPfeil }}</span>
+                        </sc-if>
+                        <span style="width:14px; height:14px; flex-shrink:0; background:{{ a.fachIconFg }}; -webkit-mask:url({{ a.fachIcon }}) center/contain no-repeat; mask:url({{ a.fachIcon }}) center/contain no-repeat;"></span>
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.art }}</span>
+                      </span>
+                      <span style="color:#68787F; flex-shrink:0;">{{ a.summeFmt }}</span>
+                    </div>
+                    <div style="height:20px; background:#EDF0F2; border-radius:4px; overflow:hidden; display:flex;">
+                      <sc-for list="{{ a.segs }}" as="sg" hint-placeholder-count="2">
+                        <div style="height:100%; background:{{ sg.farbe }}; width:{{ sg.pct }}%; display:flex; align-items:center; justify-content:center; overflow:hidden;" title="{{ sg.tip }}">
+                          <span style="font-size:10.5px; font-weight:600; color:#FFFFFF; white-space:nowrap;">{{ sg.label }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ a.zeigeRest }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:flex; align-items:center; gap:8px; padding:0 8px; white-space:nowrap;">
+                          <sc-for list="{{ a.reste }}" as="r" hint-placeholder-count="1">
+                            <span style="font-size:10.5px; font-weight:700; color:{{ r.farbe }};">{{ r.text }}</span>
+                          </sc-for>
+                        </span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:14px; margin-top:12px; font-size:12px; color:#68787F;">
+                <sc-for list="{{ legende }}" as="lg" hint-placeholder-count="2">
+                  <span style="display:flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:50%; background:{{ lg.farbe }}; display:inline-block;"></span>{{ lg.name }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="grid-column:1/-1; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px;">
+          <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px; min-width:0;">
             <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px; margin-bottom:14px;">Selbst geleistet vs. erstattet <span style="color:#68787F; font-weight:500; font-size:13px;">{{ jahr }}</span></div>
             <div style="display:flex; flex-direction:column; gap:16px;">
               <sc-for list="{{ awPersonen }}" as="p" hint-placeholder-count="2">
@@ -418,27 +532,28 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               </sc-for>
             </div>
           </div>
-        </div>
 
-        <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
+        <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px; min-width:0; display:flex; flex-direction:column;">
           <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:16px; margin-bottom:14px;">Monatsverlauf <span style="color:#68787F; font-weight:500; font-size:13px;">{{ jahr }}</span></div>
-          <div style="display:flex; align-items:flex-end; gap:6px; height:150px;">
+          <div style="display:flex; align-items:stretch; gap:6px; flex:1; min-height:0;">
             <sc-for list="{{ monatChart }}" as="m" hint-placeholder-count="12">
-              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;" title="{{ m.tip }}">
-                <div style="width:100%; max-width:38px; display:flex; gap:2px; align-items:flex-end;">
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; justify-content:flex-end;" title="{{ m.tip }}">
+                <div style="width:100%; max-width:38px; display:flex; gap:2px; align-items:flex-end; flex:1; min-height:130px;">
                   <sc-for list="{{ m.balken }}" as="b" hint-placeholder-count="2">
-                    <div style="flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
+                    <div style="flex:1; min-width:0; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;">
                       <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; font-weight:600; color:{{ b.farbe }}; white-space:nowrap; margin-bottom:2px;">{{ b.oben }}</span>
-                      <div style="width:100%; background:{{ b.farbe }}; border-radius:4px 4px 0 0; height:{{ b.h }}px; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
+                      <div style="width:100%; background:{{ b.farbe }}; border-radius:4px 4px 0 0; height:{{ b.h }}%; flex-shrink:0; display:flex; align-items:flex-start; justify-content:center; overflow:hidden;">
                         <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9.5px; font-weight:600; color:#FFFFFF; white-space:nowrap; padding-bottom:3px;">{{ b.label }}</span>
                       </div>
                     </div>
                   </sc-for>
                 </div>
-                <div style="font-size:11px; color:#68787F;">{{ m.label }}</div>
+                <div style="font-size:10px; color:#68787F; border-top:1px solid #E8ECEE; width:100%; text-align:center; padding-top:3px;">{{ m.label }}</div>
               </div>
             </sc-for>
           </div>
+        </div>
+        </div>
         </div>
 
         <div style="background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:20px;">
@@ -455,8 +570,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                     </div>
                   </sc-for>
                 </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:10px; padding-top:8px; border-top:1px solid #E2E7EA;">
+                  <span style="color:#68787F; font-weight:600;">Gesamt alle Jahre</span><span style="font-weight:700;">{{ j.summeFmt }}</span>
+                </div>
               </div>
             </sc-for>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; padding-top:12px; border-top:1px solid #DCE3E6;">
+            <span style="font-size:13.5px; font-weight:600; color:#68787F;">Gesamtsumme über alle Jahre und Personen</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-size:18px; font-weight:700;">{{ jahresVergleichGesamtFmt }}</span>
           </div>
         </div>
       </div>
@@ -525,7 +647,15 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 <div style="width:8px; height:8px; border-radius:50%; background:{{ e.farbe }}; flex-shrink:0;"></div>
                 <div style="flex:1; min-width:150px;">
                   <div style="font-size:14px; font-weight:600;">{{ e.empfaenger }}</div>
-                  <div style="font-size:12.5px; color:#68787F;">{{ e.patient }} · {{ e.datumFmt }} · Rechnung {{ e.betragFmt }}</div>
+                  <div style="display:flex; align-items:center; gap:5px; font-size:12.5px; color:#68787F; flex-wrap:wrap;">
+                    <sc-if value="{{ e.fach }}" hint-placeholder-val="{{ false }}">
+                      <span style="display:inline-flex; align-items:center; gap:4px; color:{{ e.fachFg }}; background:{{ e.fachBg }}; border-radius:9px; padding:{{ e.fachPad }}; font-weight:600;">
+                        <span style="width:12px; height:12px; background:{{ e.fachIconFg }}; -webkit-mask:url({{ e.fachIcon }}) center/contain no-repeat; mask:url({{ e.fachIcon }}) center/contain no-repeat;"></span>{{ e.fach }}
+                      </span>
+                      <span style="color:#C6D0D5;">·</span>
+                    </sc-if>
+                    <span>{{ e.patient }} · {{ e.datumFmt }} · Rechnung {{ e.betragFmt }}</span>
+                  </div>
                   <sc-if value="{{ e.hatVorsorgeCheck }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:12.5px; font-weight:600; color:{{ e.vorsorgeFarbe }}; margin-top:3px;">{{ e.vorsorgeText }}</div>
                   </sc-if>
@@ -596,6 +726,14 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                 <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:4px 10px; border-radius:13px; font-size:12px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
               </sc-for>
             </div>
+            <sc-if value="{{ hatDokFachOptionen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <span style="font-size:11.5px; font-weight:600; color:#68787F; width:70px;">Fach</span>
+                <sc-for list="{{ dokFilterFach }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.go }}" style="border:1px solid; cursor:pointer; padding:4px 10px; border-radius:13px; font-size:12px; font-weight:600; background:{{ o.bg }}; color:{{ o.fg }}; border-color:{{ o.bc }};">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
             <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
               <span style="font-size:11.5px; font-weight:600; color:#68787F; width:70px;">Monat</span>
               <sc-for list="{{ dokFilterMonat }}" as="o" hint-placeholder-count="6">
@@ -628,6 +766,11 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                     <span style="width:16px; height:16px; flex-shrink:0; background:#A0762A; -webkit-mask:url({{ mp.icon }}) center/contain no-repeat; mask:url({{ mp.icon }}) center/contain no-repeat;"></span>
                     <div style="flex:1; min-width:0; display:flex; align-items:baseline; gap:8px; overflow:hidden;">
                       <span style="font-size:13.5px; font-weight:600; white-space:nowrap;">{{ mp.name }}</span>
+                      <sc-if value="{{ mp.fach }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:inline-flex; align-items:center; gap:4px; font-size:12px; color:{{ mp.fachFg }}; background:{{ mp.fachBg }}; border-radius:9px; padding:{{ mp.fachPad }}; font-weight:600; white-space:nowrap; flex-shrink:0; align-self:center;">
+                          <span style="width:12px; height:12px; background:{{ mp.fachIconFg }}; -webkit-mask:url({{ mp.fachIcon }}) center/contain no-repeat; mask:url({{ mp.fachIcon }}) center/contain no-repeat;"></span>{{ mp.fach }}
+                        </span>
+                      </sc-if>
                       <sc-if value="{{ mp.adresse }}" hint-placeholder-val="{{ false }}">
                         <span style="font-size:12px; color:#9AA7AD; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ mp.adresse }}</span>
                       </sc-if>
@@ -698,7 +841,14 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
               </div>
               <sc-for list="{{ g.rows }}" as="db" hint-placeholder-count="2">
               <div>
-                <div style="padding:8px 14px 8px 26px; border-top:1px solid #EDF0F2; font-size:13px; font-weight:600; color:#46565E; background:#FAFBFB;">{{ db.name }}</div>
+                <div style="display:flex; align-items:center; gap:8px; padding:8px 14px 8px 26px; border-top:1px solid #EDF0F2; background:#FAFBFB;">
+                  <span style="font-size:13px; font-weight:600; color:#46565E;">{{ db.name }}</span>
+                  <sc-if value="{{ db.fach }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:inline-flex; align-items:center; gap:4px; font-size:12px; color:{{ db.fachFg }}; background:{{ db.fachBg }}; border-radius:9px; padding:{{ db.fachPad }}; font-weight:600; white-space:nowrap;">
+                      <span style="width:12px; height:12px; background:{{ db.fachIconFg }}; -webkit-mask:url({{ db.fachIcon }}) center/contain no-repeat; mask:url({{ db.fachIcon }}) center/contain no-repeat;"></span>{{ db.fach }}
+                    </span>
+                  </sc-if>
+                </div>
                 <sc-for list="{{ db.diagnosen }}" as="dg" hint-placeholder-count="2">
                   <div onClick="{{ dg.oeffnen }}" title="Eintrag öffnen" style="display:flex; flex-direction:column; gap:3px; padding:9px 14px 9px 40px; border-top:1px solid #EDF0F2; cursor:pointer;" style-hover="background:#FAFBFB;">
                     <sc-if value="{{ dg.hatText }}" hint-placeholder-val="{{ true }}">
@@ -807,7 +957,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Behandler / Apotheke
             <div style="position:relative;">
               <div style="display:flex; gap:6px;">
-                <input type="text" value="{{ formEmpfaenger }}" onChange="{{ setFormEmpfaenger }}" onKeyDown="{{ sucheEnter }}" placeholder="z. B. Dr. Printz" style="flex:1; min-width:0; padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+                <input type="text" value="{{ formEmpfaenger }}" onChange="{{ setFormEmpfaenger }}" onKeyDown="{{ sucheEnter }}" placeholder="z. B. Dr. Muster" style="flex:1; min-width:0; padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
                 <button onClick="{{ sucheOnline }}" title="Online nach Adresse suchen (OpenStreetMap)" style="border:none; cursor:pointer; background:#175260; color:#F5F6F7; border-radius:5px; padding:0 13px; font-size:13px; font-weight:600; white-space:nowrap; flex-shrink:0;" style-hover="background:#113E49;">{{ sucheButtonLabel }}</button>
               </div>
               <sc-if value="{{ sucheLaeuft }}" hint-placeholder-val="{{ false }}">
@@ -848,6 +998,10 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             </div>
           </div>
         </sc-if>
+
+        <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Fachrichtung (des Behandlers)
+          <input type="text" value="{{ formFach }}" onChange="{{ setFormFach }}" placeholder="z. B. Allgemeinmedizin, Orthopädie, Zahnmedizin" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
+        </label>
 
         <label style="display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#68787F; font-weight:600;">Anschrift
           <input type="text" value="{{ formAdresse }}" onChange="{{ setFormAdresse }}" placeholder="Straße Nr., PLZ Ort" style="padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
@@ -938,6 +1092,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
           </sc-if>
         </div>
 
+        <sc-if value="{{ dupWarnung }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FBF3E2; border:1px solid #E8D5A6; border-radius:6px; padding:10px 14px; font-size:13px; color:#A0762A; line-height:1.5;">{{ dupWarnung }}</div>
+        </sc-if>
         <div style="display:flex; gap:10px; margin-top:4px;">
           <sc-if value="{{ istBearbeitung }}" hint-placeholder-val="{{ false }}">
             <button onClick="{{ deleteEntry }}" style="border:1px solid #E3C4C4; cursor:pointer; background:#FBF0F0; color:#A03E3E; border-radius:6px; padding:12px 16px; font-size:14px; font-weight:600;">Löschen</button>
@@ -1034,13 +1191,16 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
         </div>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:13px; font-weight:600;">App-Sperre (PIN)</div>
-          <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Verlangt beim Öffnen der App eine PIN — wird über den GitHub-Sync auf alle Geräte übertragen. Feld leeren und speichern entfernt die Sperre überall. Hinweis: Das ist ein Sichtschutz für Browser und Gerät, keine Verschlüsselung.</div>
+          <div style="font-size:12.5px; color:#68787F; line-height:1.5;">Verlangt beim Öffnen der App eine PIN und verschlüsselt damit alles Ende-zu-Ende: GitHub-Token und API-Key im Browser sowie den kompletten Datenstand und alle Belege auf GitHub (AES-256, PBKDF2) — dort liegt nur noch Chiffrat. Gilt über den Sync auf allen Geräten; Feld leeren und speichern entfernt Sperre und Verschlüsselung. Wichtig: PIN sicher im Passwortmanager aufbewahren — ohne PIN sind die synchronisierten Daten nicht wiederherstellbar.</div>
           <div style="display:flex; gap:8px;">
             <input type="password" inputMode="numeric" placeholder="{{ pinPlatzhalter }}" value="{{ pinNeu }}" onChange="{{ setPinNeu }}" style="flex:1; padding:9px 10px; border:1px solid #DCE3E6; border-radius:5px; font-size:14px; color:#1E2B32;">
             <button onClick="{{ pinSpeichern }}" style="border:none; cursor:pointer; background:#175260; color:#fff; border-radius:5px; padding:9px 16px; font-size:13.5px; font-weight:600;">Speichern</button>
           </div>
           <sc-if value="{{ pinInfo }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:12.5px; color:#175260; background:#E3EDF0; border-radius:5px; padding:9px 12px; line-height:1.5;">{{ pinInfo }}</div>
+          </sc-if>
+          <sc-if value="{{ pinAktiv }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ belegeVerschluesseln }}" title="Lädt alle verknüpften Belege einmal und lädt noch unverschlüsselte verschlüsselt neu hoch" style="border:1px solid #DCE3E6; cursor:pointer; background:#FFFFFF; color:#46565E; border-radius:5px; padding:10px; font-size:13.5px; font-weight:600; align-self:flex-start;">Alle Belege jetzt verschlüsseln</button>
           </sc-if>
         </div>
         <div style="border-top:1px solid #EDF0F2; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
@@ -1097,7 +1257,7 @@ class Component extends DCLogic {
       docViewer: null,
       dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' },
       dokFilterOffen: false, dokMappenOffen: null,
-      sync: (() => { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || { token: '', gistId: '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
+      sync: (() => { try { const r = JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null') || {}; return r.enc ? { token: '', gistId: r.gistId || '', repo: r.repo || '', aiKey: '' } : { token: r.token || '', gistId: r.gistId || '', repo: r.repo || '', aiKey: r.aiKey || '' }; } catch (e) { return { token: '', gistId: '' }; } })(),
       syncStatus: null,
       eingerichtetFlag: localStorage.getItem('pkv.eingerichtet.v1') === '1',
       awFilter: {},
@@ -1135,6 +1295,97 @@ class Component extends DCLogic {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('pkv:' + pin));
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
   }
+  // ---------- Token-Tresor: GitHub-Token + API-Key mit der PIN verschlüsselt (AES-GCM, PBKDF2) ----------
+  b64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
+  b64ab(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+  syncRoh() { try { return JSON.parse(localStorage.getItem('pkv.sync.v1') || 'null'); } catch (e) { return null; } }
+  async schluesselImport(bytes) {
+    const key = await crypto.subtle.importKey('raw', bytes, 'AES-GCM', false, ['encrypt', 'decrypt']);
+    return { key, raw: this.b64(bytes) };
+  }
+  async schluesselAusPin(pin, saltB64) {
+    const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: this.b64ab(saltB64), iterations: 310000, hash: 'SHA-256' }, mat, 256);
+    return this.schluesselImport(new Uint8Array(bits));
+  }
+  async syncEntschluesseln(roh, key) {
+    const klar = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: this.b64ab(roh.iv) }, key, this.b64ab(roh.enc));
+    const g = JSON.parse(new TextDecoder().decode(klar));
+    return { token: g.token || '', aiKey: g.aiKey || '', gistId: roh.gistId || '', repo: roh.repo || '' };
+  }
+  // ---------- Datenschlüssel (Umschlag-Verschlüsselung): zufälliger AES-Schlüssel, mit der PIN umschlagen ----------
+  tresorRoh() { try { return JSON.parse(localStorage.getItem('pkv.tresor.v1') || 'null'); } catch (e) { return null; } }
+  async datenKeyErmitteln(tresor) {
+    if (this._datenKey) return this._datenKey;
+    const raw = sessionStorage.getItem('pkv.datenschluessel');
+    if (raw) { try { this._datenKey = (await this.schluesselImport(this.b64ab(raw))).key; return this._datenKey; } catch (e) {} }
+    const t = tresor || this.tresorRoh();
+    if (t && this._pin) {
+      try {
+        const k = await this.schluesselAusPin(this._pin, t.salt);
+        const bytes = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: this.b64ab(t.iv) }, k.key, this.b64ab(t.key)));
+        const imp = await this.schluesselImport(bytes);
+        this._datenKey = imp.key;
+        sessionStorage.setItem('pkv.datenschluessel', imp.raw);
+        localStorage.setItem('pkv.tresor.v1', JSON.stringify(t));
+        return this._datenKey;
+      } catch (e) {}
+    }
+    return null;
+  }
+  async datenKeyErzeugen() {
+    const bytes = crypto.getRandomValues(new Uint8Array(32));
+    const imp = await this.schluesselImport(bytes);
+    this._datenKey = imp.key;
+    sessionStorage.setItem('pkv.datenschluessel', imp.raw);
+    const salt = this.b64(crypto.getRandomValues(new Uint8Array(16)));
+    const k = await this.schluesselAusPin(this._pin, salt);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k.key, bytes);
+    localStorage.setItem('pkv.tresor.v1', JSON.stringify({ salt, iv: this.b64(iv), key: this.b64(new Uint8Array(ct)) }));
+    return this._datenKey;
+  }
+  async belegVerschluesseln(file) {
+    if (!this.state.settings.sperreHash) return file;
+    let key = await this.datenKeyErmitteln(null);
+    if (!key && this._pin) key = await this.datenKeyErzeugen();
+    if (!key) return null;
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, await file.arrayBuffer()));
+    const kopf = new TextEncoder().encode('PKVENC1');
+    const alles = new Uint8Array(kopf.length + 12 + ct.length);
+    alles.set(kopf, 0); alles.set(iv, kopf.length); alles.set(ct, kopf.length + 12);
+    return new Blob([alles]);
+  }
+  async syncPersistieren(c) {
+    if (this._pinKey && this._pinSalt && (c.token || c.aiKey)) {
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const geheim = new TextEncoder().encode(JSON.stringify({ token: c.token || '', aiKey: c.aiKey || '' }));
+      const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, this._pinKey, geheim);
+      localStorage.setItem('pkv.sync.v1', JSON.stringify({ enc: this.b64(new Uint8Array(enc)), iv: this.b64(iv), salt: this._pinSalt, gistId: c.gistId || '', repo: c.repo || '' }));
+    } else {
+      localStorage.setItem('pkv.sync.v1', JSON.stringify(c));
+    }
+  }
+  async syncStart() {
+    const roh = this.syncRoh();
+    if (roh && roh.enc) {
+      // Verschlüsselt gespeichert: nur mit Sitzungs-Schlüssel sofort nutzbar, sonst wartet alles auf die PIN
+      const raw = sessionStorage.getItem('pkv.schluessel');
+      if (raw) {
+        try {
+          const k = await this.schluesselImport(this.b64ab(raw));
+          const sync = await this.syncEntschluesseln(roh, k.key);
+          this._pinKey = k.key; this._pinSalt = roh.salt;
+          this.setState({ sync });
+          if (sync.token && sync.gistId) { this._syncGestartet = true; this.syncLoad(true); }
+        } catch (e) { sessionStorage.removeItem('pkv.schluessel'); }
+      }
+      return;
+    }
+    if (this.state.sync && this.state.sync.token && this.state.sync.gistId) { this._syncGestartet = true; this.syncLoad(true); }
+    else fetch('setup.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(b => { if (b && b.daten) this.setState({ setupBlob: b }); }).catch(() => {});
+  }
   async setupAnwenden() {
     const pass = (this.state.setupPass || '').trim();
     if (!pass) { this.setState({ setupFehler: 'Bitte Passwort eingeben.' }); return; }
@@ -1151,13 +1402,38 @@ class Component extends DCLogic {
   }
 
   async entsperren() {
-    const hash = await this.pinHash(this.state.pinEingabe || '');
-    if (hash === this.state.settings.sperreHash) {
-      sessionStorage.setItem('pkv.entsperrt', '1');
-      this.setState({ gesperrt: false, pinEingabe: '', pinFehler: null });
-    } else {
+    const pin = this.state.pinEingabe || '';
+    const hash = await this.pinHash(pin);
+    if (hash !== this.state.settings.sperreHash) {
       this.setState({ pinFehler: 'PIN falsch.', pinEingabe: '' });
+      return;
     }
+    sessionStorage.setItem('pkv.entsperrt', '1');
+    this._pin = pin;
+    let syncNeu = null;
+    try {
+      const roh = this.syncRoh();
+      if (roh && roh.enc) {
+        // Token-Tresor mit der PIN aufschließen
+        const k = await this.schluesselAusPin(pin, roh.salt);
+        syncNeu = await this.syncEntschluesseln(roh, k.key);
+        this._pinKey = k.key; this._pinSalt = roh.salt;
+        sessionStorage.setItem('pkv.schluessel', k.raw);
+      } else if (roh && (roh.token || roh.aiKey)) {
+        // Migration: bisher unverschlüsseltes Token einmalig in den Tresor überführen
+        const salt = this.b64(crypto.getRandomValues(new Uint8Array(16)));
+        const k = await this.schluesselAusPin(pin, salt);
+        this._pinKey = k.key; this._pinSalt = salt;
+        sessionStorage.setItem('pkv.schluessel', k.raw);
+        await this.syncPersistieren(this.state.sync);
+      }
+    } catch (e) { console.warn('Token-Tresor', e); }
+    // Datenschlüssel aus dem lokalen Umschlag öffnen (falls vorhanden)
+    try { await this.datenKeyErmitteln(null); } catch (e) {}
+    this.setState({ gesperrt: false, pinEingabe: '', pinFehler: null, ...(syncNeu ? { sync: syncNeu } : {}) }, () => {
+      const c = this.state.sync;
+      if (c && c.token && c.gistId) { this._syncGestartet = true; this.syncLoad(true); }
+    });
   }
   // ---------- Personen (aus Settings, neutral bei frischer Instanz) ----------
   personListe() {
@@ -1223,8 +1499,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    if (this.state.sync && this.state.sync.token && this.state.sync.gistId) this.syncLoad(true);
-    else fetch('setup.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(b => { if (b && b.daten) this.setState({ setupBlob: b }); }).catch(() => {});
+    this.syncStart();
     if (!this.state.geladen) {
       // Zuerst kompletter eingebackener Stand (stand.json), sonst Roh-Import aus der Excel
       fetch('data/stand.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(s => {
@@ -1266,7 +1541,7 @@ class Component extends DCLogic {
   }
   speichereSync(c) {
     this.setState({ sync: c });
-    localStorage.setItem('pkv.sync.v1', JSON.stringify(c));
+    this.syncPersistieren(c);
   }
   // ---------- Beleg-Sync über privates Repo ----------
   repoCfg() {
@@ -1281,12 +1556,9 @@ class Component extends DCLogic {
     if (!c) { this.setState({ syncStatus: 'Dokument nur lokal gespeichert — in den Einstellungen ist kein Beleg-Repo hinterlegt (Feld „Privates Repo für Belege“, z. B. Joe10041984/pkv-belege).' }); return; }
     try {
       const pfad = this.belegPfad(id, file.name);
-      const b64 = await new Promise((res, rej) => {
-        const fr = new FileReader();
-        fr.onload = () => res(String(fr.result).split(',')[1]);
-        fr.onerror = () => rej(new Error('Datei nicht lesbar'));
-        fr.readAsDataURL(file);
-      });
+      const zuSenden = await this.belegVerschluesseln(file);
+      if (!zuSenden) { this.setState({ syncStatus: 'Beleg-Upload wartet — zum verschlüsselten Hochladen bitte einmal mit der PIN entsperren.' }); return; }
+      const b64 = this.b64(new Uint8Array(await zuSenden.arrayBuffer()));
       const url = 'https://api.github.com/repos/' + c.repo.trim() + '/contents/' + pfad;
       let sha = null;
       const g = await fetch(url, { headers: this.syncHeaders() });
@@ -1305,9 +1577,21 @@ class Component extends DCLogic {
       const r = await fetch('https://api.github.com/repos/' + c.repo.trim() + '/contents/' + this.belegPfad(id, name), { headers: { ...this.syncHeaders(), Accept: 'application/vnd.github.raw' } });
       if (!r.ok) return null;
       const roh = await r.blob();
-      const typ = /\.pdf$/i.test(name || '') ? 'application/pdf' : (roh.type && roh.type !== 'text/plain' ? roh.type : 'image/jpeg');
-      const datei = new File([roh], name || 'beleg.pdf', { type: typ });
+      let inhalt = roh, warKlartext = true;
+      const kopf = new TextDecoder().decode(new Uint8Array(await roh.slice(0, 7).arrayBuffer()));
+      if (kopf === 'PKVENC1') {
+        warKlartext = false;
+        const key = await this.datenKeyErmitteln(null);
+        if (!key) { this.setState({ syncStatus: 'Beleg ist verschlüsselt — zum Öffnen bitte einmal mit der PIN entsperren.' }); return null; }
+        const alles = new Uint8Array(await roh.arrayBuffer());
+        const klar = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: alles.subarray(7, 19) }, key, alles.subarray(19));
+        inhalt = new Blob([klar]);
+      }
+      const typ = /\.pdf$/i.test(name || '') ? 'application/pdf' : (warKlartext && roh.type && roh.type !== 'text/plain' ? roh.type : 'image/jpeg');
+      const datei = new File([inhalt], name || 'beleg.pdf', { type: typ });
       await this.saveBeleg(id, datei);
+      // Schleichende Migration: unverschlüsselte Alt-Belege beim nächsten Zugriff verschlüsselt neu hochladen
+      if (warKlartext && this.state.settings.sperreHash && (this._datenKey || this._pin)) { try { await this.belegHochladen(id, datei); } catch (e) {} }
       return datei;
     } catch (e) { return null; }
   }
@@ -1318,7 +1602,19 @@ class Component extends DCLogic {
     try {
       if (!auto) this.setState({ syncStatus: 'Lade hoch …' });
       const stand = this.standObjekt();
-      const files = { 'pkv-stand.json': { content: JSON.stringify(stand, null, 1) } };
+      let dateiInhalt;
+      if (this.state.settings.sperreHash) {
+        // Ende-zu-Ende: Stand mit dem Datenschlüssel verschlüsseln, Umschlag (mit PIN verschlüsselter Schlüssel) reist mit
+        let key = await this.datenKeyErmitteln(null);
+        if (!key && this._pin) key = await this.datenKeyErzeugen();
+        if (!key) { this.setState({ syncStatus: 'Hochladen wartet — zum verschlüsselten Sync bitte einmal mit der PIN entsperren.' }); return; }
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(stand)));
+        dateiInhalt = JSON.stringify({ verschluesselt: true, gespeichert: stand.gespeichert, sperreHash: this.state.settings.sperreHash, tresor: this.tresorRoh(), iv: this.b64(iv), daten: this.b64(new Uint8Array(ct)) }, null, 1);
+      } else {
+        dateiInhalt = JSON.stringify(stand, null, 1);
+      }
+      const files = { 'pkv-stand.json': { content: dateiInhalt } };
       let r;
       if (c.gistId) {
         r = await fetch('https://api.github.com/gists/' + c.gistId.trim(), { method: 'PATCH', headers: this.syncHeaders(), body: JSON.stringify({ files }) });
@@ -1345,7 +1641,18 @@ class Component extends DCLogic {
       const j = await r.json();
       const f = j.files && j.files['pkv-stand.json'];
       if (!f) throw new Error('pkv-stand.json nicht im Gist gefunden');
-      const s = JSON.parse(f.truncated ? await (await fetch(f.raw_url)).text() : f.content);
+      let s = JSON.parse(f.truncated ? await (await fetch(f.raw_url)).text() : f.content);
+      if (s && s.verschluesselt) {
+        const key = await this.datenKeyErmitteln(s.tresor);
+        if (!key) {
+          // Ohne PIN nicht lesbar: Sperre aus dem Klartext-Kopf übernehmen, damit die PIN-Abfrage erscheint
+          if (s.sperreHash) this.setState({ settings: { ...this.state.settings, sperreHash: s.sperreHash }, gesperrt: sessionStorage.getItem('pkv.entsperrt') !== '1' || this.state.gesperrt });
+          this.setState({ syncStatus: 'Daten sind Ende-zu-Ende verschlüsselt — zum Laden bitte mit der PIN entsperren.' });
+          return;
+        }
+        const klar = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: this.b64ab(s.iv) }, key, this.b64ab(s.daten));
+        s = JSON.parse(new TextDecoder().decode(klar));
+      }
       if (!Array.isArray(s.eintraege)) throw new Error('kein gültiger Stand in der Datei');
       const remoteTs = s.gespeichert || '';
       if (auto) {
@@ -1682,7 +1989,7 @@ class Component extends DCLogic {
         system: 'Du extrahierst Daten aus deutschen Arzt-, Zahnarzt- und Apothekenrechnungen. Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Markdown, ohne Erklärung. Dezimalzahlen mit Punkt.',
         messages: [{
           role: 'user',
-          content: 'Extrahiere aus folgendem Rechnungstext:\nWICHTIG bei Apotheken-Rezepten (Privatrezept mit Apothekenstempel/-aufdruck): "empfaenger" ist die APOTHEKE (aus Stempel/Aufdruck erkennbar), NICHT der verordnende Arzt; "betrag" ist der von der Apotheke aufgedruckte Abgabepreis (Summe der Medikamentenpreise); "datum" ist das Abgabedatum der Apotheke; "art" ist "Medikamente".\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst [],\n "medikamente": [{"name": "Medikamentenname mit Stärke, z. B. Ibuprofen 600 mg", "dosierung": "Dosierungsangabe falls auf dem Rezept, z. B. 1-0-1, sonst null"}] — nur bei Rezepten/Apothekenbelegen mit erkennbaren Medikamenten, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
+          content: 'Extrahiere aus folgendem Rechnungstext:\nWICHTIG bei Apotheken-Rezepten (Privatrezept mit Apothekenstempel/-aufdruck): "empfaenger" ist die APOTHEKE (aus Stempel/Aufdruck erkennbar), NICHT der verordnende Arzt; "betrag" ist der von der Apotheke aufgedruckte Abgabepreis (Summe der Medikamentenpreise); "datum" ist das Abgabedatum der Apotheke; "art" ist "Medikamente".\n{\n "empfaenger": "Name des Behandlers/der Praxis/Apotheke (kurz, z. B. Dr. Anna Muster)",\n "adresse": "Straße Nr, PLZ Ort des Behandlers",\n "behandlungsdatum": "YYYY-MM-DD (frühestes Behandlungs-/Leistungs-/Kaufdatum)",\n "rechnungsdatum": "YYYY-MM-DD oder null",\n "betrag": Gesamt-Rechnungsbetrag als Zahl,\n "art": eine von: Arztbesuch | Zahnarztbesuch | Medikamente | Heilmittel | Hilfsmittel | Stationäre Behandlung | Sonstiges,\n "positionen": [{"ziffer": "GOÄ/GOZ-Nummer", "betrag": Endbetrag der Position als Zahl}] — nur bei Arzt-/Zahnarztrechnungen mit Gebührenziffern, sonst [],\n "fachrichtung": "medizinische Fachrichtung des Behandlers, aus Briefkopf/Titel ableitbar (z. B. Allgemeinmedizin, Orthopädie, Zahnmedizin, Dermatologie, Apotheke), sonst null",\n "diagnosen": [{"code": "ICD-10-Code falls angegeben, sonst null", "text": "Diagnose im Wortlaut der Rechnung"}] — nur tatsächlich in der Rechnung genannte Diagnosen, sonst [],\n "medikamente": [{"name": "Medikamentenname mit Stärke, z. B. Ibuprofen 600 mg", "dosierung": "Dosierungsangabe falls auf dem Rezept, z. B. 1-0-1, sonst null"}] — nur bei Rezepten/Apothekenbelegen mit erkennbaren Medikamenten, sonst []\n}\nFehlende Werte als null.\n\nRECHNUNGSTEXT:\n' + text
         }]
       });
       const jm = antwort.match(/\{[\s\S]*\}/);
@@ -1712,6 +2019,7 @@ class Component extends DCLogic {
           diagnosen: (Array.isArray(d.diagnosen) && d.diagnosen.length)
             ? d.diagnosen.filter(x => x && (x.text || x.code)).map(x => [x.code, x.text].filter(Boolean).join(' — ')).join('; ')
             : (mAkt.diagnosen || ''),
+          fach: (d.fachrichtung || '').trim() || ((mAkt.fach !== undefined && mAkt.fach !== null) ? mAkt.fach : (this.behandlerFach(mAkt.empfaenger) || '')),
           medikamente: (Array.isArray(d.medikamente) && d.medikamente.length)
             ? d.medikamente.filter(x => x && x.name).map(x => [x.name, x.dosierung].filter(Boolean).join(', ')).join('; ')
             : (mAkt.medikamente || ''),
@@ -1781,11 +2089,12 @@ class Component extends DCLogic {
       (f.behandler === 'Alle' || d.behandler === f.behandler) &&
       (f.art === 'Alle' || d.art === f.art) &&
       (f.patient === 'Alle' || d.patient === f.patient) &&
+      ((f.fach || 'Alle') === 'Alle' || (this.behandlerFach(d.behandler) || 'Ohne Angabe') === f.fach) &&
       (f.monat === 'Alle' || monNamen[parseInt((d.datum || '').slice(5, 7)) - 1] === f.monat)
     );
     // Hierarchie: 1. Patient, 2. Behandler-Mappen
     const offenSet = st.dokMappenOffen || {};
-    const filterAnzahl = ['art', 'patient', 'monat'].filter(k => f[k] !== 'Alle').length;
+    const filterAnzahl = ['art', 'patient', 'monat', 'fach'].filter(k => f[k] && f[k] !== 'Alle').length;
     const patNamen = [...new Set(gefiltert.map(d => d.patient))].filter(Boolean).sort((a, b) => a.localeCompare(b, 'de'));
     const alleSchluessel = [];
     const dokPersonen = patNamen.map(pat => {
@@ -1802,6 +2111,7 @@ class Component extends DCLogic {
         return {
           name, anzahl: md.length, offen, pfeil: offen ? '▾' : '▸',
           adresse: (this.behandler[name] && this.behandler[name].adresse) || null,
+          ...this.fachFelder(name),
           ...(() => {
             // häufigste Behandlungsart bestimmt Gruppe und Icon der Mappe
             const zaehl = {};
@@ -1834,7 +2144,10 @@ class Component extends DCLogic {
     if (f.art !== 'Alle') aktivTeile.push(f.art);
     if (f.patient !== 'Alle') aktivTeile.push(f.patient);
     if (f.monat !== 'Alle') aktivTeile.push(f.monat);
+    if (f.fach && f.fach !== 'Alle') aktivTeile.push(f.fach);
     return {
+      dokFilterFach: opt('fach', [...new Set(docs.map(d => this.behandlerFach(d.behandler) || 'Ohne Angabe'))].sort((a, b) => (a === 'Ohne Angabe' ? 1 : b === 'Ohne Angabe' ? -1 : a.localeCompare(b, 'de')))),
+      hatDokFachOptionen: docs.some(d => this.behandlerFach(d.behandler)),
       dokFilterArt: opt('art', [...new Set(docs.map(d => d.art))]),
       dokFilterMonat: opt('monat', [...new Set(docs.map(d => parseInt((d.datum || '').slice(5, 7))))].filter(m => m >= 1).sort((a, b) => a - b).map(m => monNamen[m - 1])),
       dokFilterPatient: opt('patient', [...new Set(docs.map(d => d.patient))].filter(Boolean)),
@@ -1844,7 +2157,7 @@ class Component extends DCLogic {
       dokFilterBtnBc: st.dokFilterOffen || filterAnzahl ? '#175260' : '#DCE3E6',
       dokFilterAnzahl: filterAnzahl || null,
       dokFilterAktivText: filterAnzahl ? aktivTeile.join(' · ') : null,
-      dokFilterReset: () => this.setState({ dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle' } }),
+      dokFilterReset: () => this.setState({ dokFilter: { behandler: 'Alle', art: 'Alle', monat: 'Alle', patient: 'Alle', fach: 'Alle' } }),
       dokAnzahl: gefiltert.length + ' von ' + docs.length + (docs.length === 1 ? ' Dokument' : ' Dokumenten'),
       dokExport: () => this.dokumenteExport(gefiltert),
       dokAlleLabel: alleWirklichOffen ? 'Alle einklappen' : 'Alle ausklappen',
@@ -1917,6 +2230,7 @@ class Component extends DCLogic {
             be.forEach(e => { if (e.art) zaehl[e.art] = (zaehl[e.art] || 0) + 1; });
             return {
               name: beh,
+              ...this.fachFelder(beh),
               art: Object.keys(zaehl).sort((a, b) => zaehl[b] - zaehl[a])[0] || 'Sonstiges',
               diagnosen: be
                 .sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
@@ -2026,6 +2340,17 @@ class Component extends DCLogic {
     if (!(betrag > 0)) return;
     const erst = m.eingereicht ? (Math.round(parseFloat(String(m.erstattet || 0).replace(',', '.')) * 100) / 100 || 0) : 0;
     const bestehend = m.id ? this.state.eintraege.find(e => e.id === m.id) : null;
+    // Duplikat-Schutz: gleicher Empfänger + Datum + Betrag existiert schon -> erst warnen, zweiter Klick speichert trotzdem
+    if (!m.id && !m._dupOk) {
+      const dup = this.state.eintraege.find(e =>
+        (e.empfaenger || '').trim().toLowerCase() === (m.empfaenger || '').trim().toLowerCase() &&
+        e.datum === m.datum && Math.abs(e.betrag - betrag) < 0.005);
+      if (dup) {
+        const status = dup.erstattet > 0 ? 'bereits erstattet' : dup.eingereicht ? 'eingereicht, wartet auf Abrechnung' : 'noch nicht eingereicht';
+        this.setState({ modal: { ...m, _dupOk: true, _dupWarnung: 'Möglicherweise ein Duplikat: Ein Eintrag mit gleichem Empfänger, Datum und Betrag existiert bereits (Status: ' + status + '). Erneut „Speichern“ drücken, um trotzdem anzulegen.' } });
+        return;
+      }
+    }
     const eintrag = {
       ...(bestehend || {}), // Felder erhalten, die das Formular nicht kennt (z. B. Abrechnungs-Verknüpfung)
       id: m.id || ('e' + Date.now()),
@@ -2038,7 +2363,7 @@ class Component extends DCLogic {
       diagnosen: (m.diagnosen || '').trim() || null,
       medikamente: (m.medikamente || '').trim() || null
     };
-    this.merkeBehandler(eintrag.empfaenger, eintrag.adresse);
+    this.merkeBehandler(eintrag.empfaenger, eintrag.adresse, (m.fach !== undefined && m.fach !== null) ? (m.fach || '').trim() : undefined);
     this.update(s => ({
       eintraege: m.id ? s.eintraege.map(e => e.id === m.id ? eintrag : e) : s.eintraege.concat([eintrag]),
       modal: null
@@ -2046,17 +2371,54 @@ class Component extends DCLogic {
     if (m._file) { this.saveBeleg(eintrag.id, m._file); this.belegHochladen(eintrag.id, m._file); }
   }
 
-  merkeBehandler(name, adresse) {
+  merkeBehandler(name, adresse, fach) {
     if (!name) return;
     const b = this.behandler[name] || { adresse: '', count: 0 };
-    this.behandler[name] = { adresse: adresse || b.adresse, count: b.count + 1 };
+    this.behandler[name] = { ...b, adresse: adresse || b.adresse, fach: (fach !== undefined ? (fach || null) : (b.fach || null)), count: (b.count || 0) + 1 };
     localStorage.setItem('pkv.behandler.v1', JSON.stringify(this.behandler));
+  }
+  behandlerFach(name) {
+    return (name && this.behandler[name] && this.behandler[name].fach) || null;
+  }
+  fachIcon(fach) {
+    const f = (fach || '').toLowerCase();
+    if (/apothe/.test(f)) {
+      // Stilisiertes deutsches Apotheken-A
+      return "data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20d=%27M2.5%208h19c0%204.3-4.2%207.2-9.5%207.2S2.5%2012.3%202.5%208Z%27/%3E%3Crect%20x=%2710.7%27%20y=%2714.2%27%20width=%272.6%27%20height=%275.8%27/%3E%3Cpath%20d=%27M5.5%2022.5c0-1.4%203-2.1%206.5-2.1s6.5.7%206.5%202.1Z%27/%3E%3Cpath%20d=%27M17.8%206c.9-3-1.8-4.8-5.3-4.8-3%200-5.2%201.3-5.2%202.8%200%201.2%201.1%202%202.6%202%27%20fill=%27none%27%20stroke=%27%23000%27%20stroke-width=%272.2%27%20stroke-linecap=%27round%27/%3E%3C/svg%3E";
+    }
+    const wahl =
+      /zahn|kiefer|oral/.test(f) ? 'dental' :
+      /orthop|unfall|chirurg/.test(f) ? 'bone' :
+      /kinder|pädiat|paediat/.test(f) ? 'mood-kid' :
+      /augen|ophthal/.test(f) ? 'eye' :
+      /hno|ohren/.test(f) ? 'ear' :
+      /derma|haut/.test(f) ? 'sun' :
+      /neuro|psych/.test(f) ? 'brain' :
+      /kardio|herz/.test(f) ? 'heart' :
+      /radiolog|röntgen|roentgen/.test(f) ? 'radioactive' :
+      /uro/.test(f) ? 'droplet' :
+      /gyn|frauen/.test(f) ? 'gender-female' :
+      /labor/.test(f) ? 'microscope' :
+      /physio|heilprakt|massage|osteo/.test(f) ? 'activity' :
+      'stethoscope';
+    return 'https://unpkg.com/@tabler/icons@2.47.0/icons/' + wahl + '.svg';
+  }
+  fachFelder(name) {
+    const fach = this.behandlerFach(name);
+    const rot = fach && /apothe/i.test(fach);
+    return {
+      fach: fach || null, fachIcon: fach ? this.fachIcon(fach) : null,
+      fachFg: rot ? '#1E2B32' : '#175260',
+      fachIconFg: rot ? '#E30613' : '#175260',
+      fachBg: 'transparent',
+      fachPad: '0'
+    };
   }
 
   sucheOnline() {
     const m = this.state.modal;
     const q = m && m.empfaenger && m.empfaenger.trim();
-    if (!q) { this.setState({ suche: { laden: false, ergebnisse: [], fehler: 'Bitte erst einen Namen eingeben, z. B. „Dr. Printz Fürstenfeldbruck“.' } }); return; }
+    if (!q) { this.setState({ suche: { laden: false, ergebnisse: [], fehler: 'Bitte erst einen Namen eingeben, z. B. „Dr. Muster München“.' } }); return; }
     // Lokale Treffer: bereits erfasste Behandler (inkl. gespeicherter Anschrift) zuerst anbieten
     const stopWorte = new Set(['dr', 'med', 'prof', 'praxis', 'und']);
     const qTok = q.toLowerCase().split(/[\s,./]+/).filter(t => t.length >= 3 && !stopWorte.has(t));
@@ -2114,7 +2476,7 @@ class Component extends DCLogic {
                 adresse: [zeile1, zeile2].filter(Boolean).join(', ') || (r.display_name || '')
               };
             }).filter(x => x.name);
-            fertig(ergebnisse, ergebnisse.length ? null : 'Nichts gefunden — versuche Name + Ort, z. B. „Ahorn Apotheke Fürstenfeldbruck“.');
+            fertig(ergebnisse, ergebnisse.length ? null : 'Nichts gefunden — versuche Name + Ort, z. B. „Stadt-Apotheke München“.');
           })
           .catch(() => fertig([], 'Suche gerade nicht erreichbar — in ein paar Sekunden erneut versuchen oder Adresse manuell eintragen.'));
       });
@@ -2251,6 +2613,8 @@ class Component extends DCLogic {
         empfehlungFarbe: typ === 'ja' ? '#175260' : typ === 'nein' ? '#A0762A' : '#68787F',
         empfehlungFarbeHell: typ === 'ja' ? '#DFEEF2' : typ === 'nein' ? '#FFE3A1' : 'rgba(255,255,255,.85)',
         vorsorgeOffen: d.vorsorgeOffenListe.length > 0,
+        vorsorgeKlick: () => { const e = d.vorsorgeOffenListe[0]; if (e) this.editEntry(e.id); },
+        vorsorgeTitel: d.vorsorgeOffenListe.length > 1 ? 'Öffnet die älteste offene Vorsorge-Rechnung' : 'Eintrag öffnen',
         vorsorgeHinweis: d.vorsorgeOffenListe.length + ' Vorsorge-Rechnung' + (d.vorsorgeOffenListe.length > 1 ? 'en' : '') + ' (' + fmt(d.vorsorgeOffenListe.reduce((x, e) => x + e.betrag, 0)) + ') immer einreichen — zählt nicht auf Bonus oder BRE.'
       };
     });
@@ -2260,6 +2624,7 @@ class Component extends DCLogic {
       .sort((a, b) => b.datum.localeCompare(a.datum));
     const offenePosten = offene.map(e => ({
       empfaenger: e.empfaenger, art: e.art, vorsorge: e.vorsorge, artIcon: this.artIcon(e.art),
+      ...this.fachFelder(e.empfaenger),
       unterzeile: e.adresse || '',
       datumFmt: this.fmtDatum(e.datum), betragFmt: fmt(e.betrag),
       farbe: this.farben[e.patient], onEdit: () => this.editEntry(e.id)
@@ -2268,6 +2633,7 @@ class Component extends DCLogic {
     // ---- Eingereicht: wartend / abgerechnet ----
     const mapZeile = e => ({
       empfaenger: e.empfaenger || '—', vorsorge: e.vorsorge, art: e.art, artIcon: this.artIcon(e.art),
+      ...this.fachFelder(e.empfaenger),
       unterzeile: e.adresse || '',
       datumFmt: this.fmtDatum(e.datum), betragFmt: fmt(e.betrag), erstattetFmt: fmt(e.erstattet),
       differenzFmt: fmt(e.betrag - e.erstattet),
@@ -2286,6 +2652,7 @@ class Component extends DCLogic {
     liste = liste.slice().sort((a, b) => gruppe(a) - gruppe(b) || b.datum.localeCompare(a.datum));
     const eintraegeListe = liste.map(e => ({
       empfaenger: e.empfaenger || '—', art: e.art, vorsorge: e.vorsorge, artIcon: this.artIcon(e.art),
+      ...this.fachFelder(e.empfaenger),
       unterzeile: [this.fmtDatum(e.datum), e.adresse].filter(Boolean).join(' · '),
       initial: e.patient[0], farbe: this.farben[e.patient], farbeHell: this.farbenHell[e.patient],
       datumFmt: this.fmtDatum(e.datum), betragFmt: fmt(e.betrag),
@@ -2328,6 +2695,63 @@ class Component extends DCLogic {
       const es = basis.filter(e => e.art === a);
       return { art: a, sum: es.reduce((x, e) => x + e.betrag, 0), betraege: persListe.map(p => es.filter(e => e.patient === p.name).reduce((x, e) => x + e.betrag, 0)) };
     }).sort((a, b) => b.sum - a.sum);
+    // Nach Fachrichtung (aus dem Behandler-Verzeichnis)
+    const fachVon = e => this.behandlerFach(e.empfaenger) || 'Ohne Angabe';
+    const fachNamen = [...new Set(basis.map(fachVon))];
+    const fachSummen = fachNamen.map(a => {
+      const es = basis.filter(e => fachVon(e) === a);
+      return { art: a, sum: es.reduce((x, e) => x + e.betrag, 0), betraege: persListe.map(p => es.filter(e => e.patient === p.name).reduce((x, e) => x + e.betrag, 0)) };
+    }).sort((a, b) => (a.art === 'Ohne Angabe' ? 1 : b.art === 'Ohne Angabe' ? -1 : b.sum - a.sum));
+    const fachMax = Math.max(1, ...fachSummen.map(a => a.sum));
+    const balkenZeile = (a, max) => {
+      const segs = [], reste = [];
+      persListe.forEach((p, i) => {
+        const s = a.betraege[i];
+        const pct = Math.round(s / max * 100);
+        const label = pct >= 14 ? fmt(s) : '';
+        if (!label && s > 0) reste.push({ text: fmt(s), farbe: p.farbe });
+        segs.push({ pct, farbe: p.farbe, label, tip: p.name + ': ' + fmt(s) });
+      });
+      return { art: a.art, summeFmt: fmt(a.sum), segs, reste, zeigeRest: reste.length > 0 };
+    };
+    const fachChart = fachSummen.map(a => balkenZeile(a, fachMax));
+    const hatFachrichtungen = fachSummen.some(a => a.art !== 'Ohne Angabe');
+
+    // Ranking nach Behandler — Top 10, Rest zusammengefasst
+    const behNamenAw = [...new Set(basis.map(e => e.empfaenger || '—'))];
+    let behSummen = behNamenAw.map(a => {
+      const es = basis.filter(e => (e.empfaenger || '—') === a);
+      return { art: a, sum: es.reduce((x, e) => x + e.betrag, 0), betraege: persListe.map(p => es.filter(e => e.patient === p.name).reduce((x, e) => x + e.betrag, 0)) };
+    }).sort((a, b) => b.sum - a.sum);
+    let behRest = null, restListe = [];
+    if (behSummen.length > 10) {
+      restListe = behSummen.slice(10);
+      behRest = {
+        art: 'Übrige (' + restListe.length + ' Behandler)',
+        sum: restListe.reduce((x, a) => x + a.sum, 0),
+        betraege: persListe.map((p, i) => restListe.reduce((x, a) => x + a.betraege[i], 0))
+      };
+      behSummen = behSummen.slice(0, 10);
+    }
+    const restOffen = !!st.behRestOffen;
+    const angezeigt = behSummen.concat(behRest ? [behRest] : []).concat(restOffen ? restListe : []);
+    const behMax = Math.max(1, ...angezeigt.map(a => a.sum));
+    const behandlerChart = angezeigt.map(a => {
+      const istRest = a === behRest;
+      return {
+        ...balkenZeile(a, behMax),
+        istRest,
+        cursor: istRest ? 'pointer' : 'default',
+        einzug: (restOffen && restListe.includes(a)) ? '18px' : '0',
+        restPfeil: restOffen ? '▾' : '▸',
+        toggleRest: istRest ? (() => this.setState({ behRestOffen: !restOffen })) : null,
+        eingerueckt: restOffen && restListe.includes(a),
+        fachIcon: istRest ? 'https://unpkg.com/@tabler/icons@2.47.0/icons/dots.svg' : (this.fachFelder(a.art).fachIcon || this.fachIcon('')),
+        fachIconFg: istRest ? '#9AA7AD' : this.fachFelder(a.art).fachIconFg || '#175260'
+      };
+    });
+    const hatBehandlerChart = behandlerChart.length > 0;
+
     const artMax = Math.max(1, ...artSummen.map(a => a.sum));
     const artChart = artSummen.map(a => {
       const segs = [], reste = [];
@@ -2356,8 +2780,8 @@ class Component extends DCLogic {
       persListe.forEach((p, pi) => {
         if (!awAktiv.includes(p.name)) return;
         const s = m.betraege[pi];
-        const h = Math.round(s / monMax * 100);
-        const label = h >= 36 ? fmt0(s) : '';
+        const h = Math.round(s / monMax * 1000) / 10;
+        const label = h >= 30 ? fmt0(s) : '';
         let oben = '';
         if (s === 0) oben = i < monatGrenze ? '0 €' : '';
         else if (!label) oben = fmt0(s);
@@ -2373,8 +2797,10 @@ class Component extends DCLogic {
         const g = this.personDaten(n, j).gesamt;
         return { label: String(j), wert: fmt(g), pct: Math.round(g / vergleichMax * 100), opa: jahreAlle.length > 1 ? +(0.45 + 0.55 * i / (jahreAlle.length - 1)).toFixed(2) : 1 };
       });
-      return { name: n, farbe: this.farben[n], zeilen };
+      const summe = jahreAlle.reduce((x, j) => x + this.personDaten(n, j).gesamt, 0);
+      return { name: n, farbe: this.farben[n], zeilen, summeFmt: fmt(summe), _summe: summe };
     });
+    const jahresVergleichGesamtFmt = fmt(jahresVergleich.reduce((x, p) => x + p._summe, 0));
     const awPersonen = personen.filter(p => awAktiv.includes(p.name));
 
     // ---- Abgleich ----
@@ -2397,6 +2823,7 @@ class Component extends DCLogic {
       const vsVoll = e.vorsorge && (e.erstattet || 0) >= vsMax - 0.005;
       return {
       empfaenger: e.empfaenger || '—', patient: e.patient,
+      ...this.fachFelder(e.empfaenger),
       datumFmt: this.fmtDatum(e.datum), betragFmt: fmt(e.betrag),
       farbe: this.farben[e.patient], erstattet: e.erstattet || '',
       hatVorsorgeCheck: !!e.vorsorge && (e.erstattet || 0) > 0,
@@ -2464,14 +2891,14 @@ class Component extends DCLogic {
         bg: t.on ? '#E3EDF0' : '#FFFFFF', fg: t.on ? '#175260' : '#68787F',
         rand: t.on ? '#175260' : '#DCE3E6'
       })),
-      setFormDatum: ev => this.setState({ modal: { ...m, datum: ev.target.value } }),
+      setFormDatum: ev => this.setState({ modal: { ...m, datum: ev.target.value, _dupOk: false, _dupWarnung: null } }),
       formRechnungsdatum: m.rechnungsdatum || '',
       setFormRechnungsdatum: ev => this.setState({ modal: { ...m, rechnungsdatum: ev.target.value } }),
-      setFormBetrag: ev => this.setState({ modal: { ...m, betrag: ev.target.value } }),
+      setFormBetrag: ev => this.setState({ modal: { ...m, betrag: ev.target.value, _dupOk: false, _dupWarnung: null } }),
       setFormArt: ev => this.setState({ modal: { ...m, art: ev.target.value } }),
       setFormEmpfaenger: ev => {
         const wert = ev.target.value;
-        this.setState({ modal: { ...m, empfaenger: wert } });
+        this.setState({ modal: { ...m, empfaenger: wert, _dupOk: false, _dupWarnung: null } });
         clearTimeout(this._sucheTimer);
         if (wert.trim().length >= 4) {
           this._sucheTimer = setTimeout(() => this.sucheOnline(), 800);
@@ -2479,6 +2906,8 @@ class Component extends DCLogic {
       },
       setFormErstattet: ev => this.setState({ modal: { ...m, erstattet: ev.target.value } }),
       formAdresse: m.adresse || '',
+      formFach: (m.fach !== undefined && m.fach !== null) ? m.fach : (this.behandlerFach(m.empfaenger) || ''),
+      setFormFach: ev => this.setState({ modal: { ...m, fach: ev.target.value } }),
       setFormAdresse: ev => this.setState({ modal: { ...m, adresse: ev.target.value } }),
       formDiagnosen: m.diagnosen || '',
       setFormDiagnosen: ev => this.setState({ modal: { ...m, diagnosen: ev.target.value } }),
@@ -2620,7 +3049,7 @@ class Component extends DCLogic {
       personFilter, statusFilter, eintraegeGruppen: this.gruppiereNachArt(eintraegeListe),
       listeAnzahl: liste.length, listeSummeFmt: fmt(liste.reduce((x, e) => x + e.betrag, 0)),
       // Auswertungen
-      artChart, monatChart, jahresVergleich, awPersonToggles, awPersonen, artGesamtFmt,
+      artChart, fachChart, hatFachrichtungen, behandlerChart, hatBehandlerChart, monatChart, jahresVergleich, jahresVergleichGesamtFmt, awPersonToggles, awPersonen, artGesamtFmt,
       // ---- Dokumentenbibliothek ----
       ...this.dokumenteVals(fmt),
       // Abgleich
@@ -2666,6 +3095,7 @@ class Component extends DCLogic {
       openNeu: () => this.setState({ modal: { id: null, patient: pNamen[0], datum: heute, art: 'Arztbesuch', empfaenger: '', adresse: '', vorsorge: false, betrag: '', bezahlt: true, eingereicht: false, erstattet: '', belegName: null }, suche: { laden: false, ergebnisse: [], fehler: null }, auslese: null }),
       closeModal: () => this.setState({ modal: null, suche: { laden: false, ergebnisse: [], fehler: null }, auslese: null }),
       saveEntry: () => this.saveEntry(),
+      dupWarnung: (m && m._dupWarnung) || false,
       deleteEntry: () => { const id = m && m.id; if (id) this.update(x => ({ eintraege: x.eintraege.filter(e => e.id !== id), modal: null })); },
       stopClick: ev => ev.stopPropagation(),
       ...formVals,
@@ -2713,19 +3143,52 @@ class Component extends DCLogic {
       pinSubmit: ev => { ev.preventDefault(); this.entsperren(); },
       entsperren: () => this.entsperren(),
       pinNeu: st.pinNeu, pinInfo: st.pinInfo,
-      pinPlatzhalter: s.sperreHash ? 'Neue PIN (leer = Sperre aus)' : 'PIN festlegen (min. 4 Zeichen)',
+      pinAktiv: !!s.sperreHash,
+      belegeVerschluesseln: async () => {
+        const kandidaten = this.state.eintraege.filter(e => e.belegName);
+        if (!kandidaten.length) { this.setState({ syncStatus: 'Keine Belege verknüpft.' }); return; }
+        let n = 0;
+        for (const e of kandidaten) {
+          n++;
+          this.setState({ syncStatus: 'Prüfe Beleg ' + n + '/' + kandidaten.length + ' …' });
+          try { await this.belegLaden(e.id, e.belegName); } catch (err) {}
+        }
+        this.setState({ syncStatus: 'Fertig — ' + kandidaten.length + ' Belege geprüft; unverschlüsselte wurden verschlüsselt neu hochgeladen.' });
+      },
+      pinPlatzhalter: s.sperreHash ? 'Neue PIN (leer = Sperre aus)' : 'PIN festlegen (min. 8 Zeichen)',
       setPinNeu: ev => this.setState({ pinNeu: ev.target.value }),
       pinSpeichern: async () => {
         const p = (st.pinNeu || '').trim();
         if (!p) {
           sessionStorage.removeItem('pkv.entsperrt');
+          sessionStorage.removeItem('pkv.schluessel');
+          this._pinKey = null; this._pinSalt = null;
+          await this.syncPersistieren(this.state.sync); // Tresor auflösen: Token wieder unverschlüsselt ablegen
           this.update(x => { const se = { ...x.settings }; delete se.sperreHash; return { settings: se }; });
-          this.setState({ pinNeu: '', pinInfo: 'Sperre entfernt — gilt über den Sync auf allen Geräten.' });
+          this.setState({ pinNeu: '', pinInfo: 'Sperre entfernt — Token liegt wieder unverschlüsselt im Browser und der Datenstand wird beim nächsten Sync unverschlüsselt hochgeladen. Bereits verschlüsselte Belege werden beim nächsten Öffnen unverschlüsselt neu abgelegt.' });
           return;
         }
-        if (p.length < 4) { this.setState({ pinInfo: 'Bitte mindestens 4 Zeichen.' }); return; }
+        if (p.length < 8) { this.setState({ pinInfo: 'Bitte mindestens 8 Zeichen — die PIN verschlüsselt auch das GitHub-Token.' }); return; }
         const hash = await this.pinHash(p);
         sessionStorage.setItem('pkv.entsperrt', '1');
+        // Datenschlüssel-Cache mit der ALTEN PIN füllen, bevor sie überschrieben wird
+        try { await this.datenKeyErmitteln(null); } catch (e) {}
+        // Token mit der neuen PIN (neu) verschlüsseln
+        const salt = this.b64(crypto.getRandomValues(new Uint8Array(16)));
+        const k = await this.schluesselAusPin(p, salt);
+        this._pinKey = k.key; this._pinSalt = salt;
+        this._pin = p;
+        sessionStorage.setItem('pkv.schluessel', k.raw);
+        await this.syncPersistieren(this.state.sync);
+        // Datenschlüssel mit der neuen PIN neu umschlagen (Belege/Gist bleiben unverändert)
+        const dkRaw = sessionStorage.getItem('pkv.datenschluessel');
+        if (dkRaw) {
+          const salt2 = this.b64(crypto.getRandomValues(new Uint8Array(16)));
+          const k2 = await this.schluesselAusPin(p, salt2);
+          const iv2 = crypto.getRandomValues(new Uint8Array(12));
+          const ct2 = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv2 }, k2.key, this.b64ab(dkRaw));
+          localStorage.setItem('pkv.tresor.v1', JSON.stringify({ salt: salt2, iv: this.b64(iv2), key: this.b64(new Uint8Array(ct2)) }));
+        }
         this.update(x => ({ settings: { ...x.settings, sperreHash: hash } }));
         this.setState({ pinNeu: '', pinInfo: 'Sperre aktiv — gilt über den Sync auf allen Geräten ab dem nächsten Öffnen.' });
       },
