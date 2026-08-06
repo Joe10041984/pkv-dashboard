@@ -619,6 +619,13 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
                   </sc-if>
                 </div>
                 <span style="font-size:11px; font-weight:600; background:{{ v.badgeBg }}; color:{{ v.badgeFg }}; border-radius:6px; padding:3px 8px; white-space:nowrap;">{{ v.badge }}</span>
+                <sc-if value="{{ v.zeigtAuswahl }}" hint-placeholder-val="{{ true }}">
+                  <select value="{{ v.auswahlWert }}" onChange="{{ v.zuordnen }}" style="border:1px solid #DCE3E6; border-radius:5px; padding:6px 8px; font-size:12.5px; font-family:inherit; color:#1E2B32; background:#FFFFFF; max-width:270px;">
+                    <sc-for list="{{ v.optionen }}" as="o" hint-placeholder-count="1">
+                      <option value="{{ o.wert }}">{{ o.text }}</option>
+                    </sc-for>
+                  </select>
+                </sc-if>
                 <sc-if value="{{ v.kannUebernehmen }}" hint-placeholder-val="{{ false }}">
                   <button onClick="{{ v.uebernehmen }}" style="border:1px solid #175260; cursor:pointer; background:#FFFFFF; color:#175260; border-radius:5px; padding:6px 12px; font-size:12.5px; font-weight:600;" style-hover="background:#E3EDF0;">Übernehmen</button>
                 </sc-if>
@@ -1847,30 +1854,20 @@ class Component extends DCLogic {
       try { daten = JSON.parse(antwort.replace(/^```json?\s*|```\s*$/g, '')); } catch (e) { throw new Error('KI-Antwort war kein gültiges JSON.'); }
       const pos = Array.isArray(daten.positionen) ? daten.positionen : [];
       if (!pos.length) { setStatus('Keine Erstattungspositionen im Dokument gefunden.', 'fehler'); return; }
-      // Zuordnung zu eingereichten Einträgen: 1) exakter Betrag, 2) Betrag ±1 Cent + Empfänger-Ähnlichkeit
+      // Zuordnung: Punktwertung über Betrag, Name und Datum — nicht mehr nur exakter Betrag bei eingereichten Einträgen
       const offenIds = new Set();
       const vorschlaege = pos.map(p => {
-        const fmt = v => this.fmt.format(v || 0);
-        const kand = this.state.eintraege.filter(e => e.eingereicht && !offenIds.has(e.id) && Math.abs(e.betrag - (p.rechnungsbetrag || 0)) < 0.02);
-        let match = kand.length === 1 ? kand[0] : null;
-        if (!match && kand.length > 1 && p.empfaenger) {
-          const norm = s => String(s || '').toLowerCase().replace(/[^a-zäöüß]/g, '');
-          match = kand.find(e => norm(e.empfaenger).includes(norm(p.empfaenger).slice(0, 6)) || norm(p.empfaenger).includes(norm(e.empfaenger).slice(0, 6))) || null;
-        }
+        const bew = this.abrBewertung(p, offenIds);
+        const match = bew.treffer;
         if (match) offenIds.add(match.id);
-        return { empfaenger: p.empfaenger || '—', datum: p.rechnungsdatum || null, betrag: p.rechnungsbetrag || 0, erstattet: p.erstattet || 0, matchId: match ? match.id : null, matchEmpfaenger: match ? match.empfaenger : null, erledigt: false };
+        return {
+          empfaenger: p.empfaenger || '—', datum: p.rechnungsdatum || null,
+          betrag: p.rechnungsbetrag || 0, erstattet: p.erstattet || 0,
+          matchId: match ? match.id : null, matchEmpfaenger: match ? match.empfaenger : null,
+          sicher: bew.sicher, erledigt: false
+        };
       });
-      // Vorsorge-Prüfung: wurde der maximale Vorsorgesatz leistungsbestätigt?
-      vorschlaege.forEach(v => {
-        if (!v.matchId) return;
-        const e = this.state.eintraege.find(x => x.id === v.matchId);
-        if (!e || !e.vorsorge) return;
-        let maxSatz = 0;
-        (e.positionen || []).forEach(p => { if (this.vorsorgeZiffern.has(this.normZiffer(p.z))) maxSatz += parseFloat(p.b) || 0; });
-        if (!(maxSatz > 0)) maxSatz = e.betrag; // keine Ziffern gepflegt: voller Rechnungsbetrag als Maßstab
-        v.vorsorgeMax = Math.round(maxSatz * 100) / 100;
-        v.vorsorgeVoll = v.erstattet >= v.vorsorgeMax - 0.005;
-      });
+      vorschlaege.forEach(v => this.vorsorgePruefen(v));
       // Abrechnungs-Dokument dauerhaft speichern (lokal + privates Repo).
       // Duplikat-Schutz: Inhalts-Hash als Schlüssel — dieselbe Datei erzeugt immer denselben Pfad.
       const hashBuf = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
@@ -1886,6 +1883,77 @@ class Component extends DCLogic {
     } catch (err) {
       setStatus('Auslesen fehlgeschlagen: ' + (err && err.message ? err.message : err), 'fehler');
     }
+  }
+  // Vorsorge-Prüfung: wurde der maximale Vorsorgesatz leistungsbestätigt?
+  vorsorgePruefen(v) {
+    v.vorsorgeMax = null; v.vorsorgeVoll = false;
+    if (!v.matchId) return v;
+    const e = this.state.eintraege.find(x => x.id === v.matchId);
+    if (!e || !e.vorsorge) return v;
+    let maxSatz = 0;
+    (e.positionen || []).forEach(p => { if (this.vorsorgeZiffern.has(this.normZiffer(p.z))) maxSatz += parseFloat(p.b) || 0; });
+    if (!(maxSatz > 0)) maxSatz = e.betrag; // keine Ziffern gepflegt: voller Rechnungsbetrag als Maßstab
+    v.vorsorgeMax = Math.round(maxSatz * 100) / 100;
+    v.vorsorgeVoll = v.erstattet >= v.vorsorgeMax - 0.005;
+    return v;
+  }
+  // Namens-Ähnlichkeit über gemeinsame Wortstämme (ab 4 Zeichen), ohne Titel/Anreden
+  namensWorte(s) {
+    const stop = new Set(['praxis', 'gemeinschaftspraxis', 'zahnarzt', 'zahnaerzte', 'arzt', 'aerzte', 'doktor', 'herrn', 'frau', 'fuer', 'und', 'der', 'die', 'das', 'med', 'dent', 'apotheke', 'zentrum', 'klinik', 'mvz']);
+    return String(s || '').toLowerCase()
+      .replace(/[äöüß]/g, m => ({ 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' }[m]))
+      .split(/[^a-z]+/).filter(w => w.length >= 4 && !stop.has(w));
+  }
+  namensNaehe(a, b) {
+    const x = this.namensWorte(a), y = this.namensWorte(b);
+    if (!x.length || !y.length) return 0;
+    let t = 0;
+    x.forEach(w => { if (y.some(v => v === w || (v.length >= 5 && w.length >= 5 && (v.startsWith(w.slice(0, 5)) || w.startsWith(v.slice(0, 5)))))) t++; });
+    return t;
+  }
+  // Bewertet alle Einträge gegen eine Abrechnungsposition. Betrag zählt am meisten,
+  // Name und Datum stützen ab. Auch nicht als „eingereicht“ markierte Einträge kommen in Frage.
+  abrBewertung(p, belegt) {
+    const rb = p.rechnungsbetrag || 0, er = p.erstattet || 0;
+    const pd = p.rechnungsdatum ? Date.parse(p.rechnungsdatum) : null;
+    const liste = this.state.eintraege.map(e => {
+      let s = 0;
+      const nahe = (a, b) => a > 0 && b > 0 && Math.abs(a - b) < 0.02;
+      if (nahe(e.betrag, rb)) s += 5;
+      else if (nahe(e.betrag, er)) s += 4;           // KI hat nur den erstatteten Betrag gefunden
+      else if (rb > 0 && e.betrag > 0 && Math.abs(e.betrag - rb) / Math.max(e.betrag, rb) < 0.02) s += 2;
+      const n = this.namensNaehe(e.empfaenger, p.empfaenger);
+      if (n >= 2) s += 4; else if (n === 1) s += 3;
+      if (pd && e.datum) { const d = Math.abs(Date.parse(e.datum) - pd) / 86400000; if (d <= 3) s += 2; else if (d <= 120) s += 1; else if (d > 400) s -= 2; }
+      if (e.erstattet > 0) s -= 3;                    // schon abgerechnet
+      if (!e.eingereicht) s -= 1;
+      if (belegt && belegt.has(e.id)) s -= 6;
+      return { e, s, n };
+    }).sort((a, b) => b.s - a.s);
+    const best = liste[0], zweit = liste[1];
+    // Sicher: Betrag passt und der Abstand zum Zweitplatzierten ist eindeutig
+    const treffer = best && best.s >= 6 && (!zweit || best.s - zweit.s >= 2) ? best.e : null;
+    const sicher = !!(treffer && best.s >= 8);
+    return { treffer, sicher, liste };
+  }
+  // Auswahlliste für die manuelle Zuordnung — plausibelste Einträge zuerst
+  abrOptionen(v) {
+    const fmt = x => this.fmt.format(x || 0);
+    const { liste } = this.abrBewertung({ rechnungsbetrag: v.betrag, erstattet: v.erstattet, rechnungsdatum: v.datum }, null);
+    return [{ wert: '', text: 'Keinem Eintrag zuordnen' }].concat(
+      liste.filter(x => x.s > -6).slice(0, 25).map(x => ({
+        wert: String(x.e.id),
+        text: (x.e.empfaenger || '—') + ' · ' + this.fmtDatum(x.e.datum) + ' · ' + fmt(x.e.betrag) + (x.e.erstattet > 0 ? ' · bereits erstattet' : x.e.eingereicht ? '' : ' · nicht eingereicht')
+      })));
+  }
+  zuordnungSetzen(index, id) {
+    const v = (this.state.abrechnungVorschlaege || [])[index];
+    if (!v) return;
+    const e = id ? this.state.eintraege.find(x => String(x.id) === String(id)) : null;
+    const neu = (this.state.abrechnungVorschlaege || []).map((x, i) => i === index
+      ? this.vorsorgePruefen({ ...x, matchId: e ? e.id : null, matchEmpfaenger: e ? e.empfaenger : null, sicher: !!e })
+      : x);
+    this.setState({ abrechnungVorschlaege: neu });
   }
   // Findet bei Vorsorge-Abweichung die Verzeichnis-Ziffern, die den Fehlbetrag erklären
   vorsorgeFehlziffern(positionen, fehlbetrag) {
@@ -3069,12 +3137,16 @@ class Component extends DCLogic {
       abrechnungStatus: st.abrechnungStatus || null,
       abrechnungStatusFarbe: st.abrechnungTyp === 'fehler' ? '#A03E3E' : st.abrechnungTyp === 'ok' ? '#175260' : '#68787F',
       hatVorschlaege: !!(st.abrechnungVorschlaege && st.abrechnungVorschlaege.length),
-      abrechnungVorschlaege: (st.abrechnungVorschlaege || []).map(v => ({
+      abrechnungVorschlaege: (st.abrechnungVorschlaege || []).map((v, vi) => ({
         titel: v.empfaenger + ' — ' + fmt(v.betrag),
         unterzeile: (v.datum ? this.fmtDatum(v.datum) + ' · ' : '') + 'erstattet ' + fmt(v.erstattet) + (v.matchEmpfaenger ? ' → ' + v.matchEmpfaenger : ''),
-        badge: v.erledigt ? 'übernommen' : v.matchId ? 'zugeordnet' : 'keine Zuordnung',
+        badge: v.erledigt ? 'übernommen' : !v.matchId ? 'keine Zuordnung' : v.sicher ? 'zugeordnet' : 'zugeordnet · bitte prüfen',
         badgeBg: v.erledigt ? '#E3EDF0' : v.matchId ? '#FBF3E2' : '#EDF0F2',
         badgeFg: v.erledigt ? '#175260' : v.matchId ? '#A0762A' : '#68787F',
+        zeigtAuswahl: !v.erledigt,
+        auswahlWert: v.matchId ? String(v.matchId) : '',
+        optionen: v.erledigt ? [] : this.abrOptionen(v),
+        zuordnen: ev => this.zuordnungSetzen(vi, ev.target.value),
         hatVorsorgeCheck: v.vorsorgeMax != null,
         vorsorgeText: v.vorsorgeMax == null ? '' : (v.vorsorgeVoll
           ? 'Vorsorge: maximaler Satz (' + fmt(v.vorsorgeMax) + ') leistungsbestätigt ✓'
