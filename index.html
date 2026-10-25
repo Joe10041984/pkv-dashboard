@@ -1470,9 +1470,16 @@ class Component extends DCLogic {
     // Lokal verschlüsselten Stand zuerst öffnen — erst danach darf der Sync vergleichen
     await this.lokalEntschluesseln();
     this.setState({ gesperrt: false, pinEingabe: '', pinFehler: null, ...(syncNeu ? { sync: syncNeu } : {}) }, () => {
-      if (!String(ref).startsWith('v2$')) this.pinHash(pin).then(neu => this.update(x => ({ settings: { ...x.settings, sperreHash: neu } })));
       const c = this.state.sync;
-      if (c && c.token && c.gistId) { this._syncGestartet = true; this.syncLoad(true); }
+      const abgleich = (c && c.token && c.gistId) ? (this._syncGestartet = true, this.syncLoad(true)) : Promise.resolve();
+      if (!String(ref).startsWith('v2$')) {
+        Promise.resolve(abgleich).catch(() => {}).then(() => this.pinHash(pin)).then(neu => {
+          this.setState(x => ({ settings: { ...x.settings, sperreHash: neu } }), () => {
+            this.persist(true);
+            if (this.state.sync && this.state.sync.token && this.state.sync.gistId) this.syncUpload(true);
+          });
+        });
+      }
     });
   }
   // ---------- Personen (aus Settings, neutral bei frischer Instanz) ----------
@@ -1761,7 +1768,7 @@ class Component extends DCLogic {
         const key = await this.datenKeyErmitteln(s.tresor);
         if (!key) {
           // Ohne PIN nicht lesbar: Sperre aus dem Klartext-Kopf übernehmen, damit die PIN-Abfrage erscheint
-          if (s.sperreHash) this.setState({ settings: { ...this.state.settings, sperreHash: s.sperreHash }, gesperrt: sessionStorage.getItem('pkv.entsperrt') !== '1' || this.state.gesperrt });
+          if (s.sperreHash && !String(this.state.settings.sperreHash || '').startsWith('v2$')) this.setState({ settings: { ...this.state.settings, sperreHash: s.sperreHash }, gesperrt: sessionStorage.getItem('pkv.entsperrt') !== '1' || this.state.gesperrt });
           this.setState({ syncStatus: 'Daten sind Ende-zu-Ende verschlüsselt — zum Laden bitte mit der PIN entsperren.' });
           return;
         }
@@ -1776,7 +1783,10 @@ class Component extends DCLogic {
         if (lokalTs && remoteTs && remoteTs < lokalTs) { this.syncUpload(true); return; } // lokal ist neuer
       }
       if (s.behandler) { this.behandler = s.behandler; this.behandlerSpeichern(); }
-      const neueSettings = s.settings || this.state.settings;
+      let neueSettings = s.settings || this.state.settings;
+      // Neuer PIN-Prüfwert (v2) hat Vorrang vor einem alten aus dem Gist bzw. von einem Gerät mit älterer Version
+      const lokalRef = this.state.settings.sperreHash;
+      if (lokalRef && String(lokalRef).startsWith('v2$') && !String(neueSettings.sperreHash || '').startsWith('v2$')) neueSettings = { ...neueSettings, sperreHash: lokalRef };
       // Kommt per Sync eine PIN-Sperre an und dieses Gerät wurde in dieser Sitzung nicht entsperrt: sofort sperren
       const jetztSperren = !!neueSettings.sperreHash && sessionStorage.getItem('pkv.entsperrt') !== '1';
       // Schutz: Dokument-Verknüpfungen nie durch einen Stand ohne diese Felder verlieren (z. B. von einem Gerät mit älterer App-Version)
