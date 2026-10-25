@@ -73,7 +73,7 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
       <div style="max-width:460px; margin:60px auto 0 auto; background:#FFFFFF; border:1px solid #DCE3E6; border-radius:6px; padding:32px; display:flex; flex-direction:column; gap:14px; text-align:center;">
         <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:20px; color:#1E2B32;">Noch nicht eingerichtet</div>
         <sc-if value="{{ setupVorhanden }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:14px; color:#68787F; line-height:1.55;">Einrichtungs-Passwort eingeben — Zugangsdaten und Stand werden automatisch geladen.</div>
+          <div style="font-size:14px; color:#68787F; line-height:1.55;">Einrichtungs-Passwort eingeben (das beim Erzeugen der setup.json vergebene) — Zugangsdaten und Stand werden automatisch geladen.</div>
           <input type="password" autoComplete="off" spellCheck="false" autoFocus="{{ true }}" placeholder="Einrichtungs-Passwort" value="{{ setupPass }}" onChange="{{ setSetupPass }}" onKeyDown="{{ setupKeyDown }}" style="padding:12px 14px; border:1px solid #DCE3E6; border-radius:6px; font-size:16px; text-align:center; color:#1E2B32;">
           <button onClick="{{ setupAnwenden }}" style="border:none; cursor:pointer; background:#C40D4E; color:#fff; border-radius:6px; padding:13px; font-size:15px; font-weight:600;">Verbinden</button>
           <sc-if value="{{ setupLaeuft }}" hint-placeholder-val="{{ false }}">
@@ -1440,7 +1440,7 @@ class Component extends DCLogic {
       return;
     }
     if (this.state.sync && this.state.sync.token && this.state.sync.gistId) { this._syncGestartet = true; this.syncLoad(true); }
-    else fetch('setup.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(b => { if (b && b.daten) this.setState({ setupBlob: b }); }).catch(() => {});
+    else fetch('setup.json?t=' + Date.now(), { cache: 'no-store' }).then(r => { if (!r.ok) throw 0; return r.json(); }).then(b => { if (b && b.daten) this.setState({ setupBlob: b }); }).catch(() => {});
   }
   async setupAnwenden() {
     const pass = (this.state.setupPass || '').trim();
@@ -1453,7 +1453,7 @@ class Component extends DCLogic {
       this.setState({ setupLaeuft: false, setupPass: '' });
       await this.syncLoad(false);
     } catch (e) {
-      this.setState({ setupLaeuft: false, setupFehler: 'Entschlüsselung fehlgeschlagen — Passwort falsch?' });
+      this.setState({ setupLaeuft: false, setupFehler: 'Entschlüsselung fehlgeschlagen. Gefragt ist das Einrichtungs-Passwort, das beim Erzeugen der setup.json vergeben wurde — nicht zwingend die PIN.' });
     }
   }
 
@@ -1584,7 +1584,14 @@ class Component extends DCLogic {
     this._sichtbar = () => { if (document.visibilityState === 'visible') pruefe(); };
     document.addEventListener('visibilitychange', this._sichtbar);
     // Sitzung noch offen (Reload): lokalen Stand mit dem Sitzungsschlüssel öffnen, bevor der Sync startet
-    try { await this.lokalEntschluesseln(); } catch (e) {}
+    let offen = true;
+    try { offen = await this.lokalEntschluesseln(); } catch (e) { offen = false; }
+    if (!offen) {
+      // Sitzungsschlüssel fehlt oder passt nicht: zur PIN-Abfrage statt in eine leere App
+      sessionStorage.removeItem('pkv.entsperrt');
+      this.setState({ gesperrt: true });
+      return;
+    }
     this.syncStart();
   }
   componentWillUnmount() {
@@ -2772,7 +2779,7 @@ class Component extends DCLogic {
     const legende = persListe.map(p => ({ name: p.name, farbe: p.farbe }));
 
     // Ersteinrichtung: ohne Daten und ohne Sync-Konfiguration nur den Start-Bildschirm zeigen
-    const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag;
+    const eingerichtet = st.eintraege.length > 0 || st.eingerichtetFlag || !!st.settings.sperreHash || !!this._lokalVerschluesselt;
 
     // ---- Tabs / Layout / Jahr ----
     const tabDefs = [['uebersicht', 'Übersicht'], ['eintraege', 'Einträge'], ['auswertungen', 'Auswertungen'], ['abgleich', 'Abgleich'], ['dokumente', 'Dokumente'], ['diagnosen', 'Diagnosen']];
