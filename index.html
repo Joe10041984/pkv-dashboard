@@ -1446,14 +1446,16 @@ class Component extends DCLogic {
     const pass = (this.state.setupPass || '').trim();
     if (!pass) { this.setState({ setupFehler: 'Bitte Passwort eingeben.' }); return; }
     this.setState({ setupLaeuft: true, setupFehler: null });
+    let c;
+    try { c = await this.setupEntschluesseln(pass, this.state.setupBlob); }
+    catch (e) { this.setState({ setupLaeuft: false, setupFehler: 'Entschlüsselung fehlgeschlagen — Einrichtungs-Passwort passt nicht zu dieser setup.json' + (this.state.setupBlob && this.state.setupBlob.erstellt ? ' (erstellt ' + new Date(this.state.setupBlob.erstellt).toLocaleString('de-DE') + ').' : ' (ältere Datei ohne Datum — vermutlich nicht die neueste).') }); return; }
     try {
-      const c = await this.setupEntschluesseln(pass, this.state.setupBlob);
       if (!c.token || !c.gistId) throw new Error('unvollständig');
       this.speichereSync({ token: c.token, gistId: c.gistId, repo: c.repo || '', aiKey: c.aiKey || '' });
       this.setState({ setupLaeuft: false, setupPass: '' });
       await this.syncLoad(false);
     } catch (e) {
-      this.setState({ setupLaeuft: false, setupFehler: 'Entschlüsselung fehlgeschlagen. Gefragt ist das Einrichtungs-Passwort, das beim Erzeugen der setup.json vergeben wurde — nicht zwingend die PIN.' });
+      this.setState({ setupLaeuft: false, setupFehler: e && e.message === 'unvollständig' ? 'Passwort stimmt, aber die setup.json enthält keinen Token oder keine Gist-ID. Bitte neu erzeugen.' : 'Passwort stimmt, aber das Laden des Stands schlug fehl: ' + ((e && e.message) || 'unbekannt') + '. Token abgelaufen oder ohne Gist-Recht?' });
     }
   }
 
@@ -1560,7 +1562,7 @@ class Component extends DCLogic {
     const key = await this.setupSchluessel(pass, salt);
     const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(obj)));
     const b64 = a => btoa(String.fromCharCode(...new Uint8Array(a)));
-    return JSON.stringify({ v: 1, salt: b64(salt), iv: b64(iv), daten: b64(ct) }, null, 1);
+    return JSON.stringify({ v: 1, erstellt: new Date().toISOString(), salt: b64(salt), iv: b64(iv), daten: b64(ct) }, null, 1);
   }
   async setupEntschluesseln(pass, blob) {
     const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
