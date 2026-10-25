@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
@@ -22,7 +23,7 @@ doc-page:not(:defined) { visibility: hidden; }
 
   <div slot="footer" style="display:flex; justify-content:space-between; font-size:9pt; color:#68787F; border-top:1px solid #DCE3E6; padding-top:6px;">
     <span>PKV-Aufwände — Bedienungsanleitung</span>
-    <span>Stand: 9. Juli 2026</span>
+    <span>Stand: 10. Juli 2026</span>
   </div>
 
   <div style="border-bottom:4px solid #C40D4E; padding-bottom:16px; margin-bottom:24px;">
@@ -32,7 +33,7 @@ doc-page:not(:defined) { visibility: hidden; }
   </div>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">1. Wozu dient die App?</h2>
-  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Das Dashboard sammelt alle bezahlten Gesundheitsausgaben der versicherten Personen (z.&#8239;B. Johannes und Konrad — Namen, Farben und Anzahl sind frei konfigurierbar, siehe Abschnitt 5) und beantwortet die zentrale Frage: <strong>Lohnt es sich, die Rechnungen bei der Hallesche einzureichen — oder ist es besser, Bonus und Beitragsrückerstattung (BRE) zu behalten?</strong> Dazu vergleicht es die nicht eingereichten Beträge mit der Schwelle aus Bonus + BRE. Als Vorsorge gekennzeichnete Leistungen (GOÄ/GOZ-Ziffern aus dem Hallesche-Vorsorgeverzeichnis) zählen nicht gegen Bonus/BRE und können immer eingereicht werden.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Das Dashboard sammelt alle bezahlten Gesundheitsausgaben der versicherten Personen (z.&#8239;B. Person A und Person B — Namen, Farben und Anzahl sind frei konfigurierbar, siehe Abschnitt 5) und beantwortet die zentrale Frage: <strong>Lohnt es sich, die Rechnungen bei der Hallesche einzureichen — oder ist es besser, Bonus und Beitragsrückerstattung (BRE) zu behalten?</strong> Dazu vergleicht es die nicht eingereichten Beträge mit der Schwelle aus Bonus + BRE. Als Vorsorge gekennzeichnete Leistungen (GOÄ/GOZ-Ziffern aus dem Hallesche-Vorsorgeverzeichnis) zählen nicht gegen Bonus/BRE und können immer eingereicht werden.</p>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">2. Aufbau</h2>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
@@ -51,6 +52,7 @@ doc-page:not(:defined) { visibility: hidden; }
     <li style="margin-bottom:4px;">Datum, Betrag und Art erfassen; <strong>Vorsorge</strong> ankreuzen, wenn die Leistung anrechnungsfrei ist. Beim KI-Auslesen mit Gebührenziffern wird das automatisch eingeschätzt.</li>
     <li>Status pflegen: <em>bezahlt</em> → <em>eingereicht</em> → Erstattungsbetrag eintragen, sobald die Leistungsabrechnung da ist.</li>
   </ol>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Duplikat-Schutz:</strong> Existiert bereits ein Eintrag mit gleichem Empfänger, Datum und Betrag, warnt die App beim Speichern (inkl. Status des vorhandenen Eintrags). Erneutes „Speichern“ legt den Eintrag bewusst trotzdem an — z.&#8239;B. bei zwei identischen Rechnungen am selben Tag.</p>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">4. Belege: Datei, Handy-Scan &amp; KI-Auslesen</h2>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
@@ -62,7 +64,9 @@ doc-page:not(:defined) { visibility: hidden; }
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">5. Einstellungen: Personen, Bonus, BRE &amp; App-Sperre</h2>
   <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Personen verwalten:</strong> Jede versicherte Person hat eine eigene Karte mit Name, Bonus und BRE-Jahren. <strong>„+ Person hinzufügen“</strong> legt eine weitere an (z.&#8239;B. ein Kind) — Farben, Filter und Auswertungen passen sich automatisch an. Umbenennen zieht alle vorhandenen Einträge mit um; Entfernen geht nur bei Personen ohne Einträge. Die <strong>Tarif-Bezeichnung</strong> in der Kopfzeile ist frei wählbar (Feld darüber). Namen, Bonuswerte und Tarif stehen nicht im Code der öffentlichen Seite — sie kommen erst mit dem geladenen Sync-Stand.</p>
   <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;">Pro Person werden der jährliche <strong>Bonus</strong> (derzeit 1.200&#8239;€ / 600&#8239;€) und die Zahl der <strong>berücksichtigungsfähigen BRE-Jahre</strong> gepflegt (Staffel ab 2026: 300–800&#8239;€ für 1–6 Jahre). Daraus errechnet sich die Schwelle für die Einreich-Empfehlung. Ist die BRE-Höhe nicht hinterlegt, rechnet die Empfehlung nur mit dem Bonus und weist darauf hin.</p>
-  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>App-Sperre (PIN):</strong> Unter Einstellungen lässt sich eine PIN festlegen (min. 4 Zeichen) — danach verlangt die App bei jedem Öffnen die Eingabe. Die Sperre wandert über den GitHub-Sync <strong>auf alle verbundenen Geräte</strong> (einmal einrichten genügt); Feld leeren und speichern schaltet sie überall ab. Wichtig zur Einordnung: Es ist ein Sichtschutz gegen neugierige Blicke am geöffneten Browser — keine Verschlüsselung der Daten. Der eigentliche Schutz deiner Daten bleibt der private Gist und die Gerätesperre von Handy/Rechner. PIN vergessen? Browserdaten der Seite löschen und den Stand per „Jetzt laden“ aus dem Gist zurückholen.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>App-Sperre (PIN) = Verschlüsselung:</strong> Unter Einstellungen lässt sich eine PIN festlegen (min. 8 Zeichen, gern deutlich länger — am besten aus dem Passwortmanager) — danach verlangt die App bei jedem Öffnen die Eingabe. Die PIN ist seit Juli 2026 weit mehr als ein Sichtschutz: Sie verschlüsselt <strong>GitHub-Token und API-Key im Browser</strong> sowie <strong>den kompletten Datenstand im Gist und alle Belege im Repo Ende-zu-Ende</strong> (AES-256, PBKDF2). Auf GitHub liegt damit nur noch unlesbares Chiffrat. Die Sperre wandert über den Sync auf alle Geräte; Feld leeren und speichern schaltet sie (und die Verschlüsselung) überall ab. <strong>Achtung — PIN vergessen:</strong> Ohne PIN sind die synchronisierten Daten nicht wiederherstellbar. Solange noch ein entsperrtes Gerät existiert, dort einfach eine neue PIN setzen; die PIN gehört zwingend in den Passwortmanager.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Sperren &amp; Auto-Sperre:</strong> Bei aktiver PIN steht oben neben „Einstellungen“ der Button <strong>„Sperren“</strong>. Ohne Bedienung sperrt die App sich nach <strong>15 Minuten</strong> selbst (nicht während ein Stapel-Auslesen läuft). Beim Sperren werden Schlüssel und Klartext aus dem Arbeitsspeicher genommen; ausstehende Änderungen werden vorher noch hochgeladen. Nach fünf falschen PIN-Eingaben folgt eine kurze, wachsende Wartezeit.</p>
+  <p style="font-size:11pt; line-height:1.55; margin:0 0 10px 0;"><strong>Auch lokal verschlüsselt:</strong> Mit PIN liegen Einträge, Behandlerliste, Einstellungen und die lokalen Beleg-Kopien auch im Browser des Geräts nur verschlüsselt vor. Bestehende Klartext-Daten werden beim nächsten Speichern bzw. Öffnen automatisch umgestellt.</p>
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">6. Daten sichern &amp; Geräte verbinden</h2>
   <p style="font-size:11pt; line-height:1.55; margin:0 0 8px 0;">Alle Daten liegen zunächst nur im Browser des jeweiligen Geräts (localStorage bzw. lokale Datenbank für Belege). Drei Wege, sie zu bewegen — alle in den Einstellungen:</p>
@@ -128,9 +132,9 @@ doc-page:not(:defined) { visibility: hidden; }
 
   <h3 style="font-size:12pt; font-weight:700; color:#1E2B32; margin:14px 0 6px 0;">So läuft der Dokumenten-Upload danach ab</h3>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
-    <li style="margin-bottom:4px;">Beim <strong>Speichern</strong> eines Eintrags mit Beleg (Datei oder Handy-Scan) committet die App die Datei automatisch als <em>belege/&lt;eintrags-id&gt;-&lt;dateiname&gt;</em> ins Repo — im Repo unter „Code → belege/“ sichtbar. Wird der Beleg ersetzt, wird die Datei im Repo überschrieben.</li>
-    <li style="margin-bottom:4px;"><strong>„Öffnen“ auf einem anderen Gerät:</strong> liegt der Beleg dort nicht lokal vor, lädt die App ihn aus dem Repo nach und merkt ihn sich lokal.</li>
-    <li style="margin-bottom:4px;"><strong>Bestehende alte Belege</strong> werden nicht rückwirkend hochgeladen. Nachziehen: Eintrag öffnen → Beleg neu anhängen → Speichern.</li>
+    <li style="margin-bottom:4px;">Beim <strong>Speichern</strong> eines Eintrags mit Beleg (Datei oder Handy-Scan) committet die App die Datei automatisch als <em>belege/&lt;eintrags-id&gt;-&lt;dateiname&gt;</em> ins Repo. Bei aktiver PIN wird der Inhalt vorher <strong>verschlüsselt</strong> — im Repo ist die Datei dann nicht mehr als PDF lesbar (GitHub zeigt „Invalid PDF“; Raw-Inhalt beginnt mit <em>PKVENC1</em>). Das ist gewollt.</li>
+    <li style="margin-bottom:4px;"><strong>„Öffnen“ auf einem anderen Gerät:</strong> liegt der Beleg dort nicht lokal vor, lädt die App ihn aus dem Repo nach, entschlüsselt ihn und merkt ihn sich lokal.</li>
+    <li style="margin-bottom:4px;"><strong>„Alle Belege jetzt verschlüsseln“</strong> (Einstellungen, PIN-Abschnitt): prüft einmalig alle verknüpften Belege und Leistungsabrechnungen und lädt unverschlüsselte Alt-Bestände verschlüsselt neu hoch — auch in ein frisch gewechseltes, leeres Repo (er nimmt die lokale Kopie). Fortschritt und Ergebnis erscheinen direkt unter dem Button.</li>
     <li>Es ist keine weitere Konfiguration im Repo nötig — keine Actions, keine Webhooks, keine Branch-Regeln. Das Repo ist reiner Ablageort.</li>
   </ul>
 
@@ -144,7 +148,7 @@ doc-page:not(:defined) { visibility: hidden; }
     <li style="margin-bottom:4px;"><strong>Konto anlegen:</strong> <em>console.anthropic.com</em> öffnen → „Sign up“ (E-Mail oder Google-Konto).</li>
     <li style="margin-bottom:4px;"><strong>Guthaben laden:</strong> In der Console unter <strong>Settings → Billing</strong> eine Zahlungsmethode hinterlegen und Guthaben aufladen (5&#8239;$ reichen sehr lange — eine Rechnung kostet grob 1–2&#8239;Cent). Empfehlung: <strong>Auto-Reload aus</strong> lassen und ggf. unter „Limits“ ein Monatslimit setzen — so kann nie mehr abgebucht werden als geplant.</li>
     <li style="margin-bottom:4px;"><strong>Key erzeugen:</strong> <strong>Settings → API keys → Create key</strong>, Name z.&#8239;B. „PKV-Dashboard“. Den Key (beginnt mit <em>sk-ant-…</em>) <strong>sofort kopieren</strong> — er wird nur einmal angezeigt.</li>
-    <li style="margin-bottom:4px;"><strong>In der App eintragen:</strong> Einstellungen → Bereich „KI-Auslesen (selbst gehostet)“ → Key einfügen. Fertig — er wird wie das GitHub-Token nur lokal auf dem Gerät gespeichert; auf jedem Gerät einmal eintragen.</li>
+    <li style="margin-bottom:4px;"><strong>In der App eintragen:</strong> Einstellungen → Bereich „KI-Auslesen (selbst gehostet)“ → Key einfügen. Fertig — er wird wie das GitHub-Token nur lokal auf dem Gerät gespeichert (bei aktiver PIN verschlüsselt); auf jedem Gerät einmal eintragen.</li>
     <li><strong>Testen:</strong> Eintrag öffnen, Beleg anhängen, „Beleg auslesen“ — bei Fehlern zeigt die Statuszeile die Ursache (401 = Key falsch, 400 = Guthaben leer, 429 = kurz warten).</li>
   </ol>
   <div style="background:#FBF3E2; border:1px solid #E8D9B5; border-radius:6px; padding:10px 14px; font-size:10.5pt; color:#6B5A2E; line-height:1.5; margin:0 0 10px 0;">
@@ -170,11 +174,11 @@ doc-page:not(:defined) { visibility: hidden; }
 
   <h2 style="font-size:15pt; font-weight:700; color:#175260; margin:22px 0 8px 0;">10. Grenzen &amp; Hinweise</h2>
   <ul style="font-size:11pt; line-height:1.55; margin:0 0 10px 0; padding-left:20px;">
-    <li style="margin-bottom:4px;"><strong>Datenschutz:</strong> Es sind Gesundheitsdaten — Gist und Beleg-Repo unbedingt <strong>privat</strong> halten; Token und API-Key nirgends teilen. Beide werden nur lokal auf dem Gerät gespeichert und sind im Export nicht enthalten.</li>
+    <li style="margin-bottom:4px;"><strong>Datenschutz:</strong> Es sind Gesundheitsdaten — Gist und Beleg-Repo unbedingt <strong>privat</strong> halten; Token und API-Key nirgends teilen. Bei aktiver PIN liegen Datenstand und Belege auf GitHub nur verschlüsselt (Abschnitt 5); Token und API-Key sind im Browser PIN-verschlüsselt und im Export nicht enthalten. Beachte: Die <strong>Git-Historie</strong> bewahrt alte (ggf. unverschlüsselte) Dateiversionen auf — wer das bereinigen will, folgt der separaten Anleitung „Frisches Repo &amp; frischer Gist“.</li>
     <li style="margin-bottom:4px;"><strong>KI-Auslesen</strong> braucht selbst gehostet einen Anthropic-API-Key (Abschnitt 8) und verursacht dort geringe Kosten pro Rechnung; OCR-Scan, Sync und alles andere sind überall kostenlos.</li>
     <li style="margin-bottom:4px;"><strong>OCR und Auto-Zuschnitt</strong> brauchen beim ersten Scan kurz Internet (Bibliotheken werden nachgeladen) und ein möglichst gerades, scharfes Foto.</li>
     <li style="margin-bottom:4px;"><strong>Sync-Konflikte:</strong> Es gewinnt der zeitlich neuere Gesamtstand — nicht gleichzeitig auf zwei Geräten erfassen, ohne zwischendurch zu synchronisieren.</li>
-    <li style="margin-bottom:4px;"><strong>Zugriffsschutz:</strong> Die gehostete Seite selbst ist öffentlich erreichbar — ein Fremder sieht dort aber nur eine leere App, denn Daten laden erst mit deinem Token. Die PIN-Sperre (Abschnitt 5) schützt zusätzlich die Ansicht auf deinen eigenen Geräten.</li>
+    <li style="margin-bottom:4px;"><strong>Zugriffsschutz:</strong> Die gehostete Seite selbst ist öffentlich erreichbar — ein Fremder sieht dort aber nur eine leere App, denn Daten laden erst mit deinem Token. Die PIN (Abschnitt 5) schützt zusätzlich die Ansicht auf deinen Geräten und ist der Schlüssel zur Verschlüsselung.</li>
     <li style="margin-bottom:4px;"><strong>Gelöschte Einträge</strong> räumen das Beleg-Repo nicht auf; die Dateien bleiben in der Git-Historie erhalten.</li>
   </ul>
 

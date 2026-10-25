@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdn.jsdelivr.net; connect-src 'self' blob: data: https://api.github.com https://gist.githubusercontent.com https://raw.githubusercontent.com https://api.anthropic.com https://cdn.jsdelivr.net https://unpkg.com https://tessdata.projectnaptha.com; img-src 'self' data: blob: https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
@@ -42,6 +44,9 @@ input, select, button, textarea { font-family: 'Hanken Grotesk', sans-serif; }
             </sc-for>
             <button onClick="{{ jahrHinzu }}" title="{{ jahrHinzuTitel }}" style="border:none; cursor:pointer; padding:6px 10px; border-radius:4px; font-size:14px; font-weight:700; background:transparent; color:#F0BCCE;" style-hover="background:#8A0836;">+</button>
           </div>
+          <sc-if value="{{ pinAktiv }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ jetztSperren }}" title="App sperren — Daten bleiben verschlüsselt, Entsperren mit der PIN" style="border:1px solid #D2668D; background:transparent; color:#F6D9E3; cursor:pointer; padding:6px 12px; border-radius:5px; font-size:13px; font-weight:500;" style-hover="background:#9E0A3F;">Sperren</button>
+          </sc-if>
           <button onClick="{{ openSettings }}" title="Einstellungen (Bonus & BRE)" style="border:1px solid #D2668D; background:transparent; color:#F6D9E3; cursor:pointer; padding:6px 12px; border-radius:5px; font-size:13px; font-weight:500;" style-hover="background:#9E0A3F;">Einstellungen</button>
         </div>
       </div>
@@ -1241,6 +1246,8 @@ class Component extends DCLogic {
     let eintraege = null, settings = null;
     try { eintraege = JSON.parse(localStorage.getItem('pkv.eintraege.v1') || 'null'); } catch (e) {}
     try { settings = JSON.parse(localStorage.getItem('pkv.settings.v1') || 'null'); } catch (e) {}
+    // Liegt nur der verschlüsselte lokale Stand vor, bleiben Daten bis zum Entsperren leer
+    this._lokalVerschluesselt = !eintraege && !!localStorage.getItem('pkv.lokal.enc.v1');
     if (settings && settings.jahreJ === undefined) { settings.jahreJ = 2; settings.jahreK = 2; }
     // PIN-Migration: früher lag der Hash nur lokal — jetzt wandert er in die (gesyncten) Settings
     const alteSperre = localStorage.getItem('pkv.sperre.v1');
@@ -1252,7 +1259,7 @@ class Component extends DCLogic {
     }
     this.state = {
       eintraege: eintraege || [],
-      geladen: !!eintraege,
+      geladen: !!eintraege || this._lokalVerschluesselt,
       settings: settings || { personen: [{ name: 'Person 1', bonus: 0, jahre: 1 }, { name: 'Person 2', bonus: 0, jahre: 1 }] },
       tab: 'uebersicht',
       jahr: 2026,
@@ -1301,9 +1308,24 @@ class Component extends DCLogic {
       return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
     }).map(a => ({ art: a, icon: this.artIcon(a), rows: gr[a] }));
   }
-  async pinHash(pin) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('pkv:' + pin));
-    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  // PIN-Prüfwert. v2: PBKDF2 (310.000 Runden, eigener Salt) — der Wert reist im Gist-Kopf mit und darf
+  // daher nicht schneller zu raten sein als der Schlüssel selbst. Alt (ungesalzenes SHA-256) wird beim Entsperren ersetzt.
+  async pinHash(pin, ref) {
+    if (ref && !String(ref).startsWith('v2$')) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('pkv:' + pin));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    const salt = ref ? String(ref).split('$')[1] : this.b64(crypto.getRandomValues(new Uint8Array(16)));
+    const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode('pkv-pruefwert:' + pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: this.b64ab(salt), iterations: 310000, hash: 'SHA-256' }, mat, 256);
+    return 'v2$' + salt + '$' + this.b64(new Uint8Array(bits));
+  }
+  async pinPruefen(pin, ref) {
+    if (!ref) return false;
+    const a = await this.pinHash(pin, ref);
+    if (a.length !== ref.length) return false;
+    let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ ref.charCodeAt(i);
+    return d === 0;
   }
   // ---------- Token-Tresor: GitHub-Token + API-Key mit der PIN verschlüsselt (AES-GCM, PBKDF2) ----------
   b64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
@@ -1413,11 +1435,16 @@ class Component extends DCLogic {
 
   async entsperren() {
     const pin = this.state.pinEingabe || '';
-    const hash = await this.pinHash(pin);
-    if (hash !== this.state.settings.sperreHash) {
+    const ref = this.state.settings.sperreHash;
+    if (this._pinSperreBis && Date.now() < this._pinSperreBis) { this.setState({ pinFehler: 'Zu viele Fehlversuche — bitte ' + Math.ceil((this._pinSperreBis - Date.now()) / 1000) + ' s warten.', pinEingabe: '' }); return; }
+    if (!(await this.pinPruefen(pin, ref))) {
+      this._pinFehlversuche = (this._pinFehlversuche || 0) + 1;
+      if (this._pinFehlversuche >= 5) this._pinSperreBis = Date.now() + Math.min(300, 15 * Math.pow(2, this._pinFehlversuche - 5)) * 1000;
       this.setState({ pinFehler: 'PIN falsch.', pinEingabe: '' });
       return;
     }
+    this._pinFehlversuche = 0; this._pinSperreBis = 0;
+    this._aktiv = Date.now();
     sessionStorage.setItem('pkv.entsperrt', '1');
     this._pin = pin;
     let syncNeu = null;
@@ -1440,7 +1467,10 @@ class Component extends DCLogic {
     } catch (e) { console.warn('Token-Tresor', e); }
     // Datenschlüssel aus dem lokalen Umschlag öffnen (falls vorhanden)
     try { await this.datenKeyErmitteln(null); } catch (e) {}
+    // Lokal verschlüsselten Stand zuerst öffnen — erst danach darf der Sync vergleichen
+    await this.lokalEntschluesseln();
     this.setState({ gesperrt: false, pinEingabe: '', pinFehler: null, ...(syncNeu ? { sync: syncNeu } : {}) }, () => {
+      if (!String(ref).startsWith('v2$')) this.pinHash(pin).then(neu => this.update(x => ({ settings: { ...x.settings, sperreHash: neu } })));
       const c = this.state.sync;
       if (c && c.token && c.gistId) { this._syncGestartet = true; this.syncLoad(true); }
     });
@@ -1508,19 +1538,90 @@ class Component extends DCLogic {
     return JSON.parse(new TextDecoder().decode(pt));
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    if (!this.state.geladen) this.setState({ geladen: true });
+    // Auto-Sperre nach 15 Minuten ohne Bedienung
+    this._aktiv = Date.now();
+    this._markiere = () => { this._aktiv = Date.now(); };
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, this._markiere, { passive: true }));
+    const pruefe = () => {
+      const st = this.state;
+      if (st.diagBatchLaeuft || st.abrechnungTyp === 'laeuft') { this._aktiv = Date.now(); return; }
+      if (Date.now() - this._aktiv > 15 * 60 * 1000) this.sperren();
+    };
+    this._sperrTimer = setInterval(pruefe, 30000);
+    this._sichtbar = () => { if (document.visibilityState === 'visible') pruefe(); };
+    document.addEventListener('visibilitychange', this._sichtbar);
+    // Sitzung noch offen (Reload): lokalen Stand mit dem Sitzungsschlüssel öffnen, bevor der Sync startet
+    try { await this.lokalEntschluesseln(); } catch (e) {}
     this.syncStart();
-    if (!this.state.geladen) {
-      // Zuerst kompletter eingebackener Stand (stand.json), sonst Roh-Import aus der Excel
-      fetch('data/stand.json').then(r => { if (!r.ok) throw 0; return r.json(); }).then(s => {
-        if (s.behandler) { this.behandler = s.behandler; localStorage.setItem('pkv.behandler.v1', JSON.stringify(s.behandler)); }
-        this.setState({ eintraege: s.eintraege || [], settings: s.settings || this.state.settings, geladen: true }, () => this.persist());
-      }).catch(() => {
-        fetch('data/eintraege.json').then(r => r.json()).then(d => {
-          this.setState({ eintraege: d, geladen: true }, () => this.persist());
-        }).catch(() => this.setState({ geladen: true }));
-      });
+  }
+  componentWillUnmount() {
+    clearInterval(this._sperrTimer);
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => window.removeEventListener(ev, this._markiere));
+    document.removeEventListener('visibilitychange', this._sichtbar);
+    if (this._docUrl) URL.revokeObjectURL(this._docUrl);
+  }
+  async sperren() {
+    if (!this.state.settings.sperreHash || this.state.gesperrt) return;
+    if (this._syncT) { clearTimeout(this._syncT); this._syncT = null; try { await this.syncUpload(true); } catch (e) {} }
+    try { await this._persistP; } catch (e) {}
+    const lokalGeschuetzt = !!localStorage.getItem('pkv.lokal.enc.v1') && !localStorage.getItem('pkv.eintraege.v1');
+    ['pkv.entsperrt', 'pkv.schluessel', 'pkv.datenschluessel'].forEach(k => sessionStorage.removeItem(k));
+    this._pin = null; this._pinKey = null; this._datenKey = null;
+    if (this._docUrl) { URL.revokeObjectURL(this._docUrl); this._docUrl = null; }
+    const patch = { gesperrt: true, pinEingabe: '', pinFehler: null, modal: null, docViewer: null, settingsOffen: false, abrechnungVorschlaege: null };
+    const roh = this.syncRoh();
+    if (roh && roh.enc) patch.sync = { ...this.state.sync, token: '', aiKey: '' };
+    if (lokalGeschuetzt) {
+      // Klartext aus dem Arbeitsspeicher nehmen; beim Entsperren wird neu entschlüsselt
+      this._lokalVerschluesselt = true; this.behandler = {};
+      patch.eintraege = []; patch.settings = { sperreHash: this.state.settings.sperreHash };
     }
+    this.setState(patch);
+  }
+  // ---------- Lokale Verschlüsselung (localStorage) mit dem Datenschlüssel ----------
+  async lokalEntschluesseln() {
+    if (!this._lokalVerschluesselt) return true;
+    let roh = null;
+    try { roh = JSON.parse(localStorage.getItem('pkv.lokal.enc.v1') || 'null'); } catch (e) {}
+    if (!roh) { this._lokalVerschluesselt = false; return true; }
+    const key = await this.datenKeyErmitteln(null);
+    if (!key) return false;
+    try {
+      const d = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: this.b64ab(roh.iv) }, key, this.b64ab(roh.daten))));
+      this.behandler = d.behandler || {};
+      const s = d.settings || {};
+      this._lokalVerschluesselt = false;
+      await new Promise(r => this.setState({ eintraege: d.eintraege || [], settings: { ...s, sperreHash: this.state.settings.sperreHash || s.sperreHash }, geladen: true }, r));
+      return true;
+    } catch (e) { return false; }
+  }
+  async lokalSchreiben() {
+    if (this._lokalVerschluesselt) return;
+    const s = this.state.settings;
+    if (s.sperreHash) {
+      const key = await this.datenKeyErmitteln(null);
+      if (key) {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify({ eintraege: this.state.eintraege, settings: s, behandler: this.behandler })));
+        localStorage.setItem('pkv.lokal.enc.v1', JSON.stringify({ v: 1, iv: this.b64(iv), daten: this.b64(new Uint8Array(ct)) }));
+        localStorage.setItem('pkv.settings.v1', JSON.stringify({ sperreHash: s.sperreHash }));
+        localStorage.removeItem('pkv.eintraege.v1');
+        localStorage.removeItem('pkv.behandler.v1');
+        return;
+      }
+      // Einen bereits verschlüsselten Stand nie durch Klartext ersetzen
+      if (localStorage.getItem('pkv.lokal.enc.v1')) return;
+    }
+    localStorage.setItem('pkv.eintraege.v1', JSON.stringify(this.state.eintraege));
+    localStorage.setItem('pkv.settings.v1', JSON.stringify(s));
+    localStorage.setItem('pkv.behandler.v1', JSON.stringify(this.behandler));
+    localStorage.removeItem('pkv.lokal.enc.v1');
+  }
+  behandlerSpeichern() {
+    if (this.state.settings.sperreHash && localStorage.getItem('pkv.lokal.enc.v1')) this.persist(true);
+    else localStorage.setItem('pkv.behandler.v1', JSON.stringify(this.behandler));
   }
 
   standHerunterladen() {
@@ -1530,12 +1631,13 @@ class Component extends DCLogic {
     a.href = URL.createObjectURL(blob);
     a.download = 'stand.json';
     a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }
 
   persist(ohneUpload) {
-    localStorage.setItem('pkv.eintraege.v1', JSON.stringify(this.state.eintraege));
-    localStorage.setItem('pkv.settings.v1', JSON.stringify(this.state.settings));
+    if (this._lokalVerschluesselt) return; // gesperrt: nichts überschreiben, nichts hochladen
     localStorage.setItem('pkv.stand.ts', new Date().toISOString());
+    this._persistP = (this._persistP || Promise.resolve()).then(() => this.lokalSchreiben()).catch(e => console.warn('Lokales Speichern fehlgeschlagen', e && e.message));
     if (!ohneUpload && this.state.sync && this.state.sync.token && this.state.sync.gistId) {
       clearTimeout(this._syncT);
       this._syncT = setTimeout(() => this.syncUpload(true), 2500);
@@ -1609,6 +1711,7 @@ class Component extends DCLogic {
   }
 
   async syncUpload(auto) {
+    if (this._lokalVerschluesselt) return;
     const c = this.state.sync;
     if (!c.token) { if (!auto) this.setState({ syncStatus: 'Bitte zuerst ein GitHub-Token eintragen.' }); return; }
     try {
@@ -1672,7 +1775,7 @@ class Component extends DCLogic {
         const lokalTs = localStorage.getItem('pkv.stand.ts') || '';
         if (lokalTs && remoteTs && remoteTs < lokalTs) { this.syncUpload(true); return; } // lokal ist neuer
       }
-      if (s.behandler) { this.behandler = s.behandler; localStorage.setItem('pkv.behandler.v1', JSON.stringify(s.behandler)); }
+      if (s.behandler) { this.behandler = s.behandler; this.behandlerSpeichern(); }
       const neueSettings = s.settings || this.state.settings;
       // Kommt per Sync eine PIN-Sperre an und dieses Gerät wurde in dieser Sitzung nicht entsperrt: sofort sperren
       const jetztSperren = !!neueSettings.sperreHash && sessionStorage.getItem('pkv.entsperrt') !== '1';
@@ -1708,24 +1811,50 @@ class Component extends DCLogic {
   }
   async saveBeleg(key, file) {
     const db = await this.db();
+    let rec = { name: file.name, type: file.type, blob: file };
+    if (this.state.settings.sperreHash) {
+      const dk = await this.datenKeyErmitteln(null);
+      if (dk) {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, dk, await file.arrayBuffer());
+        rec = { name: file.name, type: file.type, enc: true, iv: this.b64(iv), blob: new Blob([ct]) };
+      }
+    }
     return new Promise((res, rej) => {
       const tx = db.transaction('belege', 'readwrite');
-      tx.objectStore('belege').put({ name: file.name, type: file.type, blob: file }, key);
+      tx.objectStore('belege').put(rec, key);
       tx.oncomplete = res; tx.onerror = () => rej(tx.error);
     });
   }
   async getBelegBlob(key) {
     const db = await this.db();
-    return new Promise(res => {
+    const rec = await new Promise(res => {
       const rq = db.transaction('belege').objectStore('belege').get(key);
-      rq.onsuccess = () => res(rq.result ? rq.result.blob : null);
+      rq.onsuccess = () => res(rq.result || null);
       rq.onerror = () => res(null);
     });
+    if (!rec || !rec.blob) return null;
+    if (!rec.enc) {
+      // Alt-Kopie im Klartext: bei Gelegenheit lokal verschlüsselt neu ablegen
+      if (this.state.settings.sperreHash && this._datenKey) {
+        const f = rec.blob instanceof File ? rec.blob : new File([rec.blob], rec.name || 'beleg', { type: rec.type || rec.blob.type });
+        this.saveBeleg(key, f).catch(() => {});
+      }
+      return rec.blob;
+    }
+    const dk = await this.datenKeyErmitteln(null);
+    if (!dk) return null;
+    try {
+      const klar = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: this.b64ab(rec.iv) }, dk, await rec.blob.arrayBuffer());
+      return new File([klar], rec.name || 'beleg', { type: rec.type || 'application/pdf' });
+    } catch (e) { return null; }
   }
 
-  ladeScript(src, fehler) {
+  ladeScript(src, fehler, integrity) {
     return new Promise((res, rej) => {
       const s = document.createElement('script');
+      if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
+      s.referrerPolicy = 'no-referrer';
       s.src = src; s.onload = res; s.onerror = () => rej(new Error(fehler));
       document.head.appendChild(s);
     });
@@ -1733,7 +1862,7 @@ class Component extends DCLogic {
 
   async ocrFoto(file, setStatus) {
     setStatus('Lade Texterkennung …', 'laeuft');
-    if (!window.Tesseract) await this.ladeScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js', 'Texterkennung nicht erreichbar (offline?)');
+    if (!window.Tesseract) await this.ladeScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js', 'Texterkennung nicht erreichbar (offline?)', 'sha384-GJqSu7vueQ9qN0E9yLPb3Wtpd7OrgK8KmYzC8T1IysG1bcvxvIO4qtYR/D3A991F');
     const worker = await window.Tesseract.createWorker('deu', 1, {
       logger: mm => { if (mm.status === 'recognizing text') setStatus('Erkenne Text … ' + Math.round((mm.progress || 0) * 100) + ' %', 'laeuft'); }
     });
@@ -1780,7 +1909,7 @@ class Component extends DCLogic {
   }
 
   async scanSeitenZuPdf(seiten) {
-    if (!window.jspdf) await this.ladeScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js', 'PDF-Bibliothek nicht erreichbar (offline?)');
+    if (!window.jspdf) await this.ladeScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js', 'PDF-Bibliothek nicht erreichbar (offline?)', 'sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/');
     let pdf = null;
     for (const s of seiten) {
       const img = await this.ladeBild(s.blob);
@@ -2253,7 +2382,7 @@ class Component extends DCLogic {
     try {
       if (!docs.length) { setStatus('Keine Dokumente im aktuellen Filter.'); return; }
       setStatus('Sammle ' + docs.length + ' Dokumente …');
-      if (!window.JSZip) await this.ladeScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'ZIP-Bibliothek nicht erreichbar (offline?)');
+      if (!window.JSZip) await this.ladeScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'ZIP-Bibliothek nicht erreichbar (offline?)', 'sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG');
       const zip = new window.JSZip();
       let ok = 0, fehlt = 0;
       const namen = new Set();
@@ -2276,6 +2405,7 @@ class Component extends DCLogic {
       a.href = URL.createObjectURL(blob);
       a.download = 'Dokumente ' + this.state.jahr + (fehlt ? '' : '') + '.zip';
       a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
       setStatus(ok + (ok === 1 ? ' Dokument' : ' Dokumente') + ' exportiert' + (fehlt ? ' — ' + fehlt + ' nicht gefunden (weder lokal noch im Repo)' : '') + '.');
     } catch (err) {
@@ -2340,6 +2470,7 @@ class Component extends DCLogic {
       a.href = URL.createObjectURL(new Blob([zeilen.join('\n')], { type: 'text/plain;charset=utf-8' }));
       a.download = 'Diagnosen-Uebersicht-' + st.jahr + '.txt';
       a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     };
     return {
@@ -2448,7 +2579,7 @@ class Component extends DCLogic {
     if (!name) return;
     const b = this.behandler[name] || { adresse: '', count: 0 };
     this.behandler[name] = { ...b, adresse: adresse || b.adresse, fach: (fach !== undefined ? (fach || null) : (b.fach || null)), count: (b.count || 0) + 1 };
-    localStorage.setItem('pkv.behandler.v1', JSON.stringify(this.behandler));
+    this.behandlerSpeichern();
   }
   behandlerFach(name) {
     return (name && this.behandler[name] && this.behandler[name].fach) || null;
@@ -3096,6 +3227,7 @@ class Component extends DCLogic {
         a.href = URL.createObjectURL(new Blob([inhalt], { type: 'application/json' }));
         a.download = 'setup.json';
         a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
         setTimeout(() => URL.revokeObjectURL(a.href), 5000);
         this.setState({ setupCodeInfo: 'setup.json heruntergeladen — ins Repo neben die index.html hochladen. Neue Geräte brauchen dann nur noch dieses Passwort.', setupCodePass: '' });
       },
@@ -3179,6 +3311,7 @@ class Component extends DCLogic {
       // Settings
       settingsOffen: st.settingsOffen,
       openSettings: () => this.setState({ settingsOffen: true }),
+      jetztSperren: () => this.sperren(),
       syncToken: st.sync.token || '', syncGistId: st.sync.gistId || '',
       setSyncToken: ev => this.speichereSync({ ...st.sync, token: ev.target.value.trim() }),
       setSyncGistId: ev => this.speichereSync({ ...st.sync, gistId: ev.target.value.trim() }),
@@ -3201,7 +3334,7 @@ class Component extends DCLogic {
         f.text().then(txt => {
           const s = JSON.parse(txt);
           if (!Array.isArray(s.eintraege)) throw new Error('keine Einträge in der Datei gefunden');
-          if (s.behandler) { this.behandler = s.behandler; localStorage.setItem('pkv.behandler.v1', JSON.stringify(s.behandler)); }
+          if (s.behandler) { this.behandler = s.behandler; this.behandlerSpeichern(); }
           this.setState({
             eintraege: s.eintraege,
             settings: s.settings || this.state.settings,
